@@ -31,6 +31,18 @@ class OnboardingPage(BasePage):
             await self.click_locator(tab, timeout=8_000)
             await self.cancellable_sleep(1500)
             logger.info("Opened Customer Life Cycle tab via pattern match")
+            return
         except Exception:
+            pass
+
+        try:
+            tab = self.page.get_by_text(re.compile(r"Customer\s*Life\s*Cycle\s*\|\s*Queue", re.I))
+            await self.click_locator(tab, timeout=8_000)
+            await self.cancellable_sleep(1500)
+            logger.info("Opened Customer Life Cycle | Queue tab via text match")
+        except Exception:
+            if await queues._has_queues_new_button():
+                logger.info("Queues page detected after tab navigation fallback")
+                return
             await queues.wait_for_queues_ready()
-            logger.info("Queues page detected after tab navigation fallback")
+            logger.info("Queues page ready after navigation fallback")

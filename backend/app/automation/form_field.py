@@ -18,19 +18,23 @@ from app.automation.workspace_tab import (
     find_data_change_page,
 )
 from app.core.config import get_settings
+from app.knowledge.data_change_field_registry import default_customer_search_query
+from app.knowledge.sales_office_rules import (
+    choose_office_option,
+    office_option_js_pattern,
+    resolve_bottler_id,
+)
 
 logger = logging.getLogger(__name__)
-
-OFFICE_OPTION = re.compile(r"K\d{3}|FSV Recipient", re.I)
 
 # One in-browser flow: find combobox in shadow DOM → open → wait → pick → verify.
 PICK_COMBOBOX_JS = (
     """
-async ({ placeholderRe, labelText, code, pickAny, optionPattern, emptyPattern }) => {
+async ({ placeholderRe, labelText, code, pickAny, optionPattern, emptyPattern, preferPrefix }) => {
 """
     + _COMBO_FIND_CORE
     + """
-  const optRe = optionPattern ? new RegExp(optionPattern, 'i') : /K\\d{3}|FSV Recipient/i;
+  const optRe = optionPattern ? new RegExp(optionPattern, 'i') : /[SKQ]\\d{3}|Payer|FSV Recipient/i;
   const emptyRe = emptyPattern ? new RegExp(emptyPattern, 'i') : /select sales office|^$/i;
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const findInput = () => walk(document);
@@ -114,11 +118,17 @@ async ({ placeholderRe, labelText, code, pickAny, optionPattern, emptyPattern })
 
   const clickOption = (wantText) => {
     const want = wantText.toLowerCase();
+    const officeCode = (wantText.match(/[skq]\\d{3}/i) || [])[0];
     let best = null;
     let bestArea = Infinity;
     for (const el of collectNodes()) {
       const text = (el.textContent || '').trim();
-      if (!text || text.toLowerCase() !== want) continue;
+      if (!text) continue;
+      const tLower = text.toLowerCase();
+      const exact = tLower === want;
+      const bySearchCode = code && text.toUpperCase().includes(code.toUpperCase());
+      const byOfficeCode = officeCode && text.toUpperCase().includes(officeCode.toUpperCase());
+      if (!exact && !bySearchCode && !byOfficeCode) continue;
       if (el.closest('table, thead, th, label')) continue;
       if (!pickVisible(el)) continue;
       const area = el.getBoundingClientRect().width * el.getBoundingClientRect().height;
@@ -160,7 +170,13 @@ async ({ placeholderRe, labelText, code, pickAny, optionPattern, emptyPattern })
     if (!options.length) continue;
 
     let choice = options[0];
-    if (code && !pickAny) {
+    if (pickAny) {
+      const pref = preferPrefix
+        ? new RegExp('^' + preferPrefix + '\\d{3}', 'i')
+        : /[SKQ]\\d{3}/i;
+      const coded = options.filter((o) => pref.test(o));
+      if (coded.length) choice = coded[0];
+    } else if (code && !pickAny) {
       const match = options.find((o) => o.toUpperCase().includes(code.toUpperCase()));
       if (!match) {
         return { ok: false, reason: 'code_not_found', code, options };
@@ -169,7 +185,7 @@ async ({ placeholderRe, labelText, code, pickAny, optionPattern, emptyPattern })
     }
 
     if (!clickOption(choice)) continue;
-    await sleep(500);
+    await sleep(700);
 
     const selected = readValue(input);
     if (selected && !emptyRe.test(selected)) {
@@ -201,8 +217,8 @@ COMBO_BBOX_JS = (
 )
 
 LIST_OPTIONS_SHORT_JS = """
-() => {
-  const re = /K\\d{3}|FSV Recipient/i;
+({ optionPattern }) => {
+  const re = optionPattern ? new RegExp(optionPattern, 'i') : /[SKQ]\\d{3}|Payer|FSV Recipient/i;
   const seen = new Set();
   const walk = (node) => {
     if (!node) return;
@@ -261,7 +277,7 @@ CLICK_OPTION_CONTAINS_JS = """
 
 CUSTOMER_OPTION_CORE = """
   const customerRecordRe = /\\d{6,}\\s*-\\s*\\S+/;
-  const skipRe = /^select sales office$|^K\\d{3}\\b|FSV Recipient|^search customer/i;
+  const skipRe = /^select sales office$|^[SKQ]\\d{3}\\b|Payer|FSV Recipient|^search customer/i;
   const headerBottom = 100;
   const normalizeText = (t) => (t || '').replace(/\\s+/g, ' ').trim();
   const optionVisible = (el) => {
@@ -359,6 +375,118 @@ FIRST_CUSTOMER_BBOX_JS = (
   const anchor = walk(document);
   const anchorRect = anchor ? anchor.getBoundingClientRect() : null;
   const best = scanForCustomerOption(document, anchorRect, 'bbox');
+  if (!best) return null;
+  const r = best.el.getBoundingClientRect();
+  return {
+    x: Math.round(r.x + Math.min(r.width * 0.35, 120)),
+    y: Math.round(r.y + r.height / 2),
+    text: best.text,
+  };
+}
+"""
+)
+
+PRIMARY_GROUP_OPTION_CORE = """
+  const primaryGroupRe = /[AB]\\d{4}(?:\\s*-\\s*\\S+)?/i;
+  const skipRe = /^(select|enter primary|search customer|search\\.\\.\\.|sales office)/i;
+  const headerBottom = 100;
+  const normalizeText = (t) => (t || '').replace(/\\s+/g, ' ').trim();
+  const optionVisible = (el) => {
+    const r = el.getBoundingClientRect();
+    if (r.width < 8 || r.height < 6) return false;
+    if (r.y < headerBottom) return false;
+    const st = window.getComputedStyle(el);
+    return st.display !== 'none' && st.visibility !== 'hidden' && parseFloat(st.opacity || '1') > 0;
+  };
+  const inGlobalHeader = (el) => {
+    const r = el.getBoundingClientRect();
+    if (r.y >= 140) return false;
+    return !!el.closest?.('.oneHeader, .slds-global-header, one-app-nav-bar');
+  };
+  const primaryGroupText = (text, searchCode) => {
+    const t = normalizeText(text);
+    if (!t || t.length < 4 || t.length > 120 || skipRe.test(t)) return null;
+    if (!primaryGroupRe.test(t)) return null;
+    if (searchCode && !t.toUpperCase().includes(String(searchCode).toUpperCase())) return null;
+    return t;
+  };
+  const optionScore = (el, text) => {
+    if (inGlobalHeader(el)) return -1;
+    let score = 0;
+    const role = el.getAttribute?.('role') || '';
+    const cls = (el.className || '').toString();
+    if (role === 'option') score += 40;
+    if (cls.includes('slds-listbox__option') || cls.includes('lookup')) score += 30;
+    if (el.closest?.('[role="listbox"], .slds-listbox, .slds-dropdown, .slds-lookup, .slds-lookup__menu')) score += 25;
+    if (primaryGroupRe.test(text)) score += 50;
+    return score;
+  };
+  const isPrimaryGroupOption = (el, text, anchorRect, searchCode) => {
+    if (!primaryGroupText(text, searchCode)) return false;
+    if (inGlobalHeader(el)) return false;
+    if (el.closest('thead, th, label, .slds-form-element__label')) return false;
+    if (!optionVisible(el)) return false;
+    if (anchorRect) {
+      const r = el.getBoundingClientRect();
+      if (r.y < anchorRect.y - 30) return false;
+      if (r.y > anchorRect.y + 400) return false;
+    }
+    return true;
+  };
+  const scanForPrimaryGroupOption = (node, anchorRect, searchCode, mode) => {
+    if (!node) return mode === 'visible' ? false : null;
+    const kids = node.querySelectorAll ? node.querySelectorAll('*') : [];
+    let best = null;
+    let bestScore = -1;
+    for (const el of kids) {
+      const text = normalizeText(el.textContent);
+      if (text.length < 4 || text.length > 120) {
+        if (el.shadowRoot) {
+          const hit = scanForPrimaryGroupOption(el.shadowRoot, anchorRect, searchCode, mode);
+          if (mode === 'visible' && hit) return true;
+          if (mode === 'bbox' && hit && hit.score > bestScore) { best = hit; bestScore = hit.score; }
+        }
+        continue;
+      }
+      if (isPrimaryGroupOption(el, text, anchorRect, searchCode)) {
+        if (mode === 'visible') return true;
+        const score = optionScore(el, text);
+        if (score > bestScore) best = { el, text, score };
+      }
+      if (el.shadowRoot) {
+        const hit = scanForPrimaryGroupOption(el.shadowRoot, anchorRect, searchCode, mode);
+        if (mode === 'visible' && hit) return true;
+        if (mode === 'bbox' && hit && hit.score > bestScore) { best = hit; bestScore = hit.score; }
+      }
+    }
+    return mode === 'visible' ? false : best;
+  };
+"""
+
+PRIMARY_GROUP_LOOKUP_VISIBLE_JS = (
+    """
+({ placeholderRe, labelText, searchCode }) => {
+"""
+    + _COMBO_FIND_CORE
+    + PRIMARY_GROUP_OPTION_CORE
+    + """
+  const anchor = walk(document);
+  const anchorRect = anchor ? anchor.getBoundingClientRect() : null;
+  return !!scanForPrimaryGroupOption(document, anchorRect, searchCode || '', 'visible');
+}
+"""
+)
+
+FIRST_PRIMARY_GROUP_BBOX_JS = (
+    """
+({ placeholderRe, labelText, searchCode }) => {
+"""
+    + _COMBO_FIND_CORE
+    + PRIMARY_GROUP_OPTION_CORE
+    + """
+  const anchor = walk(document);
+  const anchorRect = anchor ? anchor.getBoundingClientRect() : null;
+  const best = scanForPrimaryGroupOption(document, anchorRect, searchCode || '', 'bbox');
   if (!best) return null;
   const r = best.el.getBoundingClientRect();
   return {
@@ -502,8 +630,10 @@ FORM_FIELDS: dict[str, FormFieldSpec] = {
         empty_values=frozenset({"", "search customer...", "search customer"}),
     ),
     "Primary Group": FormFieldSpec(
-        placeholder=re.compile(r"select.*primary|primary group|search", re.I),
-        empty_values=frozenset({"", "select primary group", "search..."}),
+        placeholder=re.compile(r"enter primary group|primary group", re.I),
+        empty_values=frozenset(
+            {"", "select primary group", "search...", "enter primary group", "enter primary"}
+        ),
     ),
 }
 
@@ -526,33 +656,40 @@ async def field_present(scope: PageOrFrame, field_key: str) -> bool:
         return False
 
 
-async def resolve_form_scope(page: Page, field_key: str = "Sales Office") -> PageOrFrame:
-    """Find the browser tab / frame that contains the target form field."""
+async def resolve_form_scope(
+    page: Page,
+    field_key: str = "Sales Office",
+    *,
+    prefer_page: Page | None = None,
+) -> PageOrFrame:
+    """Find the frame with the target field on the current Data Change tab only."""
+    from app.automation.scope import all_scopes
+
+    active = prefer_page if prefer_page and not prefer_page.is_closed() else page
+    if active is not page:
+        page = active
+
+    for scope in all_scopes(page):
+        try:
+            if await field_present(scope, field_key):
+                return scope
+        except Exception:
+            continue
+
+    if prefer_page is not None:
+        return page
+
     found_page = await find_data_change_page(page)
-    if found_page:
+    if found_page and found_page is not page:
         await found_page.bring_to_front()
         page = found_page
-
-    seen: set[int] = set()
-    for candidate in page.context.pages:
-        for scope in all_scopes(candidate):
-            sid = id(scope)
-            if sid in seen:
-                continue
-            seen.add(sid)
+        for scope in all_scopes(page):
             try:
                 if await field_present(scope, field_key):
-                    owner = await _scope_page(scope)
-                    if owner is not page:
-                        await owner.bring_to_front()
-                    logger.info(
-                        "Resolved %s scope: %s",
-                        field_key,
-                        scope.url if isinstance(scope, Frame) else owner.url,
-                    )
                     return scope
             except Exception:
                 continue
+
     return page
 
 
@@ -588,6 +725,7 @@ async def find_input(scope: PageOrFrame, field_key: str) -> Locator:
         scope.get_by_placeholder(spec.placeholder),
         scope.locator(f'input[placeholder*="Sales Office" i]') if field_key == "Sales Office" else None,
         scope.locator(f'input[placeholder*="Search customer" i]') if field_key == "Customer Number" else None,
+        scope.locator(f'input[placeholder*="Primary Group" i]') if field_key == "Primary Group" else None,
     ):
         if loc is None:
             continue
@@ -779,6 +917,7 @@ async def _mouse_pick_combobox(
     payload: dict,
 ) -> str | None:
     """Fast path: mouse-click combobox center, poll options, click match."""
+    list_payload = {"optionPattern": payload.get("optionPattern")}
     bbox = await scope.evaluate(
         COMBO_BBOX_JS,
         {"placeholderRe": payload["placeholderRe"], "labelText": payload["labelText"]},
@@ -787,12 +926,13 @@ async def _mouse_pick_combobox(
         return None
 
     x, y = int(bbox["x"]), int(bbox["y"])
+    bottler_id = payload.get("bottlerId")
     for click_x in (x, x + 35):
         await scope.mouse.click(click_x, y)
         await scope.wait_for_timeout(300)
         options: list[str] = []
         for _ in range(8):
-            raw = await scope.evaluate(LIST_OPTIONS_SHORT_JS)
+            raw = await scope.evaluate(LIST_OPTIONS_SHORT_JS, list_payload)
             options = [str(o).strip() for o in (raw or []) if str(o).strip()]
             if options:
                 break
@@ -800,18 +940,20 @@ async def _mouse_pick_combobox(
         if not options:
             continue
 
-        code = None if payload["pickAny"] else (payload.get("code") or "").strip().upper()
-        choice = options[0]
-        if code:
-            match = next((o for o in options if code in o.upper()), None)
-            if not match:
-                available = ", ".join(options)
-                raise RuntimeError(f"{field_key} '{value}' not found. Available: {available}")
-            choice = match
+        try:
+            choice = choose_office_option(
+                options,
+                value,
+                bottler_id=bottler_id if field_key == "Sales Office" else None,
+            )
+        except ValueError:
+            raise RuntimeError(
+                f"{field_key} '{value}' not found. Available: {', '.join(options)}"
+            ) from None
 
         picked = await scope.evaluate(
             CLICK_OPTION_CONTAINS_JS,
-            {"text": choice, "code": ""},
+            {"text": choice, "code": code if field_key == "Primary Group" else ""},
         )
         if picked:
             logger.info("Mouse picklist '%s': %s", field_key, picked)
@@ -823,19 +965,39 @@ async def _pick_combobox(
     scope: PageOrFrame,
     field_key: str,
     value: str | None,
+    *,
+    bottler_id: str | None = None,
 ) -> str:
     spec = FORM_FIELDS[field_key]
     label = FIELD_LABELS.get(field_key)
     code = None if is_auto_pick(value) else (value or "").strip().upper()
     empty_pattern = "|".join(re.escape(v) for v in spec.empty_values if v) or "select|^$"
+    resolved_bottler = resolve_bottler_id(bottler_id=bottler_id) if field_key == "Sales Office" else None
+    prefer_prefix = ""
+    option_pattern: str | None = None
+    if field_key == "Sales Office":
+        from app.knowledge.sales_office_rules import office_prefix_for_bottler
+
+        prefer_prefix = office_prefix_for_bottler(resolved_bottler) or ""
+        option_pattern = office_option_js_pattern(resolved_bottler)
+    elif field_key == "Primary Group":
+        option_pattern = re.escape(code) if code else r"[AB]\\d{4}"
     payload = {
         "placeholderRe": spec.placeholder.pattern,
         "labelText": label,
         "code": code or "",
         "pickAny": is_auto_pick(value),
-        "optionPattern": OFFICE_OPTION.pattern if field_key == "Sales Office" else None,
+        "optionPattern": option_pattern,
         "emptyPattern": empty_pattern,
+        "preferPrefix": prefer_prefix,
+        "bottlerId": resolved_bottler,
     }
+
+    if field_key == "Primary Group" and code:
+        inp = await find_input(scope, field_key)
+        await inp.click(timeout=5000)
+        await inp.fill(code)
+        await scope.wait_for_timeout(600)
 
     if not await field_present(scope, field_key):
         raise RuntimeError(
@@ -893,9 +1055,147 @@ async def _pick_combobox(
     )
 
 
-async def click_picklist(scope: PageOrFrame, field_key: str, value: str | None = None) -> str:
+async def _primary_group_field_payload(search_code: str = "") -> dict:
+    spec = FORM_FIELDS["Primary Group"]
+    label = FIELD_LABELS.get("Primary Group")
+    return {
+        "placeholderRe": spec.placeholder.pattern,
+        "labelText": label,
+        "searchCode": search_code,
+    }
+
+
+async def primary_group_lookup_visible(
+    scope: PageOrFrame, search_code: str = ""
+) -> bool:
+    try:
+        payload = await _primary_group_field_payload(search_code)
+        if await scope.evaluate(PRIMARY_GROUP_LOOKUP_VISIBLE_JS, payload):
+            return True
+    except Exception:
+        pass
+    if search_code:
+        try:
+            row = scope.get_by_text(re.compile(re.escape(search_code), re.I)).first
+            if await row.is_visible(timeout=400):
+                box = await row.bounding_box()
+                if box and box["y"] > 100:
+                    return True
+        except Exception:
+            pass
+    return False
+
+
+async def _mouse_click_primary_group_row(
+    scope: PageOrFrame, search_code: str = ""
+) -> str | None:
+    payload = await _primary_group_field_payload(search_code)
+    bbox = await scope.evaluate(FIRST_PRIMARY_GROUP_BBOX_JS, payload)
+    if not bbox:
+        return None
+    x, y = int(bbox["x"]), int(bbox["y"])
+    await scope.mouse.click(x, y)
+    await scope.wait_for_timeout(600)
+    text = str(bbox.get("text") or "").strip()
+    logger.info("Mouse-clicked Primary Group search row: %s", text)
+    return text or None
+
+
+async def _keyboard_pick_primary_group(
+    scope: PageOrFrame, search_code: str
+) -> str | None:
+    try:
+        inp = await find_input(scope, "Primary Group")
+        await inp.focus()
+        await scope.keyboard.press("ArrowDown")
+        await scope.wait_for_timeout(250)
+        await scope.keyboard.press("Enter")
+        await scope.wait_for_timeout(500)
+        value = await _input_value(inp)
+        if value and await _primary_group_selected(scope, search_code):
+            return value
+    except Exception as exc:
+        logger.debug("Keyboard Primary Group pick failed: %s", exc)
+    return None
+
+
+async def _primary_group_selected(scope: PageOrFrame, code: str) -> bool:
+    """True when the Primary Group search field shows a confirmed selection."""
+    if await primary_group_lookup_visible(scope, code):
+        return False
+    try:
+        inp = await find_input(scope, "Primary Group")
+        value = (await _input_value(inp) or "").strip()
+        if len(value) < 4:
+            return False
+        if not re.search(r"[AB]\d{4}", value, re.I):
+            return False
+        target = (code or "").strip().upper()
+        if not target:
+            return True
+        return target in value.upper()
+    except Exception:
+        return False
+
+
+async def search_primary_group(scope: PageOrFrame, value: str) -> str:
+    """Primary Group is a search field: type code, wait for results, click row."""
+    query = (value or "").strip()
+    if is_auto_pick(query):
+        query = "A"
+
+    if await _primary_group_selected(scope, query):
+        inp = await find_input(scope, "Primary Group")
+        current = await _input_value(inp)
+        logger.info("Primary Group search already set: %s", current)
+        return current
+
+    await dismiss_global_search(scope)
+
+    for attempt in range(8):
+        if await primary_group_lookup_visible(scope, query):
+            picked = await _mouse_click_primary_group_row(scope, query)
+            await scope.wait_for_timeout(400)
+            if await _primary_group_selected(scope, query):
+                inp = await find_input(scope, "Primary Group")
+                return await _input_value(inp)
+            picked = await _keyboard_pick_primary_group(scope, query)
+            if picked:
+                logger.info("Primary Group search selected via keyboard: %s", picked)
+                return picked
+
+        if attempt == 0 or not await primary_group_lookup_visible(scope, query):
+            inp = await find_input(scope, "Primary Group")
+            await inp.click(timeout=5000)
+            await inp.fill(query)
+            await scope.wait_for_timeout(900)
+
+        await scope.wait_for_timeout(400)
+
+    if await _primary_group_selected(scope, query):
+        inp = await find_input(scope, "Primary Group")
+        return await _input_value(inp)
+
+    raise RuntimeError(
+        f"Could not select Primary Group '{value}' from search results — "
+        "type in the search field and pick a row like 'A0168-DESCRIPTION'"
+    )
+
+
+async def set_primary_group(scope: PageOrFrame, value: str) -> str:
+    """Alias for search_primary_group — Primary Group is never a picklist."""
+    return await search_primary_group(scope, value)
+
+
+async def click_picklist(
+    scope: PageOrFrame,
+    field_key: str,
+    value: str | None = None,
+    *,
+    bottler_id: str | None = None,
+) -> str:
     """Click combobox → wait for options → pick → verify."""
-    return await _pick_combobox(scope, field_key, value)
+    return await _pick_combobox(scope, field_key, value, bottler_id=bottler_id)
 
 
 async def type_in_input(scope: PageOrFrame, field_key: str, text: str) -> str:
@@ -907,6 +1207,9 @@ async def type_in_input(scope: PageOrFrame, field_key: str, text: str) -> str:
 
 
 async def click_lookup(scope: PageOrFrame, field_key: str, query: str | None = None) -> str:
+    if field_key == "Primary Group":
+        return await search_primary_group(scope, query or "")
+
     typed = "060" if is_auto_pick(query) else (query or "060")
 
     if await _customer_selected(scope, field_key, typed):

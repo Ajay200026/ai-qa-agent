@@ -26,3 +26,9 @@ class Project(Base):
         "SalesforceOrg", back_populates="project"
     )
     scenarios: Mapped[list["Scenario"]] = relationship("Scenario", back_populates="project")
+    account_queries: Mapped[list["AccountQuery"]] = relationship(
+        "AccountQuery", back_populates="project"
+    )
+    login_as_profiles: Mapped[list["LoginAsProfile"]] = relationship(
+        "LoginAsProfile", back_populates="project"
+    )

@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 ACTION_WHITELIST = {
     "login",
+    "login_as",
     "open_queues",
     "create_data_change_request",
     "search_select_customer",
@@ -32,6 +33,7 @@ ACTION_WHITELIST = {
     "wait_for_data",
     "save_draft",
     "validate",
+    "load_customer_by_query",
     "validate_expected",
     "set_field",
 }
@@ -63,6 +65,11 @@ async def planner_node(state: ExecutionState) -> dict:
     async with AsyncSessionLocal() as db:
         service = WorkflowService(db)
         planned_steps, plan = await service.build_plan(parsed)
+
+    from app.automation.scenario_params import apply_account_query_to_steps, splice_login_as_step
+
+    planned_steps = splice_login_as_step(planned_steps, dict(state))
+    planned_steps = apply_account_query_to_steps(planned_steps, dict(state))
 
     logger.info(
         "Planned %d steps via workflow template %s",

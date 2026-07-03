@@ -1,0 +1,2332 @@
+{
+  "sourceFile": "force-app/main/default/lwc/Northeast Modules/lwc/Data Change/lwc/conaDatachangeDeliveryAddress/conaDatachangeDeliveryAddressFieldConfigs.js",
+  "bottlerCodes": {
+    "4600": "Reyes",
+    "4900": "Abarta",
+    "5000": "Northeast"
+  },
+  "sectionConfigs": {
+    "DELIVERY_ADDRESS": {
+      "label": "Delivery Address Details",
+      "icon": "standard:address",
+      "iconVariant": "inverse"
+    },
+    "BILLING_ADDRESS": {
+      "label": "Billing Address Details",
+      "icon": "standard:account_info",
+      "iconVariant": "inverse"
+    },
+    "PRE_EXISTING_PAYER": {
+      "label": "Pre-Existing Payer",
+      "icon": "standard:account",
+      "iconVariant": "inverse"
+    },
+    "PRE_EXISTING_PAYER_SEARCH": {
+      "label": "Pre-Existing Payer Search",
+      "icon": "standard:account",
+      "iconVariant": "inverse"
+    }
+  },
+  "deliveryAddressFields": [
+    {
+      "configKey": "ATTENTION_NAME",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "Attention Name",
+      "apiName": "cfs_ob__u_AttentionName__c",
+      "backendName": "cfs_ob__u_AttentionName__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.name4",
+      "type": "text",
+      "section": "DELIVERY_ADDRESS",
+      "row": 1,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "DELIVERY_EMAIL",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "Email",
+      "apiName": "cfs_ob__Delivery_Address_Email__c",
+      "backendName": "cfs_ob__Delivery_Address_Email__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.email",
+      "type": "email",
+      "section": "DELIVERY_ADDRESS",
+      "row": 1,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "DELIVERY_TELEPHONE",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "Telephone",
+      "apiName": "cfs_ob__u_Telephone__c",
+      "backendName": "cfs_ob__u_Telephone__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.telephone",
+      "type": "tel",
+      "section": "DELIVERY_ADDRESS",
+      "row": 1,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "DELIVERY_EXTENSION",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "Extension",
+      "apiName": "cfs_ob__Extension__c",
+      "backendName": "cfs_ob__Extension__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.communication.extension",
+      "type": "text",
+      "section": "DELIVERY_ADDRESS",
+      "row": 1,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 4
+    },
+    {
+      "configKey": "STORE_NUMBER",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "Store Number",
+      "apiName": "cfs_ob__u_StoreNumber__c",
+      "backendName": "cfs_ob__u_StoreNumber__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.controlData.locationCode",
+      "type": "text",
+      "section": "DELIVERY_ADDRESS",
+      "row": 1,
+      "order": 5,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "DELIVERY_FAX",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "Fax",
+      "apiName": "cfs_ob__Fax__c",
+      "backendName": "cfs_ob__Fax__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.communication.fax",
+      "type": "tel",
+      "section": "DELIVERY_ADDRESS",
+      "row": 1,
+      "order": 7,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 16
+    },
+    {
+      "configKey": "SEARCH_LOCATION",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "Search Location",
+      "apiName": "searchLocationDel",
+      "backendName": "cfs_ob__u_LocationNoOne__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "DELIVERY_ADDRESS",
+      "row": 2,
+      "order": 1,
+      "size": 6,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "HOUSE_NUMBER",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "House No.",
+      "apiName": "cfs_ob__u_HouseNumber__c",
+      "backendName": "cfs_ob__u_HouseNumber__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.houseNo",
+      "type": "text",
+      "section": "DELIVERY_ADDRESS",
+      "row": 2,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "STREET",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "Street",
+      "apiName": "cfs_ob__u_Street__c",
+      "backendName": "cfs_ob__u_Street__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.street",
+      "type": "text",
+      "section": "DELIVERY_ADDRESS",
+      "row": 2,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "SUITE_BUILDING",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "Suite/Building",
+      "apiName": "cfs_ob__u_SuiteBuilding__c",
+      "backendName": "cfs_ob__u_SuiteBuilding__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.houseNo2",
+      "type": "text",
+      "section": "DELIVERY_ADDRESS",
+      "row": 3,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "CITY",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "City",
+      "apiName": "cfs_ob__u_City__c",
+      "backendName": "cfs_ob__u_City__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.city",
+      "type": "text",
+      "section": "DELIVERY_ADDRESS",
+      "row": 3,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "COUNTY",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "County",
+      "apiName": "cfs_ob__u_District__c",
+      "backendName": "cfs_ob__u_District__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.district",
+      "type": "text",
+      "section": "DELIVERY_ADDRESS",
+      "row": 4,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "STATE",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "State",
+      "apiName": "cfs_ob__u_State__c",
+      "backendName": "cfs_ob__u_State__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.region",
+      "type": "text",
+      "section": "DELIVERY_ADDRESS",
+      "row": 4,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 2
+    },
+    {
+      "configKey": "ZIP_CODE",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "Zip Code",
+      "apiName": "cfs_ob__u_ZipCode__c",
+      "backendName": "cfs_ob__u_ZipCode__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.postalCode",
+      "type": "text",
+      "section": "DELIVERY_ADDRESS",
+      "row": 4,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 15
+    },
+    {
+      "configKey": "LATITUDE",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "Latitude",
+      "apiName": "cfs_ob__u_Location__Latitude__s",
+      "backendName": "cfs_ob__u_Location__Latitude__s",
+      "apiCompareKey": null,
+      "sapPath": "leoData.routeOptimization.latitude",
+      "type": "text",
+      "section": "DELIVERY_ADDRESS",
+      "row": 4,
+      "order": 4,
+      "size": 3,
+      "disabled": true,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "LONGITUDE",
+      "fieldGroup": "DELIVERY_ADDRESS_SAME",
+      "label": "Longitude",
+      "apiName": "cfs_ob__u_Location__Longitude__s",
+      "backendName": "cfs_ob__u_Location__Longitude__s",
+      "apiCompareKey": null,
+      "sapPath": "leoData.routeOptimization.longitude",
+      "type": "text",
+      "section": "DELIVERY_ADDRESS",
+      "row": 5,
+      "order": 1,
+      "size": 3,
+      "disabled": true,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "PAYER_NAME",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "Payer Name",
+      "apiName": "cfs_ob__u_Token_Name__c",
+      "backendName": "cfs_ob__u_Token_Name__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.name",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 1,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 32
+    },
+    {
+      "configKey": "PAYER_LEGAL_NAME",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "Payer Legal Name",
+      "apiName": "cfs_ob__Payer_Legal_Name__c",
+      "backendName": "cfs_ob__Payer_Legal_Name__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.legalName",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 1,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "NAME_EXTENSION",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "Name Extension",
+      "apiName": "cfs_ob__u_Name3__c",
+      "backendName": "cfs_ob__u_Name3__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.name3",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 1,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "ATTENTION_TO",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "Attention Name",
+      "apiName": "cfs_ob__u_AttentionName2__c",
+      "backendName": "cfs_ob__u_AttentionName2__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.name4",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 1,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "BILLING_PAYER_NUMBER",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "Payer Number",
+      "apiName": "cfs_ob__PayerNumber__c",
+      "backendName": "cfs_ob__PayerNumber__c",
+      "apiCompareKey": "cfs_ob__PayerNumber__c",
+      "sapPath": "payerData.customerNumber",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 2,
+      "order": 1,
+      "size": 3,
+      "disabled": true,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "BILLING_PAYER_MDG",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "MDG",
+      "apiName": "cfs_ob__Payer_MDG__c",
+      "backendName": "cfs_ob__Payer_MDG__c",
+      "apiCompareKey": "cfs_ob__Payer_MDG__c",
+      "sapPath": "payerData.mdg",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 2,
+      "order": 2,
+      "size": 3,
+      "disabled": true,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "BILLING_TELEPHONE",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "Telephone",
+      "apiName": "cfs_ob__u_Telephone2__c",
+      "backendName": "cfs_ob__u_Telephone2__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.telephone",
+      "type": "tel",
+      "section": "BILLING_ADDRESS",
+      "row": 2,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 16
+    },
+    {
+      "configKey": "BILLING_EXTENSION",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "Extension",
+      "apiName": "cfs_ob__u_Name1__c",
+      "backendName": "cfs_ob__u_Name1__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.telephone",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 2,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 4
+    },
+    {
+      "configKey": "BILLING_EMAIL",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "Email",
+      "apiName": "cfs_ob__Billing_Address_Email__c",
+      "backendName": "cfs_ob__Billing_Address_Email__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.email",
+      "type": "email",
+      "section": "BILLING_ADDRESS",
+      "row": 2,
+      "order": 5,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 241
+    },
+    {
+      "configKey": "BILLING_SEARCH_LOCATION",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "Search Location",
+      "apiName": "searchLocationBilling",
+      "backendName": "cfs_ob__u_LocationNoTwo__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "BILLING_ADDRESS",
+      "row": 3,
+      "order": 1,
+      "size": 6,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "BILLING_HOUSE_NUMBER",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "House Number",
+      "apiName": "cfs_ob__u_HouseNumber2__c",
+      "backendName": "cfs_ob__u_HouseNumber2__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.houseNo",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 3,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "BILLING_STREET",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "Street",
+      "apiName": "cfs_ob__u_Street2__c",
+      "backendName": "cfs_ob__u_Street2__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.street",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 3,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "BILLING_PO_BOX",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "PO Box",
+      "apiName": "cfs_ob__u_POBox2__c",
+      "backendName": "cfs_ob__u_POBox2__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.poBox",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 4,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "BILLING_PO_BOX_POSTAL_CODE",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "PO Box Postal Code",
+      "apiName": "cfs_ob__PO_Box_Postal_Code2__c",
+      "backendName": "cfs_ob__PO_Box_Postal_Code2__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.poBoxPostalCode",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 4,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "BILLING_SUITE_BUILDING",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "Suite/Building",
+      "apiName": "cfs_ob__u_SuiteBuilding2__c",
+      "backendName": "cfs_ob__u_SuiteBuilding2__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.houseNo2",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 4,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "BILLING_CITY",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "City",
+      "apiName": "cfs_ob__u_City2__c",
+      "backendName": "cfs_ob__u_City2__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.city",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 4,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "BILLING_STATE",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "State",
+      "apiName": "cfs_ob__u_State2__c",
+      "backendName": "cfs_ob__u_State2__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.region",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 5,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 2
+    },
+    {
+      "configKey": "BILLING_COUNTY",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "County",
+      "apiName": "cfs_ob__u_District2__c",
+      "backendName": "cfs_ob__u_District2__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.district",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 5,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "BILLING_ZIP_CODE",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "Zip Code",
+      "apiName": "cfs_ob__u_ZipCode2__c",
+      "backendName": "cfs_ob__u_ZipCode2__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.address.postalCode",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 5,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 15
+    },
+    {
+      "configKey": "BILLING_LATITUDE",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "Latitude",
+      "apiName": "cfs_ob__u_Location2__Latitude__s",
+      "backendName": "cfs_ob__u_Location2__Latitude__s",
+      "apiCompareKey": null,
+      "sapPath": "leoData.routeOptimization.latitude",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 5,
+      "order": 4,
+      "size": 3,
+      "disabled": true,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "BILLING_LONGITUDE",
+      "fieldGroup": "DELIVERY_ADDRESS_DIFFERENT",
+      "label": "Longitude",
+      "apiName": "cfs_ob__u_Location2__Longitude__s",
+      "backendName": "cfs_ob__u_Location2__Longitude__s",
+      "apiCompareKey": null,
+      "sapPath": "leoData.routeOptimization.longitude",
+      "type": "text",
+      "section": "BILLING_ADDRESS",
+      "row": 6,
+      "order": 1,
+      "size": 3,
+      "disabled": true,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_SEARCH",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Pre-Existing Payer",
+      "apiName": "preExistingPayerSearch",
+      "backendName": "preExistingPayerSearch",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PRE_EXISTING_PAYER_SEARCH",
+      "row": 1,
+      "order": 1,
+      "size": 6,
+      "disabled": false,
+      "payerMode": false,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": "Search for payer...",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_NUMBER",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Payer Number",
+      "apiName": "cfs_ob__u_Token_Number__c",
+      "backendName": "cfs_ob__u_Token_Number__c",
+      "apiCompareKey": "cfs_ob__u_Token_Number__c",
+      "sapPath": "payerData.customerNumber",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 2,
+      "order": 1,
+      "size": 3,
+      "disabled": true,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_NAME",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Payer Name",
+      "apiName": "cfs_ob__u_Token_Name__c",
+      "backendName": "cfs_ob__u_Token_Name__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.name",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 2,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 40
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_LEGAL_NAME",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Payer Legal Name",
+      "apiName": "cfs_ob__Payer_Legal_Name__c",
+      "backendName": "cfs_ob__Payer_Legal_Name__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.legalName",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 2,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_NAME3",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Name Extension",
+      "apiName": "cfs_ob__u_Name3__c",
+      "backendName": "cfs_ob__u_Name3__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.name3",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 2,
+      "order": 5,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_ATTENTION",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Attention Name",
+      "apiName": "cfs_ob__u_AttentionName2__c",
+      "backendName": "cfs_ob__u_AttentionName2__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.name4",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 2,
+      "order": 6,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_TELEPHONE",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Telephone",
+      "apiName": "cfs_ob__u_Telephone2__c",
+      "backendName": "cfs_ob__u_Telephone2__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.telephone",
+      "type": "tel",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 3,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 16
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_EXTENSION",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Extension",
+      "apiName": "cfs_ob__u_Name1__c",
+      "backendName": "cfs_ob__u_Name1__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.extension",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 3,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 4
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_EMAIL",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Email",
+      "apiName": "cfs_ob__Pre_Existing_Payer_Email__c",
+      "backendName": "cfs_ob__Pre_Existing_Payer_Email__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.email",
+      "type": "email",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 3,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 241
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_HOUSE_NUMBER",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "House No.",
+      "apiName": "cfs_ob__u_HouseNumber2__c",
+      "backendName": "cfs_ob__u_HouseNumber2__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.address.houseNo",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 4,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_STREET",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Street",
+      "apiName": "cfs_ob__u_Street2__c",
+      "backendName": "cfs_ob__u_Street2__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.address.street",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 4,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_PO_BOX",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "PO Box",
+      "apiName": "cfs_ob__u_POBox2__c",
+      "backendName": "cfs_ob__u_POBox2__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.address.poBox",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 4,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_PO_BOX_POSTAL_CODE",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "PO Box Postal Code",
+      "apiName": "cfs_ob__PO_Box_Postal_Code2__c",
+      "backendName": "cfs_ob__PO_Box_Postal_Code2__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.address.poBoxPostalCode",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 4,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_SUITE_BUILDING",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Suite/Building",
+      "apiName": "cfs_ob__u_SuiteBuilding2__c",
+      "backendName": "cfs_ob__u_SuiteBuilding2__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.address.houseNo2",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 5,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_CITY",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "City",
+      "apiName": "cfs_ob__u_City2__c",
+      "backendName": "cfs_ob__u_City2__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.address.city",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 5,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_STATE",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "State",
+      "apiName": "cfs_ob__u_State2__c",
+      "backendName": "cfs_ob__u_State2__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.address.region",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 5,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 2
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_COUNTY",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "County",
+      "apiName": "cfs_ob__u_District2__c",
+      "backendName": "cfs_ob__u_District2__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.address.district",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 5,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_ZIP_CODE",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Zip Code",
+      "apiName": "cfs_ob__u_ZipCode2__c",
+      "backendName": "cfs_ob__u_ZipCode2__c",
+      "apiCompareKey": null,
+      "sapPath": "payerData.address.postalCode",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 6,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 15
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_LATITUDE",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Latitude",
+      "apiName": "cfs_ob__u_Location2__Latitude__s",
+      "backendName": "cfs_ob__u_Location2__Latitude__s",
+      "apiCompareKey": null,
+      "sapPath": "payerData.leoData.routeOptimization.latitude",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 6,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "PRE_EXISTING_PAYER_LONGITUDE",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Longitude",
+      "apiName": "cfs_ob__u_Location2__Longitude__s",
+      "backendName": "cfs_ob__u_Location2__Longitude__s",
+      "apiCompareKey": null,
+      "sapPath": "payerData.leoData.routeOptimization.longitude",
+      "type": "text",
+      "section": "PRE_EXISTING_PAYER",
+      "row": 6,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "PAYER_UNKNOWN",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Payer Unknown",
+      "apiName": "cfs_ob__PayerUnknown__c",
+      "backendName": "cfs_ob__PayerUnknown__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "toggle",
+      "section": "PRE_EXISTING_PAYER_SEARCH",
+      "row": 2,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "ACCOUNT_TO_MIRROR",
+      "fieldGroup": "PRE_EXISTING_PAYER",
+      "label": "Account to Mirror",
+      "apiName": "cfs_ob__AccountToMirror__c",
+      "backendName": "cfs_ob__AccountToMirror__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PRE_EXISTING_PAYER_SEARCH",
+      "row": 2,
+      "order": 2,
+      "size": 6,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Search for customer account...",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    }
+  ],
+  "bottlerVisibilitySummary": {
+    "4600": [
+      "DELIVERY_EMAIL",
+      "DELIVERY_TELEPHONE",
+      "DELIVERY_EXTENSION",
+      "DELIVERY_FAX",
+      "SEARCH_LOCATION",
+      "HOUSE_NUMBER",
+      "STREET",
+      "SUITE_BUILDING",
+      "CITY",
+      "COUNTY",
+      "STATE",
+      "ZIP_CODE",
+      "LATITUDE",
+      "LONGITUDE",
+      "PAYER_NAME",
+      "PAYER_LEGAL_NAME",
+      "NAME_EXTENSION",
+      "ATTENTION_TO",
+      "BILLING_PAYER_NUMBER",
+      "BILLING_PAYER_MDG",
+      "BILLING_TELEPHONE",
+      "BILLING_EXTENSION",
+      "BILLING_EMAIL",
+      "BILLING_SEARCH_LOCATION",
+      "BILLING_HOUSE_NUMBER",
+      "BILLING_STREET",
+      "BILLING_PO_BOX",
+      "BILLING_PO_BOX_POSTAL_CODE",
+      "BILLING_SUITE_BUILDING",
+      "BILLING_CITY",
+      "BILLING_STATE",
+      "BILLING_ZIP_CODE",
+      "BILLING_LATITUDE",
+      "BILLING_LONGITUDE",
+      "PRE_EXISTING_PAYER_SEARCH",
+      "PRE_EXISTING_PAYER_NUMBER",
+      "PRE_EXISTING_PAYER_NAME",
+      "PRE_EXISTING_PAYER_LEGAL_NAME",
+      "PRE_EXISTING_PAYER_NAME3",
+      "PRE_EXISTING_PAYER_ATTENTION",
+      "PRE_EXISTING_PAYER_TELEPHONE",
+      "PRE_EXISTING_PAYER_EXTENSION",
+      "PRE_EXISTING_PAYER_EMAIL",
+      "PRE_EXISTING_PAYER_HOUSE_NUMBER",
+      "PRE_EXISTING_PAYER_STREET",
+      "PRE_EXISTING_PAYER_PO_BOX",
+      "PRE_EXISTING_PAYER_PO_BOX_POSTAL_CODE",
+      "PRE_EXISTING_PAYER_SUITE_BUILDING",
+      "PRE_EXISTING_PAYER_CITY",
+      "PRE_EXISTING_PAYER_STATE",
+      "PRE_EXISTING_PAYER_COUNTY",
+      "PRE_EXISTING_PAYER_ZIP_CODE",
+      "PRE_EXISTING_PAYER_LATITUDE",
+      "PRE_EXISTING_PAYER_LONGITUDE",
+      "PAYER_UNKNOWN",
+      "ACCOUNT_TO_MIRROR"
+    ],
+    "4900": [
+      "DELIVERY_EMAIL",
+      "DELIVERY_TELEPHONE",
+      "STORE_NUMBER",
+      "SEARCH_LOCATION",
+      "HOUSE_NUMBER",
+      "STREET",
+      "SUITE_BUILDING",
+      "CITY",
+      "COUNTY",
+      "STATE",
+      "ZIP_CODE",
+      "LATITUDE",
+      "LONGITUDE",
+      "PAYER_NAME",
+      "PAYER_LEGAL_NAME",
+      "NAME_EXTENSION",
+      "ATTENTION_TO",
+      "BILLING_PAYER_NUMBER",
+      "BILLING_PAYER_MDG",
+      "BILLING_TELEPHONE",
+      "BILLING_EXTENSION",
+      "BILLING_EMAIL",
+      "BILLING_SEARCH_LOCATION",
+      "BILLING_HOUSE_NUMBER",
+      "BILLING_STREET",
+      "BILLING_PO_BOX",
+      "BILLING_PO_BOX_POSTAL_CODE",
+      "BILLING_SUITE_BUILDING",
+      "BILLING_CITY",
+      "BILLING_STATE",
+      "BILLING_COUNTY",
+      "BILLING_ZIP_CODE",
+      "BILLING_LATITUDE",
+      "BILLING_LONGITUDE",
+      "PRE_EXISTING_PAYER_SEARCH",
+      "PRE_EXISTING_PAYER_NUMBER",
+      "PRE_EXISTING_PAYER_NAME",
+      "PRE_EXISTING_PAYER_LEGAL_NAME",
+      "PRE_EXISTING_PAYER_NAME3",
+      "PRE_EXISTING_PAYER_ATTENTION",
+      "PRE_EXISTING_PAYER_TELEPHONE",
+      "PRE_EXISTING_PAYER_EXTENSION",
+      "PRE_EXISTING_PAYER_EMAIL",
+      "PRE_EXISTING_PAYER_HOUSE_NUMBER",
+      "PRE_EXISTING_PAYER_STREET",
+      "PRE_EXISTING_PAYER_PO_BOX",
+      "PRE_EXISTING_PAYER_PO_BOX_POSTAL_CODE",
+      "PRE_EXISTING_PAYER_SUITE_BUILDING",
+      "PRE_EXISTING_PAYER_CITY",
+      "PRE_EXISTING_PAYER_STATE",
+      "PRE_EXISTING_PAYER_COUNTY",
+      "PRE_EXISTING_PAYER_ZIP_CODE",
+      "PRE_EXISTING_PAYER_LATITUDE",
+      "PRE_EXISTING_PAYER_LONGITUDE"
+    ],
+    "5000": [
+      "ATTENTION_NAME",
+      "DELIVERY_EMAIL",
+      "DELIVERY_TELEPHONE",
+      "STORE_NUMBER",
+      "SEARCH_LOCATION",
+      "HOUSE_NUMBER",
+      "STREET",
+      "SUITE_BUILDING",
+      "CITY",
+      "COUNTY",
+      "STATE",
+      "ZIP_CODE",
+      "LATITUDE",
+      "LONGITUDE",
+      "PAYER_NAME",
+      "PAYER_LEGAL_NAME",
+      "NAME_EXTENSION",
+      "ATTENTION_TO",
+      "BILLING_TELEPHONE",
+      "BILLING_EXTENSION",
+      "BILLING_EMAIL",
+      "BILLING_SEARCH_LOCATION",
+      "BILLING_HOUSE_NUMBER",
+      "BILLING_STREET",
+      "BILLING_PO_BOX",
+      "BILLING_PO_BOX_POSTAL_CODE",
+      "BILLING_SUITE_BUILDING",
+      "BILLING_CITY",
+      "BILLING_STATE",
+      "BILLING_COUNTY",
+      "BILLING_ZIP_CODE",
+      "BILLING_LATITUDE",
+      "BILLING_LONGITUDE",
+      "PRE_EXISTING_PAYER_SEARCH",
+      "PRE_EXISTING_PAYER_NUMBER",
+      "PRE_EXISTING_PAYER_NAME",
+      "PRE_EXISTING_PAYER_LEGAL_NAME",
+      "PRE_EXISTING_PAYER_NAME3",
+      "PRE_EXISTING_PAYER_ATTENTION",
+      "PRE_EXISTING_PAYER_TELEPHONE",
+      "PRE_EXISTING_PAYER_EXTENSION",
+      "PRE_EXISTING_PAYER_EMAIL",
+      "PRE_EXISTING_PAYER_HOUSE_NUMBER",
+      "PRE_EXISTING_PAYER_STREET",
+      "PRE_EXISTING_PAYER_PO_BOX",
+      "PRE_EXISTING_PAYER_PO_BOX_POSTAL_CODE",
+      "PRE_EXISTING_PAYER_SUITE_BUILDING",
+      "PRE_EXISTING_PAYER_CITY",
+      "PRE_EXISTING_PAYER_STATE",
+      "PRE_EXISTING_PAYER_COUNTY",
+      "PRE_EXISTING_PAYER_ZIP_CODE",
+      "PRE_EXISTING_PAYER_LATITUDE",
+      "PRE_EXISTING_PAYER_LONGITUDE"
+    ]
+  },
+  "deliveryAddressPreExistingPayerConfig": {
+    "4600": {
+      "disablePreExistingPayerFields": true,
+      "customerOwnershipOverrides": true
+    },
+    "4900": {
+      "disablePreExistingPayerFields": true
+    },
+    "5000": {
+      "disablePreExistingPayerFields": true
+    }
+  },
+  "fieldGroups": [
+    "DELIVERY_ADDRESS_SAME",
+    "DELIVERY_ADDRESS_DIFFERENT",
+    "PRE_EXISTING_PAYER"
+  ]
+}

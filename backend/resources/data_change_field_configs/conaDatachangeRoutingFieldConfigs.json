@@ -1,0 +1,1868 @@
+{
+  "sourceFile": "force-app/main/default/lwc/Northeast Modules/lwc/Data Change/lwc/conaDatachangeRouting/conaDatachangeRoutingFieldConfigs.js",
+  "bottlerCodes": {
+    "4600": "Reyes",
+    "4900": "Abarta",
+    "5000": "Northeast"
+  },
+  "sectionConfigs": {
+    "BASIC_ROUTING": {},
+    "PARTNERS": {
+      "label": "Partners",
+      "icon": "utility:display_text",
+      "iconVariant": "error",
+      "iconColor": "red",
+      "bottlers": [
+        "4900",
+        "4600"
+      ]
+    },
+    "CALLING_AND_DELIVERY_TIME": {
+      "label": "Calling and Delivery Time Details",
+      "icon": "standard:call",
+      "iconVariant": "default",
+      "bottlers": [
+        "4900",
+        "5000",
+        "4600"
+      ]
+    },
+    "VISIT_PLANS": {
+      "label": "Visit Plan Options",
+      "icon": "custom:custom106",
+      "iconVariant": "default",
+      "bottlers": [
+        "5000",
+        "4600"
+      ]
+    },
+    "SEASONALITY": {
+      "label": "Seasonality",
+      "icon": "standard:timeslot",
+      "iconVariant": "default"
+    }
+  },
+  "routingFields": [
+    {
+      "configKey": "PREFERRED_ORDER_METHOD",
+      "label": "Preferred Order Method",
+      "apiName": "cfs_ob__Preferred_Order_Method_Options__c",
+      "backendName": "cfs_ob__u_PreferredOrderingMethod__c",
+      "apiCompareKey": null,
+      "sapPath": "sapCustomerData.conaCustomData.salesArea.preferredOrdMthd",
+      "type": "combobox",
+      "section": "BASIC_ROUTING",
+      "row": 1,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Select Preferred Order Method",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "FREQUENCY",
+      "label": "Frequency",
+      "apiName": "cfs_ob__Frequency_Options__c",
+      "backendName": "cfs_ob__u_Frequency__c",
+      "apiCompareKey": null,
+      "sapPath": "anchorDeliveryResponse.customers[0].visitFrequency",
+      "type": "combobox",
+      "section": "BASIC_ROUTING",
+      "row": 1,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Select Frequency",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "SHIPPING_CONDITIONS",
+      "label": "Shipping Conditions",
+      "apiName": "cfs_ob__Shipping_Conditions_Options__c",
+      "backendName": "cfs_ob__u_ShippingConditions__c",
+      "apiCompareKey": null,
+      "sapPath": "sapCustomerData.salesArea.shipping.conditions",
+      "type": "combobox",
+      "section": "BASIC_ROUTING",
+      "row": 1,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Select Shipping Conditions",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "UNLOADING_POINT",
+      "label": "Unloading Point",
+      "apiName": "cfs_ob__u_UnloadingPoint__c",
+      "backendName": "cfs_ob__u_UnloadingPoint__c",
+      "apiCompareKey": null,
+      "sapPath": "sapCustomerData.generalData.unloadingPoints[0].unloadingPoint",
+      "type": "text",
+      "section": "BASIC_ROUTING",
+      "row": 1,
+      "order": 4,
+      "size": 3,
+      "disabled": true,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 25
+    },
+    {
+      "configKey": "MASTER_ROUTE",
+      "label": "Master Route",
+      "apiName": "cfs_ob__Leo_Master_Route__c",
+      "backendName": "cfs_ob__u_LEOMasterRoute__c",
+      "apiCompareKey": null,
+      "sapPath": "sapCustomerData.leoData.routeOptimization.masterRoute",
+      "type": "search",
+      "section": "BASIC_ROUTING",
+      "row": 2,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Search Route",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "LEO_MASTER_ROUTE_SEQUENCE",
+      "label": "Master Route Sequence",
+      "apiName": "cfs_ob__u_LEOMasterRouteSequence__c",
+      "backendName": "cfs_ob__u_LEOMasterRouteSequence__c",
+      "apiCompareKey": null,
+      "sapPath": "sapCustomerData.leoData.routeOptimization.masterRouteSeq",
+      "type": "text",
+      "section": "BASIC_ROUTING",
+      "row": 2,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 3
+    },
+    {
+      "configKey": "OS4_REGION",
+      "label": "OS4 Region",
+      "apiName": "cfs_ob__OS4_Region__c",
+      "backendName": "cfs_ob__OS4_Region__c",
+      "apiCompareKey": null,
+      "sapPath": "sapCustomerData.leoData.routeOptimization.region",
+      "type": "search",
+      "section": "BASIC_ROUTING",
+      "row": 2,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "required": [],
+      "placeholder": "Search OS4 Region",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "SALES_REPRESENTATIVE",
+      "label": "Sales Representative (ZR)",
+      "apiName": "cfs_ob__Sales_Representative__c",
+      "backendName": "cfs_ob__Sales_Representative__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": {
+        "4600": "PARTNERS",
+        "4900": "PARTNERS",
+        "5000": "BASIC_ROUTING"
+      },
+      "row": {
+        "4600": 1,
+        "4900": 1,
+        "5000": 2
+      },
+      "order": {
+        "4600": 1,
+        "4900": 1,
+        "5000": 4
+      },
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Search Sales Representative",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "SERVICE_AREA",
+      "label": "Service Area",
+      "apiName": "cfs_ob__CustomerNumberInTable__c",
+      "backendName": "cfs_ob__CustomerNumberInTable__c",
+      "apiCompareKey": null,
+      "sapPath": "sapCustomerData.conaCustomData.salesArea.serviceArea",
+      "type": "search",
+      "section": "BASIC_ROUTING",
+      "row": 2,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Search Service Area",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "AREA_SALES_MANAGER",
+      "label": "Area Sales Manager (ZL)",
+      "apiName": "cfs_ob__u_ZLPartnerFunction__c",
+      "backendName": "cfs_ob__u_ZLPartnerFunction__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PARTNERS",
+      "row": 1,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Search Area Sales Manager",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "KEY_ACCOUNT_MANAGER",
+      "label": "Key Account Manager (ZN)",
+      "apiName": "cfs_ob__u_ZNPartnerFunction__c",
+      "backendName": "cfs_ob__u_ZNPartnerFunction__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PARTNERS",
+      "row": 1,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Search Key Account Manager",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "OUTLET_CREATOR",
+      "label": "Outlet Creator (ZJ)",
+      "apiName": "cfs_ob__u_ZJPartnerFunction__c",
+      "backendName": "cfs_ob__u_ZJPartnerFunction__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PARTNERS",
+      "row": 1,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Search Outlet Creator",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "DISTRICT_SALES_MANAGER",
+      "label": "District Sales Manager (ZK)",
+      "apiName": "cfs_ob__u_ZKPartnerFunction__c",
+      "backendName": "cfs_ob__u_ZKPartnerFunction__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PARTNERS",
+      "row": 1,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Search District Sales Manager",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "BULK_CUSTOMERS",
+      "label": "Bulk Customers",
+      "apiName": "cfs_ob__Bulk_Customers__c",
+      "backendName": "cfs_ob__Bulk_Customers__c",
+      "apiCompareKey": null,
+      "sapPath": "sapCustomerData.conaCustomData.general.bulkCustomers",
+      "type": "toggle",
+      "section": "BASIC_ROUTING",
+      "row": {
+        "4900": 2,
+        "5000": 3
+      },
+      "order": {
+        "4900": 3,
+        "5000": 1
+      },
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "DISTRIBUTION_MODE",
+      "label": "Distribution Mode",
+      "apiName": "cfs_ob__Distribution_Mode__c",
+      "backendName": "cfs_ob__Distribution_Mode__c",
+      "apiCompareKey": null,
+      "sapPath": "sapCustomerData.leoData.packagingOptimization.distMode",
+      "type": "search",
+      "section": "BASIC_ROUTING",
+      "row": {
+        "4900": 2,
+        "5000": 3
+      },
+      "order": {
+        "4900": 4,
+        "5000": 2
+      },
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "MERCH_PERCENTAGE",
+      "label": "Merch Percentage",
+      "apiName": "cfs_ob__Merch_Percentage__c",
+      "backendName": "cfs_ob__Merch_Percentage__c",
+      "apiCompareKey": null,
+      "sapPath": "sapCustomerData.conaCustomData.general.merchPct",
+      "type": "combobox",
+      "section": "BASIC_ROUTING",
+      "row": 2,
+      "order": 5,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select Merch Percentage",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "DRIVER_NOTES",
+      "label": "Driver Notes",
+      "apiName": "cfs_ob__u_Driver_Notes__c",
+      "backendName": "cfs_ob__u_Driver_Notes__c",
+      "apiCompareKey": null,
+      "sapPath": "driverNotes",
+      "type": "textarea",
+      "section": "BASIC_ROUTING",
+      "row": {
+        "4600": 2,
+        "4900": 2,
+        "5000": 3
+      },
+      "order": {
+        "4600": 6,
+        "4900": 4,
+        "5000": 3
+      },
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Driver Notes...",
+      "triggersLmsPublish": false,
+      "maxlength": 255
+    },
+    {
+      "configKey": "DISPATCHER_NOTES",
+      "label": "Dispatcher Notes",
+      "apiName": "cfs_ob__Dispatcher_Notes__c",
+      "backendName": "cfs_ob__Dispatcher_Notes__c",
+      "apiCompareKey": null,
+      "sapPath": "dispatcherNotes",
+      "type": "textarea",
+      "section": "BASIC_ROUTING",
+      "row": 3,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [],
+      "required": [],
+      "placeholder": "Dispatcher Notes...",
+      "triggersLmsPublish": false,
+      "maxlength": 255
+    },
+    {
+      "configKey": "WEEKEND_CALLS",
+      "label": "Weekend Calls Allowed",
+      "apiName": "cfs_ob__u_Weekend_Calls__c",
+      "backendName": "cfs_ob__u_Weekend_Calls__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "toggle",
+      "section": "CALLING_AND_DELIVERY_TIME",
+      "row": 1,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "ORDER_DAYS",
+      "label": "Order Day(s)",
+      "apiName": "cfs_ob__Order_Days__c",
+      "backendName": "cfs_ob__Order_Days__c",
+      "apiCompareKey": null,
+      "sapPath": "anchorCallTimeResponse.customers[0].validFrom",
+      "type": "multicheckbox",
+      "section": "CALLING_AND_DELIVERY_TIME",
+      "row": {
+        "4900": 3,
+        "5000": 2
+      },
+      "order": 1,
+      "size": 8,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "hideForAccountGroups": [
+        "ZFSV"
+      ]
+    },
+    {
+      "configKey": "DELIVERY_DAYS",
+      "label": "Delivery Day(s)",
+      "apiName": "cfs_ob__Delivery_Days__c",
+      "backendName": "cfs_ob__Delivery_Days__c",
+      "apiCompareKey": null,
+      "sapPath": "anchorDeliveryResponse.customers[0].validFrom",
+      "type": "multicheckbox",
+      "section": "CALLING_AND_DELIVERY_TIME",
+      "row": {
+        "4900": 2,
+        "5000": 3
+      },
+      "order": 1,
+      "size": 8,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "ANCHOR_CALL_DATE",
+      "label": "Anchor Call Date",
+      "apiName": "cfs_ob__Anchor_Call_Date__c",
+      "backendName": "cfs_ob__Anchor_Call_Date__c",
+      "apiCompareKey": null,
+      "sapPath": "anchorCallTimeResponse.customers[0].validFrom",
+      "type": "date",
+      "section": "CALLING_AND_DELIVERY_TIME",
+      "row": 4,
+      "order": {
+        "4600": 2,
+        "4900": 2,
+        "5000": 1
+      },
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "hideForAccountGroups": [
+        "ZFSV"
+      ]
+    },
+    {
+      "configKey": "ANCHOR_DELIVERY_DATE",
+      "label": "Anchor Delivery Date",
+      "apiName": "cfs_ob__Anchor_Delivery_Date__c",
+      "backendName": "cfs_ob__Anchor_Delivery_Date__c",
+      "apiCompareKey": null,
+      "sapPath": "anchorDeliveryResponse.customers[0].validFrom",
+      "type": "date",
+      "section": "CALLING_AND_DELIVERY_TIME",
+      "row": 4,
+      "order": {
+        "4600": 1,
+        "4900": 1,
+        "5000": 2
+      },
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "ZA_VISIT_PLAN",
+      "label": "Select Plan for ZA",
+      "apiName": "cfs_ob__ZA_Visit_Plan__c",
+      "backendName": "cfs_ob__ZA_Visit_Plan__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "VISIT_PLANS",
+      "row": 1,
+      "order": 1,
+      "size": 4,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [],
+      "required": [],
+      "placeholder": "Search Plan",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "Z7_VISIT_PLAN",
+      "label": "Select Plan for Z7",
+      "apiName": "cfs_ob__Z7_Visit_Plan__c",
+      "backendName": "cfs_ob__Z7_Visit_Plan__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "VISIT_PLANS",
+      "row": 4,
+      "order": 1,
+      "size": 4,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Search Plan",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "ZR_VISIT_PLAN",
+      "label": "Select Plan for ZR",
+      "apiName": "cfs_ob__ZR_Visit_Plan__c",
+      "backendName": "cfs_ob__ZR_Visit_Plan__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "VISIT_PLANS",
+      "row": 5,
+      "order": 1,
+      "size": 4,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Search Plan",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "Z1_VISIT_PLAN",
+      "label": "Select Plan for Z1",
+      "apiName": "cfs_ob__Z1_Visit_Plan__c",
+      "backendName": "cfs_ob__Z1_Visit_Plan__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "VISIT_PLANS",
+      "row": 1,
+      "order": 1,
+      "size": 4,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Search Plan",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "LOS_VISIT_DAYS",
+      "label": "LOS Visit day(s)",
+      "apiName": "cfs_ob__LOS_Visit_Days__c",
+      "backendName": "cfs_ob__LOS_Visit_Days__c",
+      "apiCompareKey": null,
+      "sapPath": "anchorCallTimeResponse.customers",
+      "type": "multicheckbox",
+      "section": "VISIT_PLANS",
+      "row": 2,
+      "order": 1,
+      "size": 8,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "LOS_START_DATE",
+      "label": "LOS Start Date",
+      "apiName": "cfs_ob__LOS_Start_Date__c",
+      "backendName": "cfs_ob__LOS_Start_Date__c",
+      "apiCompareKey": null,
+      "sapPath": "anchorCallTimeResponse.customers",
+      "type": "date",
+      "section": "VISIT_PLANS",
+      "row": 3,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "LOS_FREQUENCY",
+      "label": "LOS Frequency",
+      "apiName": "cfs_ob__LOS_Frequency__c",
+      "backendName": "cfs_ob__LOS_Frequency__c",
+      "apiCompareKey": null,
+      "sapPath": "anchorCallTimeResponse.customers",
+      "type": "combobox",
+      "section": "VISIT_PLANS",
+      "row": 3,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "placeholder": "Select LOS Frequency",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "LOS_PREFERRED_TIME_FROM",
+      "label": "Preferred Call/Visit Time (1st From)",
+      "apiName": "preferredTimeFrom",
+      "backendName": "preferredTimeFrom",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "time",
+      "section": "VISIT_PLANS",
+      "row": 3,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "LOS_PREFERRED_TIME_TO",
+      "label": "Preferred Call/Visit Time (1st To)",
+      "apiName": "preferredTimeTo",
+      "backendName": "preferredTimeTo",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "time",
+      "section": "VISIT_PLANS",
+      "row": 3,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "SEASONAL_CUSTOMER",
+      "label": "Is this a seasonal customer?",
+      "apiName": "cfs_ob__Seasonal_customer__c",
+      "backendName": "cfs_ob__Seasonal_customer__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "toggle",
+      "section": "SEASONALITY",
+      "row": 1,
+      "order": 1,
+      "size": 12,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "SEASON_START",
+      "label": "Start Month",
+      "apiName": "seasonStart",
+      "backendName": "seasonStart",
+      "apiCompareKey": null,
+      "sapPath": "sapCustomerData.conaCustomData.seasonality.period",
+      "type": "combobox",
+      "section": "SEASONALITY",
+      "row": 2,
+      "order": 1,
+      "size": 4,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "SEASON_END",
+      "label": "End Month",
+      "apiName": "seasonEnd",
+      "backendName": "seasonEnd",
+      "apiCompareKey": null,
+      "sapPath": "sapCustomerData.conaCustomData.seasonality.period",
+      "type": "combobox",
+      "section": "SEASONALITY",
+      "row": 2,
+      "order": 2,
+      "size": 4,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    }
+  ],
+  "bottlerVisibilitySummary": {
+    "4600": [
+      "PREFERRED_ORDER_METHOD",
+      "FREQUENCY",
+      "SHIPPING_CONDITIONS",
+      "UNLOADING_POINT",
+      "MASTER_ROUTE",
+      "LEO_MASTER_ROUTE_SEQUENCE",
+      "SALES_REPRESENTATIVE",
+      "KEY_ACCOUNT_MANAGER",
+      "OUTLET_CREATOR",
+      "DISTRICT_SALES_MANAGER",
+      "BULK_CUSTOMERS",
+      "DISTRIBUTION_MODE",
+      "MERCH_PERCENTAGE",
+      "DRIVER_NOTES",
+      "WEEKEND_CALLS",
+      "ORDER_DAYS",
+      "DELIVERY_DAYS",
+      "ANCHOR_CALL_DATE",
+      "ANCHOR_DELIVERY_DATE",
+      "Z7_VISIT_PLAN",
+      "ZR_VISIT_PLAN",
+      "Z1_VISIT_PLAN",
+      "SEASONAL_CUSTOMER",
+      "SEASON_START",
+      "SEASON_END"
+    ],
+    "4900": [
+      "PREFERRED_ORDER_METHOD",
+      "FREQUENCY",
+      "SHIPPING_CONDITIONS",
+      "UNLOADING_POINT",
+      "SALES_REPRESENTATIVE",
+      "SERVICE_AREA",
+      "AREA_SALES_MANAGER",
+      "DISTRICT_SALES_MANAGER",
+      "BULK_CUSTOMERS",
+      "DISTRIBUTION_MODE",
+      "DRIVER_NOTES",
+      "WEEKEND_CALLS",
+      "ORDER_DAYS",
+      "DELIVERY_DAYS",
+      "ANCHOR_CALL_DATE",
+      "ANCHOR_DELIVERY_DATE",
+      "SEASONAL_CUSTOMER",
+      "SEASON_START",
+      "SEASON_END"
+    ],
+    "5000": [
+      "PREFERRED_ORDER_METHOD",
+      "FREQUENCY",
+      "SHIPPING_CONDITIONS",
+      "UNLOADING_POINT",
+      "MASTER_ROUTE",
+      "LEO_MASTER_ROUTE_SEQUENCE",
+      "OS4_REGION",
+      "SALES_REPRESENTATIVE",
+      "BULK_CUSTOMERS",
+      "DISTRIBUTION_MODE",
+      "DRIVER_NOTES",
+      "WEEKEND_CALLS",
+      "ORDER_DAYS",
+      "DELIVERY_DAYS",
+      "ANCHOR_CALL_DATE",
+      "ANCHOR_DELIVERY_DATE",
+      "Z7_VISIT_PLAN",
+      "ZR_VISIT_PLAN",
+      "SEASONAL_CUSTOMER",
+      "SEASON_START",
+      "SEASON_END"
+    ]
+  },
+  "fieldRequirementRulesByBottler": {
+    "4600": {
+      "CALL": {
+        "required": [],
+        "notUsed": [],
+        "visible": [
+          "ORDER_TIME_GRID",
+          "DELIVERY_TIME_GRID"
+        ]
+      },
+      "ECOM": {
+        "required": [],
+        "notUsed": [],
+        "visible": [
+          "ORDER_TIME_GRID",
+          "DELIVERY_TIME_GRID"
+        ]
+      },
+      "EDI": {
+        "required": [],
+        "notUsed": [],
+        "visible": [
+          "ORDER_TIME_GRID",
+          "DELIVERY_TIME_GRID"
+        ]
+      },
+      "EML": {
+        "required": [],
+        "notUsed": [],
+        "visible": [
+          "ORDER_TIME_GRID",
+          "DELIVERY_TIME_GRID"
+        ]
+      },
+      "SREP": {
+        "required": [],
+        "notUsed": [],
+        "visible": [
+          "ORDER_TIME_GRID",
+          "DELIVERY_TIME_GRID"
+        ]
+      },
+      "CONV": {
+        "required": [],
+        "notUsed": [],
+        "visible": [
+          "ORDER_TIME_GRID",
+          "DELIVERY_TIME_GRID"
+        ]
+      },
+      "EDID": {
+        "required": [],
+        "notUsed": [],
+        "visible": [
+          "ORDER_TIME_GRID",
+          "DELIVERY_TIME_GRID"
+        ]
+      },
+      "EQON": {
+        "required": [],
+        "notUsed": [],
+        "visible": [
+          "ORDER_TIME_GRID",
+          "DELIVERY_TIME_GRID"
+        ]
+      },
+      "HOUS": {
+        "required": [],
+        "notUsed": [],
+        "visible": [
+          "ORDER_TIME_GRID",
+          "DELIVERY_TIME_GRID"
+        ]
+      },
+      "SRVC": {
+        "required": [],
+        "notUsed": [],
+        "visible": [
+          "ORDER_TIME_GRID",
+          "DELIVERY_TIME_GRID"
+        ]
+      },
+      "FSV": {
+        "required": [],
+        "notUsed": [
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "LOS_TIME_GRID"
+        ],
+        "visible": [
+          "ORDER_TIME_GRID",
+          "DELIVERY_TIME_GRID"
+        ]
+      }
+    },
+    "4900": {
+      "SRVC": {
+        "required": [
+          "cfs_ob__Preferred_Order_Method_Options__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__u_UnloadingPoint__c",
+          "cfs_ob__Sales_Representative__c",
+          "cfs_ob__u_Weekend_Calls__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__Anchor_Delivery_Date__c",
+          "cfs_ob__Vehicle_Type__c",
+          "cfs_ob__CustomerNumberInTable__c",
+          "cfs_ob__u_ZJPartnerFunction__c",
+          "cfs_ob__ZL_Partner_Function__c",
+          "cfs_ob__ZN_Partner_Function__c",
+          "DELIVERY_TIME_GRID",
+          "ORDER_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "LOS_TIME_GRID"
+        ]
+      },
+      "SREP": {
+        "required": [
+          "cfs_ob__Preferred_Order_Method_Options__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__u_UnloadingPoint__c",
+          "cfs_ob__Sales_Representative__c",
+          "cfs_ob__u_Weekend_Calls__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__Anchor_Delivery_Date__c",
+          "cfs_ob__Vehicle_Type__c",
+          "cfs_ob__CustomerNumberInTable__c",
+          "cfs_ob__u_ZJPartnerFunction__c",
+          "cfs_ob__ZL_Partner_Function__c",
+          "cfs_ob__ZN_Partner_Function__c",
+          "DELIVERY_TIME_GRID",
+          "ORDER_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "LOS_TIME_GRID"
+        ]
+      },
+      "EDI": {
+        "required": [
+          "cfs_ob__Preferred_Order_Method_Options__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__u_UnloadingPoint__c",
+          "cfs_ob__Sales_Representative__c",
+          "cfs_ob__u_Weekend_Calls__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__Anchor_Delivery_Date__c",
+          "cfs_ob__Vehicle_Type__c",
+          "cfs_ob__CustomerNumberInTable__c",
+          "cfs_ob__u_ZJPartnerFunction__c",
+          "cfs_ob__ZL_Partner_Function__c",
+          "cfs_ob__ZN_Partner_Function__c",
+          "DELIVERY_TIME_GRID",
+          "ORDER_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "LOS_TIME_GRID"
+        ]
+      },
+      "EDIS": {
+        "required": [
+          "cfs_ob__Preferred_Order_Method_Options__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__u_UnloadingPoint__c",
+          "cfs_ob__Sales_Representative__c",
+          "cfs_ob__u_Weekend_Calls__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__Anchor_Delivery_Date__c",
+          "cfs_ob__Vehicle_Type__c",
+          "cfs_ob__CustomerNumberInTable__c",
+          "cfs_ob__u_ZJPartnerFunction__c",
+          "cfs_ob__ZL_Partner_Function__c",
+          "cfs_ob__ZN_Partner_Function__c",
+          "DELIVERY_TIME_GRID",
+          "ORDER_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "LOS_TIME_GRID"
+        ]
+      },
+      "EDID": {
+        "required": [
+          "cfs_ob__Preferred_Order_Method_Options__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__u_UnloadingPoint__c",
+          "cfs_ob__Sales_Representative__c",
+          "cfs_ob__u_Weekend_Calls__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__Anchor_Delivery_Date__c",
+          "cfs_ob__Vehicle_Type__c",
+          "cfs_ob__CustomerNumberInTable__c",
+          "cfs_ob__u_ZJPartnerFunction__c",
+          "cfs_ob__ZL_Partner_Function__c",
+          "cfs_ob__ZN_Partner_Function__c",
+          "DELIVERY_TIME_GRID",
+          "ORDER_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "LOS_TIME_GRID"
+        ]
+      },
+      "ECOM": {
+        "required": [
+          "cfs_ob__Preferred_Order_Method_Options__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__u_UnloadingPoint__c",
+          "cfs_ob__Sales_Representative__c",
+          "cfs_ob__u_Weekend_Calls__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__Anchor_Delivery_Date__c",
+          "cfs_ob__Vehicle_Type__c",
+          "cfs_ob__CustomerNumberInTable__c",
+          "cfs_ob__u_ZJPartnerFunction__c",
+          "cfs_ob__ZL_Partner_Function__c",
+          "cfs_ob__ZN_Partner_Function__c",
+          "DELIVERY_TIME_GRID",
+          "ORDER_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "LOS_TIME_GRID"
+        ]
+      },
+      "CALL": {
+        "required": [
+          "cfs_ob__Preferred_Order_Method_Options__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__u_UnloadingPoint__c",
+          "cfs_ob__Sales_Representative__c",
+          "cfs_ob__u_Weekend_Calls__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__Anchor_Delivery_Date__c",
+          "cfs_ob__Vehicle_Type__c",
+          "cfs_ob__CustomerNumberInTable__c",
+          "cfs_ob__u_ZJPartnerFunction__c",
+          "cfs_ob__ZL_Partner_Function__c",
+          "cfs_ob__ZN_Partner_Function__c",
+          "DELIVERY_TIME_GRID",
+          "ORDER_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "LOS_TIME_GRID"
+        ]
+      },
+      "INCL": {
+        "required": [
+          "cfs_ob__Preferred_Order_Method_Options__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__u_UnloadingPoint__c",
+          "cfs_ob__Sales_Representative__c",
+          "cfs_ob__u_Weekend_Calls__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__Anchor_Delivery_Date__c",
+          "cfs_ob__Vehicle_Type__c",
+          "cfs_ob__CustomerNumberInTable__c",
+          "cfs_ob__u_ZJPartnerFunction__c",
+          "cfs_ob__ZL_Partner_Function__c",
+          "cfs_ob__ZN_Partner_Function__c",
+          "DELIVERY_TIME_GRID",
+          "ORDER_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "LOS_TIME_GRID"
+        ]
+      },
+      "EML": {
+        "required": [
+          "cfs_ob__Preferred_Order_Method_Options__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__u_UnloadingPoint__c",
+          "cfs_ob__Sales_Representative__c",
+          "cfs_ob__u_Weekend_Calls__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__Anchor_Delivery_Date__c",
+          "cfs_ob__Vehicle_Type__c",
+          "cfs_ob__CustomerNumberInTable__c",
+          "cfs_ob__u_ZJPartnerFunction__c",
+          "cfs_ob__ZL_Partner_Function__c",
+          "cfs_ob__ZN_Partner_Function__c",
+          "DELIVERY_TIME_GRID",
+          "ORDER_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "LOS_TIME_GRID"
+        ]
+      },
+      "FSV": {
+        "required": [
+          "cfs_ob__Preferred_Order_Method_Options__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__u_UnloadingPoint__c",
+          "cfs_ob__Sales_Representative__c",
+          "cfs_ob__u_Weekend_Calls__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__Anchor_Delivery_Date__c",
+          "cfs_ob__Vehicle_Type__c",
+          "cfs_ob__CustomerNumberInTable__c",
+          "cfs_ob__u_ZJPartnerFunction__c",
+          "cfs_ob__ZL_Partner_Function__c",
+          "cfs_ob__ZN_Partner_Function__c",
+          "DELIVERY_TIME_GRID",
+          "ORDER_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "LOS_TIME_GRID"
+        ]
+      }
+    },
+    "5000": {
+      "CALL": {
+        "required": [
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "DELIVERY_TIME_GRID",
+          "LOS_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZR_Visit_Plan__c",
+          "ORDER_TIME_GRID"
+        ]
+      },
+      "INCL": {
+        "required": [
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "DELIVERY_TIME_GRID",
+          "LOS_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZR_Visit_Plan__c",
+          "ORDER_TIME_GRID"
+        ]
+      },
+      "ECOM": {
+        "required": [
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "DELIVERY_TIME_GRID",
+          "LOS_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZR_Visit_Plan__c",
+          "ORDER_TIME_GRID"
+        ]
+      },
+      "EML": {
+        "required": [
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "DELIVERY_TIME_GRID",
+          "LOS_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZR_Visit_Plan__c",
+          "ORDER_TIME_GRID"
+        ]
+      },
+      "EDI": {
+        "required": [
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "DELIVERY_TIME_GRID",
+          "LOS_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZR_Visit_Plan__c",
+          "ORDER_TIME_GRID"
+        ]
+      },
+      "EDID": {
+        "required": [
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "ORDER_TIME_GRID",
+          "DELIVERY_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "LOS_TIME_GRID"
+        ]
+      },
+      "EDIS": {
+        "required": [
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "ORDER_TIME_GRID",
+          "DELIVERY_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "LOS_TIME_GRID"
+        ]
+      },
+      "SREP": {
+        "required": [
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "ORDER_TIME_GRID",
+          "DELIVERY_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "LOS_TIME_GRID"
+        ]
+      },
+      "CPOM": {
+        "required": [
+          "cfs_ob__Z7_Visit_Plan__c",
+          "cfs_ob__Shipping_Conditions_Options__c",
+          "cfs_ob__Order_Days__c",
+          "cfs_ob__Delivery_Days__c",
+          "cfs_ob__Frequency_Options__c",
+          "cfs_ob__Anchor_Call_Date__c",
+          "DELIVERY_TIME_GRID"
+        ],
+        "notUsed": [
+          "cfs_ob__ZR_Visit_Plan__c",
+          "cfs_ob__ZA_Visit_Plan__c",
+          "cfs_ob__LOS_Visit_Days__c",
+          "cfs_ob__LOS_Frequency__c",
+          "cfs_ob__LOS_Start_Date__c",
+          "ORDER_TIME_GRID",
+          "LOS_TIME_GRID"
+        ]
+      }
+    }
+  }
+}

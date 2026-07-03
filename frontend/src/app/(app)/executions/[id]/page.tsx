@@ -6,11 +6,15 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { useExecutionStream } from "@/hooks/useExecutionStream";
 import { ExecutionTimeline } from "@/components/executions/execution-timeline";
+import { ExecutionEventLog } from "@/components/executions/execution-event-log";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate, formatDuration } from "@/lib/utils";
-import { FileText, RotateCcw, Square } from "lucide-react";
+import { FileText, Pencil, RotateCcw, Square } from "lucide-react";
+import { StepEditDialog } from "@/components/executions/step-edit-dialog";
+import type { ExecutionStep } from "@/lib/types";
+import { Spinner } from "@/components/ui/spinner";
 
 function statusBadgeVariant(status: string) {
   switch (status) {
@@ -31,12 +35,13 @@ function statusBadgeVariant(status: string) {
 export default function ExecutionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const queryClient = useQueryClient();
-  const { events, connected } = useExecutionStream(id);
+  const { events, connected, clearEvents } = useExecutionStream(id);
   const [rerunning, setRerunning] = useState(false);
   const [stopping, setStopping] = useState(false);
   const [actionError, setActionError] = useState("");
+  const [editingStep, setEditingStep] = useState<ExecutionStep | null>(null);
 
-  const { data: execution, refetch } = useQuery({
+  const { data: execution, isLoading: executionLoading, refetch } = useQuery({
     queryKey: ["execution", id],
     queryFn: () => api.getExecution(id),
     refetchInterval: (query) => {
@@ -46,6 +51,7 @@ export default function ExecutionPage({ params }: { params: Promise<{ id: string
   });
 
   const isActive = execution?.status === "running" || execution?.status === "queued";
+  const streamError = [...events].reverse().find((e) => e.event_type === "execution_error");
   const isComplete =
     execution?.status === "passed" ||
     execution?.status === "failed" ||
@@ -89,11 +95,22 @@ export default function ExecutionPage({ params }: { params: Promise<{ id: string
   };
 
   return (
-    <div className="space-y-6">
+    <div className="lg:grid lg:grid-cols-[minmax(280px,340px)_1fr] lg:items-start lg:gap-6">
+      <div className="mb-6 lg:sticky lg:top-6 lg:mb-0 lg:max-h-[calc(100vh-3rem)]">
+        <ExecutionEventLog
+          executionId={id}
+          events={events}
+          connected={connected}
+          isRunning={execution?.status === "running"}
+          onClear={clearEvents}
+        />
+      </div>
+
+      <div className="min-w-0 space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Test Execution</h1>
-          <p className="font-mono text-sm text-muted-foreground">{id}</p>
+        <div className="min-w-0 space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Test Execution</h1>
+          <p className="break-all font-mono text-xs text-muted-foreground sm:text-sm">{id}</p>
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant={connected ? "success" : "secondary"}>
               {connected ? "Live" : "Disconnected"}
@@ -111,7 +128,7 @@ export default function ExecutionPage({ params }: { params: Promise<{ id: string
             <Button
               variant="destructive"
               onClick={handleStop}
-              disabled={stopping}
+              loading={stopping}
               className="gap-2"
             >
               <Square className="h-4 w-4 fill-current" />
@@ -119,10 +136,20 @@ export default function ExecutionPage({ params }: { params: Promise<{ id: string
             </Button>
           )}
           {canRerun && (
-            <Button onClick={handleRerun} disabled={rerunning} variant="secondary" className="gap-2">
+            <Button onClick={handleRerun} loading={rerunning} variant="secondary" className="gap-2">
               <RotateCcw className="h-4 w-4" />
               {rerunning ? "Starting..." : "Re-run"}
             </Button>
+          )}
+          {execution?.scenario_id && !isActive && (
+            <Link
+              href={`/scenarios/${execution.scenario_id}/edit?return=${encodeURIComponent(`/executions/${id}`)}&org_id=${execution.org_id}`}
+            >
+              <Button variant="outline" className="gap-2">
+                <Pencil className="h-4 w-4" />
+                Edit Scenario
+              </Button>
+            </Link>
           )}
           {isComplete && execution?.status !== "cancelled" && (
             <Link href={`/reports?execution=${id}`}>
@@ -149,6 +176,15 @@ export default function ExecutionPage({ params }: { params: Promise<{ id: string
               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-blue-500" />
             </span>
             Queued — automation will start shortly. Use <strong>Stop Execution</strong> to cancel.
+          </CardContent>
+        </Card>
+      )}
+
+      {execution?.status === "error" && (
+        <Card className="border-destructive/40 bg-destructive/10">
+          <CardContent className="py-4 text-sm text-destructive">
+            Execution failed
+            {streamError?.message ? `: ${streamError.message}` : "."} Click <strong>Re-run</strong> to try again.
           </CardContent>
         </Card>
       )}
@@ -196,37 +232,71 @@ export default function ExecutionPage({ params }: { params: Promise<{ id: string
         </div>
       )}
 
+      {(execution?.plan_json as { mode?: string } | undefined)?.mode === "test_pack" && Boolean(execution?.plan_json?.test_pack_result) && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Test Case Results</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {(execution?.plan_json?.test_pack_result as {
+              test_case_results?: Array<{
+                tc_id: string;
+                title: string;
+                status: string;
+                is_smoke?: boolean;
+                error?: string;
+              }>;
+            }).test_case_results?.map((tc) => (
+              <div key={tc.tc_id} className="rounded-md border p-3">
+                <div className="flex items-center gap-2">
+                  <Badge variant={statusBadgeVariant(tc.status)} className="capitalize">
+                    {tc.status}
+                  </Badge>
+                  <span className="font-medium">{tc.tc_id}</span>
+                  {tc.is_smoke && <Badge variant="outline">Smoke</Badge>}
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">{tc.title}</p>
+                {tc.error && <p className="text-sm text-destructive mt-1">{tc.error}</p>}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle>Live Progress</CardTitle>
         </CardHeader>
         <CardContent>
-          {execution ? (
-            <ExecutionTimeline steps={execution.steps} events={events} />
-          ) : (
-            <p className="text-muted-foreground">Loading execution...</p>
-          )}
+          {executionLoading ? (
+            <div className="flex flex-col items-center gap-3 py-8">
+              <Spinner size="lg" />
+              <p className="text-sm text-muted-foreground">Loading execution…</p>
+            </div>
+          ) : execution ? (
+            <ExecutionTimeline
+              executionId={id}
+              steps={execution.steps}
+              events={events}
+              onEditStep={!isActive ? setEditingStep : undefined}
+            />
+          ) : null}
         </CardContent>
       </Card>
 
-      {events.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Event Log</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="max-h-64 space-y-1 overflow-auto rounded-md border bg-muted/20 p-3 font-mono text-xs">
-              {events.map((event, i) => (
-                <div key={i} className="text-muted-foreground">
-                  [{new Date(event.timestamp).toLocaleTimeString()}] {event.event_type}
-                  {event.step_name && ` — ${event.step_name}`}
-                  {event.message && `: ${event.message}`}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      {editingStep && (
+        <StepEditDialog
+          executionId={id}
+          step={editingStep}
+          open={!!editingStep}
+          onClose={() => setEditingStep(null)}
+          onSaved={async () => {
+            await queryClient.invalidateQueries({ queryKey: ["execution", id] });
+            await refetch();
+          }}
+        />
       )}
+      </div>
     </div>
   );
 }

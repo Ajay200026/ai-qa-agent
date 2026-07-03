@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field
 
+from app.schemas.test_case import TestPackResult
+
 
 class ExecutionPlanStep(BaseModel):
     action: str
@@ -46,3 +48,5 @@ class ExecutionReport(BaseModel):
     failed_count: int
     llm_analysis: str | None = None
     step_results: list[StepResult] = Field(default_factory=list)
+    test_pack_result: TestPackResult | None = None
+    trace_events: list[dict] = Field(default_factory=list)

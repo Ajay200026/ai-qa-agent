@@ -1,0 +1,335 @@
+{
+  "sourceFile": "force-app/main/default/lwc/Northeast Modules/lwc/Data Change/lwc/conaDatachangePayerDetails/conaDatachangePayerDetailsFieldConfigs.js",
+  "bottlerCodes": {
+    "4600": "Reyes",
+    "4900": "Abarta",
+    "5000": "Northeast"
+  },
+  "sectionConfigs": {
+    "PAYER_DETAILS": {
+      "label": "Payer Details",
+      "icon": "utility:user",
+      "iconVariant": "inverse"
+    }
+  },
+  "payerDetailsFields": [
+    {
+      "configKey": "BOTTLER",
+      "label": "Bottler's ID",
+      "apiName": "cfs_ob__Bottler__c",
+      "backendName": "cfs_ob__Bottler__c",
+      "apiCompareKey": "cfs_ob__Bottler__c",
+      "sapPath": "salesOrg",
+      "type": "combobox",
+      "section": "PAYER_DETAILS",
+      "row": 1,
+      "order": 1,
+      "size": 3,
+      "disabled": true,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "BUSINESS_TYPE_EXTENSION",
+      "label": "Business Type Extension",
+      "apiName": "cfs_ob__u_BusinessTypeExtension__c",
+      "backendName": "cfs_ob__u_BusinessTypeExtension__c",
+      "apiCompareKey": "cfs_ob__u_BusinessTypeExtension__c",
+      "sapPath": "generalData.additionalData.businessTypeExtension",
+      "type": "combobox",
+      "section": "PAYER_DETAILS",
+      "row": 1,
+      "order": 2,
+      "size": 3,
+      "disabled": true,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select Business Type Extension",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "PAYER_NAME",
+      "label": "Payer Name",
+      "apiName": "Name",
+      "backendName": "Name",
+      "apiCompareKey": "Name",
+      "sapPath": "generalData.address.name1",
+      "type": "text",
+      "section": "PAYER_DETAILS",
+      "row": 1,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "LEGAL_NAME",
+      "label": "Legal Name",
+      "apiName": "cfs_ob__u_LegalName__c",
+      "backendName": "cfs_ob__u_LegalName__c",
+      "apiCompareKey": "cfs_ob__u_LegalName__c",
+      "sapPath": "generalData.address.name2",
+      "type": "text",
+      "section": "PAYER_DETAILS",
+      "row": 1,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "NAME_EXTENSION",
+      "label": "Name Extension",
+      "apiName": "cfs_ob__Name_Extension__c",
+      "backendName": "cfs_ob__Name_Extension__c",
+      "apiCompareKey": "cfs_ob__Name_Extension__c",
+      "sapPath": "generalData.address.name3",
+      "type": "text",
+      "section": "PAYER_DETAILS",
+      "row": 2,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "ATTENTION_NAME",
+      "label": "Attention Name",
+      "apiName": "cfs_ob__CustomerNameInTable__c",
+      "backendName": "cfs_ob__CustomerNameInTable__c",
+      "apiCompareKey": "cfs_ob__CustomerNameInTable__c",
+      "sapPath": "generalData.address.name4",
+      "type": "text",
+      "section": "PAYER_DETAILS",
+      "row": 2,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 35
+    },
+    {
+      "configKey": "PAYER_NUMBER",
+      "label": "Payer Number",
+      "apiName": "cfs_ob__u_CustomerNumber__c",
+      "backendName": "cfs_ob__u_CustomerNumber__c",
+      "apiCompareKey": "cfs_ob__u_CustomerNumber__c",
+      "sapPath": "customerNumber",
+      "type": "text",
+      "section": "PAYER_DETAILS",
+      "row": 2,
+      "order": 3,
+      "size": 3,
+      "disabled": true,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "MDG",
+      "label": "MDG",
+      "apiName": "cfs_ob__u_MDG__c",
+      "backendName": "cfs_ob__u_MDG__c",
+      "apiCompareKey": "cfs_ob__u_MDG__c",
+      "sapPath": null,
+      "type": "text",
+      "section": "PAYER_DETAILS",
+      "row": 2,
+      "order": 4,
+      "size": 3,
+      "disabled": true,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    }
+  ],
+  "bottlerVisibilitySummary": {
+    "4600": [
+      "BOTTLER",
+      "BUSINESS_TYPE_EXTENSION",
+      "PAYER_NAME",
+      "LEGAL_NAME",
+      "NAME_EXTENSION",
+      "ATTENTION_NAME",
+      "PAYER_NUMBER",
+      "MDG"
+    ],
+    "4900": [
+      "BOTTLER",
+      "BUSINESS_TYPE_EXTENSION",
+      "PAYER_NAME",
+      "LEGAL_NAME",
+      "NAME_EXTENSION",
+      "ATTENTION_NAME",
+      "PAYER_NUMBER",
+      "MDG"
+    ],
+    "5000": [
+      "BOTTLER",
+      "BUSINESS_TYPE_EXTENSION",
+      "PAYER_NAME",
+      "LEGAL_NAME",
+      "NAME_EXTENSION",
+      "ATTENTION_NAME",
+      "PAYER_NUMBER",
+      "MDG"
+    ]
+  }
+}

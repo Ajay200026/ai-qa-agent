@@ -1,38 +1,36 @@
-"""Deterministic checks for expected results from scenarios."""
-
-import re
+"""Deterministic checks for expected results — delegates to assertion engine when possible."""
 
 from playwright.async_api import Page
 
+from app.automation.assertions import run_assertion
 from app.automation.form_field import field_present, find_input, resolve_form_scope
 from app.automation.scope import all_scopes
+from app.workflows.action_mapping import infer_assertions_from_expected
 
 
-async def check_expected(page: Page, expected: str) -> tuple[bool, str]:
+async def check_expected(page: Page, expected: str, db=None) -> tuple[bool, str]:
+    assertions = infer_assertions_from_expected(expected)
+    if assertions:
+        for assertion in assertions:
+            passed, detail, _ = await run_assertion(page, assertion, db=db)
+            if not passed:
+                return False, detail
+        return True, f"All assertions passed for: {expected}"
+
     lower = expected.lower()
 
-    if "request created" in lower:
-        found = await _any_visible(
-            page,
-            [
-                page.get_by_text(re.compile(r"request\s*(id|#)?\s*\d+", re.I)),
-                page.locator("table tbody tr").first,
-                page.get_by_text(re.compile(r"success", re.I)),
-            ],
-        )
-        return found, "Request row or success indicator visible" if found else "No request created indicator"
+    if "primary group" in lower and ("editable" in lower or "read-only" in lower or "greyed" in lower):
+        from app.schemas.test_case import Assertion, AssertionKind
 
-    if "status submitted" in lower or ("submitted" in lower and "primary" not in lower):
-        found = await _any_visible(
-            page,
-            [
-                page.get_by_text(re.compile(r"submitted", re.I)),
-                page.get_by_text(re.compile(r"status.*submitted", re.I)),
-                page.locator('[role="status"]'),
-            ],
+        kind = (
+            AssertionKind.FIELD_READONLY
+            if "read-only" in lower or "not editable" in lower or "greyed" in lower
+            else AssertionKind.FIELD_EDITABLE
         )
-        toast = await page.locator(".slds-notify, [role='status']").first.text_content() if found else None
-        return found, f"Submitted status found: {toast or 'visible'}" if found else "Submitted status not found"
+        passed, detail, _ = await run_assertion(
+            page, Assertion(kind=kind, target="Primary Group"), db=db,
+        )
+        return passed, detail
 
     if "primary group" in lower:
         scope = await resolve_form_scope(page, "Primary Group")
@@ -50,30 +48,21 @@ async def check_expected(page: Page, expected: str) -> tuple[bool, str]:
             except Exception as exc:
                 return False, f"Primary Group value not readable: {exc}"
 
-        return True, "Primary Group field present"
+        return False, "Primary Group present but assertion too vague — specify editable/value check"
 
-    if "draft saved" in lower:
-        found = await _any_visible(
-            page,
-            [page.get_by_text(re.compile(r"draft\s+saved", re.I)), page.get_by_text(re.compile(r"saved", re.I))],
-        )
-        return found, "Draft saved message visible" if found else "Draft saved message not found"
+    from app.schemas.test_case import Assertion, AssertionKind
+
+    passed, detail, _ = await run_assertion(
+        page, Assertion(kind=AssertionKind.TEXT_VISIBLE, expected=expected), db=db,
+    )
+    if passed:
+        return True, detail
 
     for candidate in all_scopes(page):
         try:
             loc = candidate.get_by_text(expected, exact=False).first
-            if await loc.is_visible(timeout=5000):
+            if await loc.is_visible(timeout=3000):
                 return True, f"Found text: {expected}"
         except Exception:
             continue
     return False, f"Could not verify: {expected}"
-
-
-async def _any_visible(page: Page, locators: list) -> bool:
-    for loc in locators:
-        try:
-            if await loc.first.is_visible(timeout=3000):
-                return True
-        except Exception:
-            continue
-    return False

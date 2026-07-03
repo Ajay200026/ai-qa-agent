@@ -16,6 +16,7 @@ from app.services.execution_registry import execution_registry
 logger = logging.getLogger(__name__)
 
 POLL_MS = 2_000
+_LIGHTNING_URL = re.compile(r"lightning\.force\.com|\.salesforce\.com", re.IGNORECASE)
 
 
 class BasePage:
@@ -143,26 +144,40 @@ class BasePage:
 
     async def wait_for_lightning_ready(self, timeout: int = 60000) -> None:
         """Wait for Salesforce Lightning shell after login — not for a specific app."""
-        chunk = max(timeout // 4, 10000)
         checks = [
             lambda: self.page.locator(".oneHeader"),
             lambda: self.page.locator("#oneHeader"),
             lambda: self.page.locator(".slds-global-header"),
             lambda: self.page.locator("one-app-nav-bar"),
             lambda: self.page.get_by_role("button", name="App Launcher"),
+            lambda: self.page.locator("one-app-launcher-header"),
         ]
 
         last_url = self.page.url
+        per_check = min(4000, max(timeout // max(len(checks), 1), 1500))
+
+        if _LIGHTNING_URL.search(last_url or ""):
+            for locator_fn in checks:
+                try:
+                    await self.wait_locator_visible(locator_fn(), timeout=2000)
+                    await self.cancellable_sleep(500)
+                    return
+                except Exception:
+                    continue
+            if "/lightning/" in (last_url or "").lower():
+                await self.cancellable_sleep(800)
+                return
+
         for locator_fn in checks:
             try:
-                await self.wait_locator_visible(locator_fn(), timeout=chunk)
-                await self.cancellable_sleep(1500)
+                await self.wait_locator_visible(locator_fn(), timeout=per_check)
+                await self.cancellable_sleep(500)
                 return
             except Exception:
                 continue
 
-        if re.search(r"lightning\.force\.com|\.salesforce\.com", self.page.url):
-            await self.cancellable_sleep(3000)
+        if _LIGHTNING_URL.search(self.page.url or ""):
+            await self.cancellable_sleep(800)
             return
 
         raise TimeoutError(
@@ -175,8 +190,8 @@ class BasePage:
         app_checks: dict[str, list] = {
             "onboarding": [
                 lambda: self.page.get_by_role("tab", name="Customer_Life_Cycle_Queues"),
-                lambda: self.page.get_by_role("button", name="New"),
-                lambda: self.page.get_by_role("tab", name="Customer Lifecycle"),
+                lambda: self.page.get_by_role("tab", name=re.compile(r"Customer.*Life.*Cycle.*Queue", re.I)),
+                lambda: self.page.get_by_text(re.compile(r"Customer.*Life.*Cycle.*Queue", re.I)),
                 lambda: self.page.locator(".slds-tabs_default"),
             ],
         }
@@ -215,13 +230,41 @@ class BasePage:
         return str(path)
 
     async def get_toast_text(self) -> str | None:
-        try:
-            toast = self.resolve_locator("generic.toast_message")
-            if await toast.is_visible():
-                return await toast.text_content()
-        except Exception:
-            pass
-        return None
+        texts = await self.get_all_toast_texts()
+        return texts if texts else None
+
+    async def get_all_toast_texts(self) -> str | None:
+        selectors = [
+            "[role='status']",
+            "[role='alert']",
+            ".slds-notify_toast",
+            ".slds-notify",
+            ".toastMessage",
+        ]
+        parts: list[str] = []
+        for sel in selectors:
+            try:
+                locs = self.page.locator(sel)
+                count = await locs.count()
+                for i in range(min(count, 5)):
+                    el = locs.nth(i)
+                    if await el.is_visible(timeout=500):
+                        text = (await el.text_content() or "").strip()
+                        if text and text not in parts:
+                            parts.append(text)
+            except Exception:
+                continue
+        return " | ".join(parts) if parts else None
+
+    async def wait_for_toast(self, timeout_ms: int = 8000) -> str | None:
+        from app.automation.assertions import wait_for_toast
+
+        return await wait_for_toast(self.page, timeout_ms)
+
+    async def assert_no_toast_visible(self, window_ms: int = 3000) -> tuple[bool, str]:
+        from app.automation.assertions import assert_no_toast
+
+        return await assert_no_toast(self.page, window_ms)
 
     async def assert_visible(self, locator_name: str) -> None:
         locator = self.resolve_locator(locator_name)

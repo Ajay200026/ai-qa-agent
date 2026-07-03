@@ -1,5 +1,4 @@
 import logging
-import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncGenerator
@@ -7,6 +6,7 @@ from uuid import UUID
 
 from playwright.async_api import Browser, BrowserContext, Page, Playwright, async_playwright
 
+from app.automation.playwright_paths import ensure_playwright_browsers_path
 from app.core.config import get_settings
 from app.services.execution_registry import execution_registry
 
@@ -20,14 +20,10 @@ class BrowserManager:
         self.settings = get_settings()
 
     def _configure_browsers_path(self) -> None:
-        configured = self.settings.playwright_browsers_path
-        if configured:
-            os.environ["PLAYWRIGHT_BROWSERS_PATH"] = configured
-            return
-        current = os.environ.get("PLAYWRIGHT_BROWSERS_PATH", "")
-        if "cursor-sandbox-cache" in current:
-            os.environ["PLAYWRIGHT_BROWSERS_PATH"] = str(
-                Path.home() / "Library/Caches/ms-playwright"
+        resolved = ensure_playwright_browsers_path(self.settings.playwright_browsers_path)
+        if not resolved:
+            raise RuntimeError(
+                "Playwright Chromium is not installed. Run: playwright install chromium"
             )
 
     async def start(self) -> None:
@@ -42,6 +38,7 @@ class BrowserManager:
                     f"--window-size={width},{height}",
                     "--window-position=0,0",
                 ])
+
             self._browser = await self._playwright.chromium.launch(
                 headless=self.settings.playwright_headless,
                 args=launch_args,

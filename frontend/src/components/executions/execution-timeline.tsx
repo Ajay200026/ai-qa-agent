@@ -1,11 +1,15 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { ExecutionEvent, ExecutionStep } from "@/lib/types";
-import { CheckCircle2, Circle, Loader2, XCircle } from "lucide-react";
+import { CheckCircle2, Circle, Loader2, Pencil, XCircle } from "lucide-react";
+import { ScreenshotThumbnail } from "@/components/artifacts/screenshot-lightbox";
 
 interface ExecutionTimelineProps {
+  executionId: string;
   steps: ExecutionStep[];
   events: ExecutionEvent[];
+  onEditStep?: (step: ExecutionStep) => void;
 }
 
 function StatusIcon({ status }: { status: string }) {
@@ -33,7 +37,7 @@ function statusBadgeVariant(status: string) {
   return "secondary" as const;
 }
 
-export function ExecutionTimeline({ steps, events }: ExecutionTimelineProps) {
+export function ExecutionTimeline({ executionId, steps, events, onEditStep }: ExecutionTimelineProps) {
   const latestEventByStep = new Map<number, ExecutionEvent>();
   events.forEach((e) => {
     if (e.step_seq) latestEventByStep.set(e.step_seq, e);
@@ -69,15 +73,17 @@ export function ExecutionTimeline({ steps, events }: ExecutionTimelineProps) {
           );
           const status = event?.status || "pending";
           return (
-            <div key={phase.name} className="flex items-center gap-3 rounded-lg border p-3">
-              <StatusIcon status={status} />
-              <div className="flex-1">
-                <p className="font-medium">{phase.name}</p>
-                {event?.message && (
-                  <p className="text-sm text-muted-foreground">{event.message}</p>
-                )}
+            <div key={phase.name} className="flex flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-center">
+              <div className="flex items-center gap-3">
+                <StatusIcon status={status} />
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium">{phase.name}</p>
+                  {event?.message && (
+                    <p className="text-sm text-muted-foreground break-words">{event.message}</p>
+                  )}
+                </div>
               </div>
-              <Badge variant={statusBadgeVariant(status)} className="capitalize">
+              <Badge variant={statusBadgeVariant(status)} className="w-fit capitalize">
                 {status}
               </Badge>
             </div>
@@ -94,23 +100,54 @@ export function ExecutionTimeline({ steps, events }: ExecutionTimelineProps) {
             <div
               key={step.id}
               className={cn(
-                "flex items-start gap-3 rounded-lg border p-3",
+                "flex flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-start",
                 status === "running" && "border-blue-500 bg-blue-50/50 dark:bg-blue-950/20"
               )}
             >
-              <StatusIcon status={status} />
-              <div className="flex-1">
-                <p className="font-medium">
-                  {step.seq}. {step.name}
-                </p>
-                <p className="text-xs text-muted-foreground">Action: {step.action}</p>
-                {(step.error || event?.message) && (
-                  <p className="mt-1 text-sm text-destructive">{step.error || event?.message}</p>
+              <div className="flex items-start gap-3 flex-1 min-w-0">
+                <StatusIcon status={status} />
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium">
+                    {step.seq}. {step.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Action: {step.action}</p>
+                  {(step.error || event?.message) && (
+                    <p className="mt-1 text-sm text-destructive break-words">
+                      {step.error || event?.message}
+                    </p>
+                  )}
+                  {step.notes && (
+                    <p className="mt-1 text-xs text-muted-foreground italic">
+                      Note: {step.notes}
+                    </p>
+                  )}
+                  {(step.screenshot_path || event?.screenshot_path) && (
+                    <div className="mt-2">
+                      <ScreenshotThumbnail
+                        executionId={executionId}
+                        screenshotPath={step.screenshot_path || event!.screenshot_path!}
+                        alt={`Step ${step.seq} screenshot`}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 sm:flex-col sm:items-end">
+                <Badge variant={statusBadgeVariant(status)} className="w-fit capitalize">
+                  {status}
+                </Badge>
+                {onEditStep && (status === "failed" || status === "error" || status === "skipped") && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 gap-1 text-xs"
+                    onClick={() => onEditStep(step)}
+                  >
+                    <Pencil className="h-3 w-3" />
+                    Edit & Retry
+                  </Button>
                 )}
               </div>
-              <Badge variant={statusBadgeVariant(status)} className="capitalize">
-                {status}
-              </Badge>
             </div>
           );
         })}

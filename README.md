@@ -155,6 +155,20 @@ Open http://localhost:3000 and register a new account (Firebase Email/Password m
 
 See [.env.example](.env.example) for the full list.
 
+### Hosting / production (Playwright)
+
+For any server that runs browser automation:
+
+1. **Recommended:** use the provided Docker backend image (`backend/Dockerfile`), which is based on `mcr.microsoft.com/playwright/python` and already includes Chromium + OS dependencies.
+2. Run with Docker Compose: `docker compose up --build`
+3. Keep `PLAYWRIGHT_HEADLESS=true` in production.
+4. If you deploy without Docker, on the server run once inside the backend venv:
+   ```bash
+   playwright install chromium
+   playwright install-deps chromium   # Linux only — installs system libraries
+   ```
+5. Do **not** copy a local `PLAYWRIGHT_BROWSERS_PATH` from macOS into production. On Linux/Docker, leave it unset or set `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when using the official Playwright image.
+
 ### Frontend (`frontend/.env.local`)
 
 | Variable | Required | Description |
@@ -186,8 +200,60 @@ python -c "import secrets; print(secrets.token_urlsafe(48))"
 
 Supports two methods when adding a Salesforce org:
 
-1. **Credentials** — Username/password stored encrypted (Fernet); Playwright logs in via the login page
-2. **OAuth/SFDX** — Access token + instance URL; session injected via `frontdoor.jsp`
+1. **Credentials** — Username/password stored encrypted (Fernet); Playwright logs in via the login page. The same credentials power **REST SOQL** lookups (Login As user resolution, Account Queries).
+2. **OAuth (Authorize via Web)** — Same flow as VS Code / SF CLI: pick Production/Sandbox, sign in via browser popup. Uses Salesforce’s built-in `PlatformCLI` Connected App and a local callback on port **1717** — no `.env` setup required.
+3. **Credentials** — Username/password (+ optional security token) on the same page.
+
+### Salesforce Orgs page
+
+Use the sidebar **Salesforce Orgs** menu to:
+
+- Authorize orgs (web OAuth or username/password)
+- View org details, re-validate, set default, delete
+- Default org is pre-selected on **New Execution**
+
+### Custom Connected App (optional)
+
+By default, Web authorize uses the same OAuth client as SF CLI (`PlatformCLI`, callback `http://localhost:1717/OauthRedirect`). To use your own Connected App instead:
+
+1. Salesforce Setup → App Manager → New Connected App
+2. Enable OAuth, callback URL: `http://localhost:3000/salesforce-orgs/oauth/callback`
+3. Scopes: `api`, `refresh_token`
+4. Copy Consumer Key/Secret to backend `.env`:
+
+```bash
+SALESFORCE_OAUTH_CLIENT_ID=...
+SALESFORCE_OAUTH_CLIENT_SECRET=...
+SALESFORCE_OAUTH_REDIRECT_URI=http://localhost:3000/salesforce-orgs/oauth/callback
+```
+
+If port **1717** is already in use (e.g. `sf org login web` running), stop that process or switch to a custom Connected App with the frontend callback URL above.
+
+### Login As & Account Queries (REST SOQL)
+
+User and Account lookups use the Salesforce REST API (`/services/data/vXX.X/query`). No browser extension or Salesforce CLI is required — the backend authenticates the same way the CLI would (SOAP login for username/password orgs, or OAuth bearer token).
+
+**Requirements:**
+
+| Requirement | Why |
+|-------------|-----|
+| Salesforce org connected with **admin** credentials | API must query `User` and `Account` |
+| `API Enabled` permission on the integration user | REST query access |
+| Password + **security token** (if IP not trusted) | Store as `password` + `token` concatenated in the org password field |
+| `instance_url` set on the org | Used for Manage Users navigation after lookup |
+
+**Login As flow:** REST SOQL → User Id → open Manage Users URL in browser → click Login → verify session.
+
+Example SOQL (built automatically from bottler + role):
+
+```sql
+SELECT Id, Name, Username, cfs_ob__Bottler__c, cfs_ob__Onboarding_Role__c
+FROM User
+WHERE IsActive = true
+  AND cfs_ob__Bottler__c = '4900'
+  AND cfs_ob__Onboarding_Role__c = 'Requestor'
+LIMIT 1
+```
 
 ## API Endpoints
 
@@ -195,7 +261,7 @@ Supports two methods when adding a Salesforce org:
 |--------|-----------|
 | Auth | `POST /auth/register`, `POST /auth/login`, `GET /auth/me` |
 | Projects | `GET\|POST /projects` |
-| Salesforce | `GET\|POST /salesforce/orgs`, `POST /salesforce/orgs/{id}/validate` |
+| Salesforce | `GET\|POST\|PATCH\|DELETE /salesforce/orgs`, `POST /salesforce/orgs/oauth/start`, `POST /salesforce/orgs/oauth/callback`, `POST /salesforce/orgs/{id}/validate` |
 | Scenarios | `GET\|POST /scenarios` (multipart upload) |
 | Workflows | `GET\|POST /workflows` |
 | Executions | `POST /executions`, `GET /executions`, `WS /executions/{id}/stream` |
@@ -239,6 +305,7 @@ ai-qa-agent/
 | Backend won't start — missing env | Ensure `JWT_SECRET` (32+ chars) and `FERNET_KEY` are set in `.env` |
 | `alembic upgrade head` fails | Confirm PostgreSQL is running: `docker compose up postgres -d` |
 | Playwright browser missing | Run `playwright install chromium` in the backend venv |
+| Playwright points at Cursor sandbox path | Restart the backend after pulling latest; the app ignores invalid sandbox paths. Or unset `PLAYWRIGHT_BROWSERS_PATH` in your shell |
 | Frontend login fails | Verify Firebase Email/Password is enabled and `NEXT_PUBLIC_FIREBASE_*` match your project |
 | Neo4j connection warning | Non-fatal at startup; graph features retry on use. Check `docker compose up neo4j -d` |
 | CORS errors | Add your frontend URL to `CORS_ORIGINS` in backend `.env` |

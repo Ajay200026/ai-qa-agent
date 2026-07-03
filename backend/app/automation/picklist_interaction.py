@@ -7,6 +7,10 @@ from playwright.async_api import Locator
 
 from app.automation.combobox import PLACEHOLDER_PATTERNS, dropdown_option_candidates, is_auto_pick
 from app.automation.scope import PageOrFrame
+from app.knowledge.sales_office_rules import (
+    choose_office_option,
+    office_option_full_js_pattern,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +20,10 @@ OPTION_EXCLUDE_PATTERN = re.compile(
     re.I,
 )
 
-# e.g. "K003 West Dundee", "FSV Recipient"
-SALES_OFFICE_OPTION_TEXT = re.compile(r"K\d{3}\s+[\w\s]+|^FSV Recipient$", re.I)
+# Bottler-coded offices plus Payer / FSV Recipient (see sales_office_rules.py).
+SALES_OFFICE_OPTION_TEXT = re.compile(
+    r"[SKQ]\d{3}\s+[\w\s,]+|^Payer$|^FSV Recipient$", re.I
+)
 
 SHADOW_WALK_JS = """
 (root) => {
@@ -69,7 +75,7 @@ CLICK_SALES_OFFICE_JS = """
 
 HAS_OPTIONS_JS = """
 ({ pattern }) => {
-  const re = pattern ? new RegExp(pattern, 'i') : /K\\d{3}|FSV Recipient/i;
+  const re = pattern ? new RegExp(pattern, 'i') : /[SK]\\d{3}|FSV Recipient/i;
   const walk = (node, hits) => {
     if (!node) return;
     const els = node.querySelectorAll ? node.querySelectorAll('div, li, span, a, [role="option"]') : [];
@@ -141,7 +147,7 @@ OPEN_SALES_OFFICE_JS = """
 # Return visible option texts (strings only) matching Sales Office pattern.
 LIST_SALES_OFFICE_OPTIONS_JS = """
 () => {
-  const optionRe = /(^|\\s)K\\d{3}(\\s|$)|FSV Recipient/i;
+  const optionRe = /(^|\\s)[SKQ]\\d{3}(\\s|,|$)|^Payer$|^FSV Recipient$/i;
   const nodes = [];
   const walk = (node) => {
     if (!node) return;
@@ -175,6 +181,7 @@ LIST_SALES_OFFICE_OPTIONS_JS = """
 CLICK_SALES_OFFICE_OPTION_JS = """
 (wantText) => {
   const want = (wantText || '').toLowerCase();
+    const code = (wantText.match(/[skq]\\d{3}/i) || [])[0];
   const nodes = [];
   const walk = (node) => {
     if (!node) return;
@@ -192,7 +199,8 @@ CLICK_SALES_OFFICE_OPTION_JS = """
     if (!['div','li','span','a'].includes(tag) && role !== 'option') continue;
     const text = (el.textContent || '').trim();
     if (!text || text.length > 60) continue;
-    if (text.toLowerCase() !== want) continue;
+    const tLower = text.toLowerCase();
+    if (tLower !== want && !(code && text.toUpperCase().includes(code.toUpperCase()))) continue;
     const r = el.getBoundingClientRect();
     if (r.width < 10 || r.height < 8) continue;
     const st = window.getComputedStyle(el);
@@ -209,7 +217,7 @@ CLICK_SALES_OFFICE_OPTION_JS = """
 
 PICK_OPTION_JS = """
 ({ pattern, pickFirst }) => {
-  const re = pattern ? new RegExp(pattern, 'i') : /K\\d{3}\\s+[\\w\\s]+|^FSV Recipient$/i;
+  const re = pattern ? new RegExp(pattern, 'i') : /[SK]\\d{3}\\s+[\\w\\s,]+|^FSV Recipient$/i;
   const walk = (node, hits) => {
     if (!node) return;
     const els = node.querySelectorAll ? node.querySelectorAll('div, li, span, a, [role="option"]') : [];
@@ -361,7 +369,8 @@ async def _options_visible(scope: PageOrFrame, extra: list[Locator] | None = Non
             continue
     try:
         found = await scope.evaluate(
-            HAS_OPTIONS_JS, {"pattern": r"K\d{3}\s+[\w\s]+|^FSV Recipient$"}
+            HAS_OPTIONS_JS,
+            {"pattern": office_option_full_js_pattern(bottler_id)},
         )
         return bool(found)
     except Exception:
@@ -376,7 +385,9 @@ async def _list_sales_office_options(scope: PageOrFrame) -> list[str]:
         return []
 
 
-async def select_sales_office_value(scope: PageOrFrame, value: str | None) -> str:
+async def select_sales_office_value(
+    scope: PageOrFrame, value: str | None, *, bottler_id: str | None = None
+) -> str:
     """Open Sales Office dropdown and pick an option, fully via shadow-aware JS.
 
     Tries Playwright click first, then JS open. Polls for options, logs what it
@@ -422,11 +433,10 @@ async def select_sales_office_value(scope: PageOrFrame, value: str | None) -> st
 
         logger.info("Sales Office options found (%d): %s", len(options), options[:8])
 
-        target_text = options[0]
-        if value and not is_auto_pick(value):
-            wanted = value.strip().lower()
-            match = next((o for o in options if wanted in o.lower()), None)
-            target_text = match or options[0]
+        try:
+            target_text = choose_office_option(options, value, bottler_id=bottler_id)
+        except ValueError as exc:
+            raise RuntimeError(str(exc)) from exc
 
         try:
             clicked = await scope.evaluate(CLICK_SALES_OFFICE_OPTION_JS, target_text)

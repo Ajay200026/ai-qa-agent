@@ -4,12 +4,13 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import {
-  auth,
+  getFirebaseAuth,
   firebaseLogin,
   firebaseLogout,
   firebaseRegister,
   getFirebaseIdToken,
   onAuthStateChanged,
+  subscribeIdTokenRefresh,
 } from "@/lib/firebase";
 import type { User } from "@/lib/types";
 
@@ -30,7 +31,7 @@ export function useAuth() {
   }, []);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    const unsubscribeAuth = onAuthStateChanged(getFirebaseAuth(), async (firebaseUser) => {
       if (!firebaseUser) {
         localStorage.removeItem("token");
         setUser(null);
@@ -47,7 +48,17 @@ export function useAuth() {
         setLoading(false);
       }
     });
-    return () => unsubscribe();
+
+    const unsubscribeToken = subscribeIdTokenRefresh((token) => {
+      if (token) {
+        localStorage.setItem("token", token);
+      }
+    });
+
+    return () => {
+      unsubscribeAuth();
+      unsubscribeToken();
+    };
   }, [syncBackendUser]);
 
   const login = async (email: string, password: string) => {

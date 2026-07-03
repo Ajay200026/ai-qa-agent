@@ -1,0 +1,1050 @@
+{
+  "sourceFile": "force-app/main/default/lwc/Northeast Modules/lwc/Data Change/lwc/conaDatachangeAccountReceivable/conaDatachangeAccountReceivableFieldConfigs.js",
+  "bottlerCodes": {
+    "4600": "Reyes",
+    "4900": "Abarta",
+    "5000": "Northeast"
+  },
+  "sectionConfigs": {
+    "AR_FIELDS": {
+      "label": "Accounts Receivable",
+      "icon": "standard:account_info",
+      "iconVariant": "inverse"
+    },
+    "EMAIL_DETAILS": {
+      "label": "Email Details",
+      "icon": "utility:email",
+      "iconVariant": "inverse"
+    },
+    "ACCOUNTS_TO_PAYER": {
+      "label": "Accounts to Payer",
+      "icon": null,
+      "iconVariant": null
+    }
+  },
+  "accountReceivableFields": [
+    {
+      "configKey": "ELIGIBILITY_INDICATOR",
+      "label": "Payment Eligibility Indicator",
+      "apiName": "cfs_ob__Eligibility_Indicator__c",
+      "backendName": "cfs_ob__u_EligibilityIndicator__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "AR_FIELDS",
+      "row": 1,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "both",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select an option",
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      },
+      "hideForSalesOffices": {
+        "4600": [
+          "FSV Recipient"
+        ]
+      }
+    },
+    {
+      "configKey": "PAYMENT_OPTIONS",
+      "label": "Payment Options",
+      "apiName": "cfs_ob__Payment_Options__c",
+      "backendName": "cfs_ob__u_PaymentOptions__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "AR_FIELDS",
+      "row": 1,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "both",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Select an option",
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      },
+      "payerModeByBottler": {
+        "4600": "non-payer"
+      }
+    },
+    {
+      "configKey": "TERMS_OF_PAYMENT",
+      "label": "Terms of Payment",
+      "apiName": "cfs_ob__Terms_of_Payment__c",
+      "backendName": "cfs_ob__u_TermsOfPayment__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "AR_FIELDS",
+      "row": 1,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "both",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Select an option",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "ACCOUNTING_CLERK",
+      "label": "Accounting Clerk",
+      "apiName": "cfs_ob__u_AccountingClerk__c",
+      "backendName": "cfs_ob__u_AccountingClerk__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "AR_FIELDS",
+      "row": 1,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "both",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Search Accounting Clerk...",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "ACCOUNT_STATEMENT",
+      "label": "Account Statement",
+      "apiName": "cfs_ob__Account_Statement__c",
+      "backendName": "cfs_ob__u_AccountStatement__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "AR_FIELDS",
+      "row": 1,
+      "order": 5,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "both",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select an option",
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "DEFAULT_COMM_METHOD",
+      "label": "Default Comm. Method",
+      "apiName": "cfs_ob__Default_Comm_Method__c",
+      "backendName": "cfs_ob__u_Default_Comm_Method__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "AR_FIELDS",
+      "row": 1,
+      "order": 6,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "both",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select an option",
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "TAX_STATUS",
+      "label": "Tax Status",
+      "apiName": "cfs_ob__Tax_Status__c",
+      "backendName": "cfs_ob__Tax_Status__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "AR_FIELDS",
+      "row": 2,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "placeholder": "Select an option",
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "TAX_REASON",
+      "label": "Tax Reason",
+      "apiName": "cfs_ob__Tax_Reason__c",
+      "backendName": "cfs_ob__Tax_Reason__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "AR_FIELDS",
+      "row": 2,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select an option",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "DUNNING_PROCEDURE",
+      "label": "Dunning Procedure",
+      "apiName": "cfs_ob__Dunning_Procedure__c",
+      "backendName": "cfs_ob__Dunning_Procedure__c",
+      "apiCompareKey": null,
+      "sapPath": "customerDunning[0].dunningProcedure",
+      "type": "combobox",
+      "section": "AR_FIELDS",
+      "row": 2,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "both",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select an option",
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "CONTRACT_CUSTOMER",
+      "label": "Is this a Contract Customer?",
+      "apiName": "cfs_ob__Is_Contract_Customer__c",
+      "backendName": "cfs_ob__Is_Contract_Customer__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "toggle",
+      "section": "AR_FIELDS",
+      "row": 2,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "EDI_INBOUND",
+      "label": "EDI Inbound ID",
+      "apiName": "cfs_ob__u_EDIInboundProfileID__c",
+      "backendName": "cfs_ob__u_EDIInboundProfileID__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "AR_FIELDS",
+      "row": 3,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter EDI Inbound ID...",
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "EDI_OUTBOUND",
+      "label": "EDI Outbound ID",
+      "apiName": "cfs_ob__u_EDIOutboundProfileID__c",
+      "backendName": "cfs_ob__u_EDIOutboundProfileID__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "AR_FIELDS",
+      "row": 3,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter EDI Outbound ID...",
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "EDI_VENDOR_NUMBER",
+      "label": "EDI Vendor Number",
+      "apiName": "cfs_ob__u_EDIVendorNumber__c",
+      "backendName": "cfs_ob__u_EDIVendorNumber__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "AR_FIELDS",
+      "row": 3,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter EDI Vendor Number...",
+      "triggersLmsPublish": false,
+      "maxlength": 35,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "PO_REQUIRED",
+      "label": "PO Number Required?",
+      "apiName": "cfs_ob__Checkbox_Field__c",
+      "backendName": "cfs_ob__Checkbox_Field__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "toggle",
+      "section": "AR_FIELDS",
+      "row": 4,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "PO_NUMBER",
+      "label": "PO/DSD Number Indic",
+      "apiName": "cfs_ob__PO_Number__c",
+      "backendName": "cfs_ob__PO_Number__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "AR_FIELDS",
+      "row": 4,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": 40,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "TAX_NUMBER_1",
+      "label": "Tax Number 1",
+      "apiName": "cfs_ob__u_TaxJurisdiction__c",
+      "backendName": "cfs_ob__u_TaxJurisdiction__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.controlData.taxNumber1",
+      "type": "text",
+      "section": "AR_FIELDS",
+      "row": 5,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter Tax Number 1",
+      "triggersLmsPublish": false,
+      "maxlength": 11
+    },
+    {
+      "configKey": "TAX_NUMBER_2",
+      "label": "Tax Number 2",
+      "apiName": "cfs_ob__Tax_Jurisdiction_2__c",
+      "backendName": "cfs_ob__Tax_Jurisdiction_2__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.controlData.taxNumber2",
+      "type": "text",
+      "section": "AR_FIELDS",
+      "row": 5,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "payer",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter Tax Number 2",
+      "triggersLmsPublish": false,
+      "maxlength": 10
+    },
+    {
+      "configKey": "DUNNING_BLOCK",
+      "label": "Dunning Block",
+      "apiName": "cfs_ob__u_Mirror__c",
+      "backendName": "cfs_ob__u_Mirror__c",
+      "apiCompareKey": null,
+      "sapPath": "generalData.customerDunning.dunningBlock",
+      "type": "combobox",
+      "section": "AR_FIELDS",
+      "row": 5,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "both",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select an option",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "DUNS_NUMBER",
+      "label": "DUNS Number",
+      "apiName": "cfs_ob__u_DUNSNumber__c",
+      "backendName": "cfs_ob__u_DUNSNumber__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "AR_FIELDS",
+      "row": 4,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter DUNS Number...",
+      "triggersLmsPublish": false,
+      "maxlength": 20,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "DEX_COMM_ID",
+      "label": "DEX Comm ID",
+      "apiName": "cfs_ob__u_DEXCommID__c",
+      "backendName": "cfs_ob__u_DEXCommID__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "AR_FIELDS",
+      "row": 4,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter DEX Comm ID...",
+      "triggersLmsPublish": false,
+      "maxlength": 20,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "DEX_VERSION",
+      "label": "DEX Version",
+      "apiName": "cfs_ob__u_DEXVersion__c",
+      "backendName": "cfs_ob__u_DEXVersion__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "AR_FIELDS",
+      "row": 4,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter DEX Version...",
+      "triggersLmsPublish": false,
+      "maxlength": 10,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "DEX_EMPTY",
+      "label": "DEX Empty",
+      "apiName": "cfs_ob__u_DEXEmpty__c",
+      "backendName": "cfs_ob__u_DEXEmpty__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "AR_FIELDS",
+      "row": 5,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter DEX Empty...",
+      "triggersLmsPublish": false,
+      "maxlength": 10,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "STORE_STAMP_FLAG",
+      "label": "Store Stamp Flag",
+      "apiName": "cfs_ob__u_StoreStampSign__c",
+      "backendName": "cfs_ob__u_StoreStampSign__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "AR_FIELDS",
+      "row": 5,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter Store Stamp Flag...",
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "DSD_BARCODE_FLAG",
+      "label": "DSD Barcode Flag",
+      "apiName": "cfs_ob__DSDBarcode__c",
+      "backendName": "cfs_ob__DSDBarcode__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "AR_FIELDS",
+      "row": 5,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter DSD Barcode Flag...",
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "ACN_NUMBER",
+      "label": "ACN Number",
+      "apiName": "cfs_ob__ACNNumber__c",
+      "backendName": "cfs_ob__ACNNumber__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "AR_FIELDS",
+      "row": 5,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "non-payer",
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter ACN Number...",
+      "triggersLmsPublish": false,
+      "maxlength": 35,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      }
+    },
+    {
+      "configKey": "TOLERANCE_GROUP",
+      "label": "Tolerance Group",
+      "apiName": "cfs_ob__Tolerance_Group__c",
+      "backendName": "cfs_ob__Tolerance_Group__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "AR_FIELDS",
+      "row": 6,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "both",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select an option",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "PAYMENT_METHOD",
+      "label": "Payment Method",
+      "apiName": "cfs_ob__Payment_Method__c",
+      "backendName": "cfs_ob__u_PaymentMethod__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "AR_FIELDS",
+      "row": 6,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "both",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select an option",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "SELECTION_RULE",
+      "label": "Selection Rule",
+      "apiName": "cfs_ob__Selection_Rule__c",
+      "backendName": "cfs_ob__Selection_Rule__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "AR_FIELDS",
+      "row": 6,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "both",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select an option",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "ALTERNATE_PAYER",
+      "label": "Alternate Payer",
+      "apiName": "cfs_ob__u_UsePreExistingPayer__c",
+      "backendName": "cfs_ob__u_UsePreExistingPayer__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "AR_FIELDS",
+      "row": 7,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": "both",
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "required": [],
+      "placeholder": "Search for alternate payer...",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    }
+  ],
+  "bottlerVisibilitySummary": {
+    "4600": [
+      "ELIGIBILITY_INDICATOR",
+      "PAYMENT_OPTIONS",
+      "TERMS_OF_PAYMENT",
+      "ACCOUNTING_CLERK",
+      "ACCOUNT_STATEMENT",
+      "DEFAULT_COMM_METHOD",
+      "TAX_STATUS",
+      "DUNNING_PROCEDURE",
+      "CONTRACT_CUSTOMER",
+      "EDI_INBOUND",
+      "EDI_OUTBOUND",
+      "EDI_VENDOR_NUMBER",
+      "PO_NUMBER",
+      "DUNS_NUMBER",
+      "DEX_COMM_ID",
+      "DEX_VERSION",
+      "DEX_EMPTY",
+      "STORE_STAMP_FLAG",
+      "DSD_BARCODE_FLAG",
+      "ACN_NUMBER"
+    ],
+    "4900": [
+      "ELIGIBILITY_INDICATOR",
+      "PAYMENT_OPTIONS",
+      "TERMS_OF_PAYMENT",
+      "ACCOUNTING_CLERK",
+      "ACCOUNT_STATEMENT",
+      "DEFAULT_COMM_METHOD",
+      "DUNNING_PROCEDURE",
+      "EDI_INBOUND",
+      "EDI_OUTBOUND",
+      "EDI_VENDOR_NUMBER",
+      "PO_REQUIRED",
+      "PO_NUMBER",
+      "DUNS_NUMBER",
+      "DEX_COMM_ID",
+      "DEX_VERSION",
+      "DEX_EMPTY",
+      "STORE_STAMP_FLAG",
+      "DSD_BARCODE_FLAG"
+    ],
+    "5000": [
+      "ELIGIBILITY_INDICATOR",
+      "PAYMENT_OPTIONS",
+      "TERMS_OF_PAYMENT",
+      "ACCOUNTING_CLERK",
+      "ACCOUNT_STATEMENT",
+      "DEFAULT_COMM_METHOD",
+      "TAX_STATUS",
+      "TAX_REASON",
+      "DUNNING_PROCEDURE",
+      "EDI_INBOUND",
+      "EDI_OUTBOUND",
+      "PO_REQUIRED",
+      "PO_NUMBER",
+      "TAX_NUMBER_1",
+      "TAX_NUMBER_2",
+      "DUNNING_BLOCK",
+      "TOLERANCE_GROUP",
+      "PAYMENT_METHOD",
+      "SELECTION_RULE",
+      "ALTERNATE_PAYER"
+    ]
+  }
+}

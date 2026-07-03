@@ -17,10 +17,24 @@ class ExecutionStepResponse(BaseModel):
     status: str
     screenshot_path: str | None
     error: str | None
+    action_params: dict | None = None
+    notes: str | None = None
     started_at: datetime | None
     finished_at: datetime | None
 
     model_config = {"from_attributes": True}
+
+
+class ExecutionRerunRequest(BaseModel):
+    from_step_seq: int | None = None
+
+
+class StepParamsUpdate(BaseModel):
+    params: dict = Field(default_factory=dict)
+
+
+class StepNotesUpdate(BaseModel):
+    notes: str | None = None
 
 
 class ExecutionResponse(BaseModel):

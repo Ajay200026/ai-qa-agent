@@ -6,7 +6,14 @@ from sqlalchemy import inspect
 from app.core.deps import CurrentUser, DbSession
 from app.core.exceptions import AppException
 from app.events.manager import event_manager
-from app.schemas.execution import ExecutionCreate, ExecutionResponse, ExecutionStepResponse
+from app.schemas.execution import (
+    ExecutionCreate,
+    ExecutionRerunRequest,
+    ExecutionResponse,
+    ExecutionStepResponse,
+    StepNotesUpdate,
+    StepParamsUpdate,
+)
 from app.services.execution_service import ExecutionService, schedule_execution_run
 
 router = APIRouter()
@@ -69,13 +76,51 @@ async def rerun_execution(
     execution_id: UUID,
     db: DbSession,
     current_user: CurrentUser,
+    payload: ExecutionRerunRequest | None = None,
 ):
     service = ExecutionService(db)
     try:
-        execution = await service.rerun_execution(execution_id)
+        execution = await service.rerun_execution(
+            execution_id,
+            from_step_seq=payload.from_step_seq if payload else None,
+        )
         await db.commit()
         schedule_execution_run(execution.id)
         return _to_response(execution)
+    except AppException as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message) from exc
+
+
+@router.patch("/{execution_id}/steps/{seq}", response_model=ExecutionStepResponse)
+async def patch_execution_step(
+    execution_id: UUID,
+    seq: int,
+    payload: StepParamsUpdate,
+    db: DbSession,
+    current_user: CurrentUser,
+):
+    service = ExecutionService(db)
+    try:
+        step = await service.update_step_params(execution_id, seq, payload.params)
+        await db.commit()
+        return ExecutionStepResponse.model_validate(step)
+    except AppException as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message) from exc
+
+
+@router.put("/{execution_id}/steps/{seq}/notes", response_model=ExecutionStepResponse)
+async def put_execution_step_notes(
+    execution_id: UUID,
+    seq: int,
+    payload: StepNotesUpdate,
+    db: DbSession,
+    current_user: CurrentUser,
+):
+    service = ExecutionService(db)
+    try:
+        step = await service.update_step_notes(execution_id, seq, payload.notes)
+        await db.commit()
+        return ExecutionStepResponse.model_validate(step)
     except AppException as exc:
         raise HTTPException(status_code=exc.status_code, detail=exc.message) from exc
 
@@ -98,12 +143,38 @@ async def list_failed_executions(db: DbSession, current_user: CurrentUser, limit
     return results
 
 
+@router.delete("/failed", status_code=200)
+async def clear_failed_executions(db: DbSession, current_user: CurrentUser):
+    service = ExecutionService(db)
+    deleted = await service.clear_failed_executions()
+    await db.commit()
+    return {"deleted": deleted}
+
+
+@router.delete("/history", status_code=200)
+async def clear_execution_history(db: DbSession, current_user: CurrentUser):
+    service = ExecutionService(db)
+    deleted = await service.clear_execution_history()
+    await db.commit()
+    return {"deleted": deleted}
+
+
 @router.get("/{execution_id}", response_model=ExecutionResponse)
 async def get_execution(execution_id: UUID, db: DbSession, current_user: CurrentUser):
     service = ExecutionService(db)
     try:
         execution = await service.get_execution(execution_id)
         return _to_response(execution)
+    except AppException as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message) from exc
+
+
+@router.delete("/{execution_id}", status_code=204)
+async def delete_execution(execution_id: UUID, db: DbSession, current_user: CurrentUser):
+    service = ExecutionService(db)
+    try:
+        await service.delete_execution(execution_id)
+        await db.commit()
     except AppException as exc:
         raise HTTPException(status_code=exc.status_code, detail=exc.message) from exc
 

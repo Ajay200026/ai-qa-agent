@@ -1,0 +1,760 @@
+{
+  "sourceFile": "force-app/main/default/lwc/Northeast Modules/lwc/Data Change/lwc/conaDatachangePricing/conaDatachangePricingFieldConfigs.js",
+  "bottlerCodes": {
+    "4600": "Reyes",
+    "4900": "Abarta",
+    "5000": "Northeast"
+  },
+  "sectionConfigs": {
+    "PRICING_FORM": {
+      "label": null,
+      "icon": null,
+      "iconVariant": null
+    }
+  },
+  "pricingFields": [
+    {
+      "configKey": "BUSINESS_TYPE",
+      "label": "Business Type",
+      "apiName": "cfs_ob__u_BusinessType__c",
+      "backendName": "cfs_ob__u_BusinessType__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "PRICING_FORM",
+      "row": 1,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Select Business Type",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "BUSINESS_TYPE_EXTENSION",
+      "label": "Business Type Extension",
+      "apiName": "cfs_ob__u_BusinessTypeExtension__c",
+      "backendName": "cfs_ob__u_BusinessTypeExtension__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "PRICING_FORM",
+      "row": 1,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Select Business Type Extension",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "SALES_GROUP",
+      "label": "Sales Group",
+      "apiName": "cfs_ob__u_SalesGroup__c",
+      "backendName": "cfs_ob__u_SalesGroup__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "PRICING_FORM",
+      "row": 1,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "placeholder": "Select Sales Group",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "TRADE_CHANNEL",
+      "label": "Trade Channel",
+      "apiName": "cfs_ob__Trade_Channel__c",
+      "backendName": "cfs_ob__Trade_Channel__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PRICING_FORM",
+      "row": {
+        "4900": 2,
+        "5000": 1,
+        "default": 1
+      },
+      "order": {
+        "4900": 2,
+        "5000": 4,
+        "default": 4
+      },
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "placeholder": "Select Trade Channel",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "SUBTRADE_CHANNEL",
+      "label": "Customer SubTrade Channel",
+      "apiName": "cfs_ob__Subtrade_Channel_Name_Full__c",
+      "backendName": "cfs_ob__u_SubtradeChannel__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PRICING_FORM",
+      "row": {
+        "4900": 2,
+        "5000": 1,
+        "default": 1
+      },
+      "order": {
+        "4900": 1,
+        "5000": 5,
+        "default": 4
+      },
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "placeholder": "Select SubTrade Channel...",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "TRADE_NAME",
+      "label": "Trade Name",
+      "apiName": "cfs_ob__u_TradeNameFull__c",
+      "backendName": "cfs_ob__u_TradeName__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PRICING_FORM",
+      "row": {
+        "4900": 1,
+        "5000": 1,
+        "default": 1
+      },
+      "order": {
+        "4900": 7,
+        "5000": 6,
+        "default": 6
+      },
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "placeholder": "Select Trade Name",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "MANAGED_BY",
+      "label": "Managed By",
+      "apiName": "cfs_ob__u_ManagedBy__c",
+      "backendName": "cfs_ob__u_ManagedBy__c",
+      "apiCompareKey": "cfs_ob__u_ManagedBy__c",
+      "sapPath": "conaCustomData.general.managedBy",
+      "type": "search",
+      "section": "PRICING_FORM",
+      "row": 2,
+      "order": 0,
+      "size": 6,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Search Managed By",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "SECONDARY_GROUP",
+      "label": "Secondary Group",
+      "apiName": "cfs_ob__Secondary_Group_Name_Full__c",
+      "backendName": "cfs_ob__u_SecondaryGroup__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PRICING_FORM",
+      "row": {
+        "4900": 1,
+        "5000": 2,
+        "default": 2
+      },
+      "order": {
+        "4900": 4,
+        "5000": 2,
+        "default": 2
+      },
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Select Secondary Group",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "GLOBAL_CUSTOMER",
+      "label": "Global Customer",
+      "apiName": "cfs_ob__Global_Customer__c",
+      "backendName": "cfs_ob__Global_Customer__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "PRICING_FORM",
+      "row": 3,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter Global Customer",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "OVERARCHING_GROUP",
+      "label": "Overarching Group",
+      "apiName": "cfs_ob__Overarching_Group__c",
+      "backendName": "cfs_ob__Overarching_Group__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PRICING_FORM",
+      "row": 2,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select Overarching Group",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "ON_OFF_PROMOTION_GROUP",
+      "label": "On/Off Promotion Group",
+      "apiName": "cfs_ob__On_Off_Promotion_Full_Name__c",
+      "backendName": "cfs_ob__u_OnOffPromotionGroup__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PRICING_FORM",
+      "row": 2,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select On/Off Promotion Group",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "PRIMARY_FRANCHISE_GROUP",
+      "label": "Primary Franchise Group",
+      "apiName": "cfs_ob__Primary_Franchise_Group__c",
+      "backendName": "cfs_ob__Primary_Franchise_Group__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PRICING_FORM",
+      "row": {
+        "4900": 2,
+        "5000": 3,
+        "default": 3
+      },
+      "order": {
+        "4900": 4,
+        "5000": 1,
+        "default": 1
+      },
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select Primary Franchise Group",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "CHAIN_CODE",
+      "label": "Secondary Franchise Agreement",
+      "apiName": "cfs_ob__Chain_Code__c",
+      "backendName": "cfs_ob__Chain_Code__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PRICING_FORM",
+      "row": {
+        "4900": 2,
+        "5000": 3,
+        "default": 3
+      },
+      "order": {
+        "4900": 2,
+        "5000": 2,
+        "default": 2
+      },
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select Secondary Franchise Agreement Group",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "INVOICE_PRINT_OPTION",
+      "label": "Invoice Print Option",
+      "apiName": "cfs_ob__Invoice_Print_Option__c",
+      "backendName": "cfs_ob__Invoice_Print_Option__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "PRICING_FORM",
+      "row": 4,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "placeholder": "Select Invoice Print Option",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    },
+    {
+      "configKey": "AML",
+      "label": "Authorized Material List",
+      "apiName": "cfs_ob__AML__c",
+      "backendName": "cfs_ob__AML__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "search",
+      "section": "PRICING_FORM",
+      "row": {
+        "4900": 2,
+        "5000": 4,
+        "default": 4
+      },
+      "order": {
+        "4900": 4,
+        "5000": 2,
+        "default": 2
+      },
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "placeholder": "Select Authorized Material List",
+      "triggersLmsPublish": false,
+      "maxlength": null
+    }
+  ],
+  "bottlerVisibilitySummary": {
+    "4600": [
+      "BUSINESS_TYPE",
+      "BUSINESS_TYPE_EXTENSION",
+      "SUBTRADE_CHANNEL",
+      "TRADE_NAME",
+      "MANAGED_BY",
+      "SECONDARY_GROUP",
+      "GLOBAL_CUSTOMER",
+      "OVERARCHING_GROUP",
+      "ON_OFF_PROMOTION_GROUP",
+      "PRIMARY_FRANCHISE_GROUP",
+      "CHAIN_CODE",
+      "INVOICE_PRINT_OPTION",
+      "AML"
+    ],
+    "4900": [
+      "BUSINESS_TYPE",
+      "BUSINESS_TYPE_EXTENSION",
+      "SALES_GROUP",
+      "TRADE_CHANNEL",
+      "SUBTRADE_CHANNEL",
+      "TRADE_NAME",
+      "SECONDARY_GROUP",
+      "OVERARCHING_GROUP",
+      "PRIMARY_FRANCHISE_GROUP",
+      "CHAIN_CODE",
+      "AML"
+    ],
+    "5000": [
+      "SALES_GROUP",
+      "TRADE_CHANNEL",
+      "SUBTRADE_CHANNEL",
+      "TRADE_NAME",
+      "MANAGED_BY",
+      "SECONDARY_GROUP",
+      "OVERARCHING_GROUP",
+      "ON_OFF_PROMOTION_GROUP",
+      "PRIMARY_FRANCHISE_GROUP",
+      "CHAIN_CODE",
+      "INVOICE_PRINT_OPTION",
+      "AML"
+    ]
+  },
+  "pricingChangeFieldsConfig": {
+    "4600": [
+      "cfs_ob__u_BusinessType__c",
+      "cfs_ob__u_BusinessTypeExtension__c",
+      "cfs_ob__u_SalesGroup__c",
+      "cfs_ob__Invoice_Print_Option__c",
+      "cfs_ob__Trade_Channel__c",
+      "cfs_ob__Subtrade_Channel_Name_Full__c",
+      "cfs_ob__u_TradeNameFull__c",
+      "cfs_ob__u_ManagedBy__c",
+      "cfs_ob__Secondary_Group_Name_Full__c",
+      "cfs_ob__Overarching_Group__c",
+      "cfs_ob__Primary_Franchise_Group__c",
+      "cfs_ob__Chain_Code__c",
+      "cfs_ob__On_Off_Promotion_Full_Name__c",
+      "cfs_ob__AML__c"
+    ],
+    "4900": [
+      "cfs_ob__u_BusinessType__c",
+      "cfs_ob__u_BusinessTypeExtension__c",
+      "cfs_ob__u_SalesGroup__c",
+      "cfs_ob__Trade_Channel__c",
+      "cfs_ob__Subtrade_Channel_Name_Full__c",
+      "cfs_ob__u_TradeNameFull__c",
+      "cfs_ob__Secondary_Group_Name_Full__c",
+      "cfs_ob__Overarching_Group__c",
+      "cfs_ob__Primary_Franchise_Group__c",
+      "cfs_ob__Chain_Code__c",
+      "cfs_ob__AML__c"
+    ],
+    "5000": [
+      "cfs_ob__u_BusinessType__c",
+      "cfs_ob__u_BusinessTypeExtension__c",
+      "cfs_ob__u_SalesGroup__c",
+      "cfs_ob__Invoice_Print_Option__c",
+      "cfs_ob__Trade_Channel__c",
+      "cfs_ob__Subtrade_Channel_Name_Full__c",
+      "cfs_ob__u_TradeNameFull__c",
+      "cfs_ob__u_ManagedBy__c",
+      "cfs_ob__Secondary_Group_Name_Full__c",
+      "cfs_ob__Overarching_Group__c",
+      "cfs_ob__Primary_Franchise_Group__c",
+      "cfs_ob__Chain_Code__c",
+      "cfs_ob__On_Off_Promotion_Full_Name__c",
+      "cfs_ob__AML__c"
+    ]
+  },
+  "businessTypeFieldRequirements": {
+    "DSD": {
+      "cfs_ob__u_SalesGroup__c": true,
+      "cfs_ob__Trade_Channel__c": true,
+      "cfs_ob__Subtrade_Channel_Name_Full__c": true,
+      "cfs_ob__u_TradeNameFull__c": true,
+      "cfs_ob__Secondary_Group_Name_Full__c": "Optional*",
+      "cfs_ob__Overarching_Group__c": false,
+      "cfs_ob__On_Off_Promotion_Full_Name__c": false,
+      "cfs_ob__Primary_Franchise_Group__c": false,
+      "cfs_ob__Chain_Code__c": false,
+      "cfs_ob__Invoice_Print_Option__c": "Required*",
+      "cfs_ob__AML__c": true
+    },
+    "Secondary": {
+      "cfs_ob__u_SalesGroup__c": true,
+      "cfs_ob__Trade_Channel__c": true,
+      "cfs_ob__Subtrade_Channel_Name_Full__c": true,
+      "cfs_ob__u_TradeNameFull__c": "Default 99999",
+      "cfs_ob__Secondary_Group_Name_Full__c": "Default A9999",
+      "cfs_ob__Overarching_Group__c": false,
+      "cfs_ob__On_Off_Promotion_Full_Name__c": false,
+      "cfs_ob__Primary_Franchise_Group__c": false,
+      "cfs_ob__Chain_Code__c": false,
+      "cfs_ob__Invoice_Print_Option__c": "Default to C",
+      "cfs_ob__AML__c": "Default SERVICE_ONLY"
+    }
+  },
+  "zfsv4600PricingVisibleFieldNames": [
+    "cfs_ob__u_BusinessType__c",
+    "cfs_ob__u_BusinessTypeExtension__c",
+    "cfs_ob__u_TradeNameFull__c",
+    "cfs_ob__Subtrade_Channel_Name_Full__c",
+    "cfs_ob__Primary_Franchise_Group__c",
+    "cfs_ob__u_ManagedBy__c",
+    "cfs_ob__Global_Customer__c",
+    "cfs_ob__Secondary_Group_Name_Full__c",
+    "cfs_ob__AML__c"
+  ],
+  "zfsv4600PricingDisabledFieldNames": [
+    "cfs_ob__u_BusinessType__c",
+    "cfs_ob__u_BusinessTypeExtension__c",
+    "cfs_ob__AML__c",
+    "cfs_ob__Global_Customer__c",
+    "cfs_ob__Primary_Franchise_Group__c"
+  ],
+  "zfsv4900PricingDisabledFieldNames": [
+    "cfs_ob__u_BusinessType__c",
+    "cfs_ob__u_BusinessTypeExtension__c",
+    "cfs_ob__u_SalesGroup__c"
+  ],
+  "zfsv4900DefaultValues": {
+    "cfs_ob__u_BusinessType__c": "04",
+    "cfs_ob__u_BusinessTypeExtension__c": "L",
+    "cfs_ob__u_SalesGroup__c": "FULL SERVICE - Q03"
+  },
+  "fieldOptionsMap": {
+    "cfs_ob__u_BusinessType__c": "businessTypeOptions",
+    "cfs_ob__u_BusinessTypeExtension__c": "businessTypeExtensionOptions",
+    "cfs_ob__u_SalesGroup__c": "salesGroupOptions",
+    "cfs_ob__Invoice_Print_Option__c": "invoicePrintOptionOptions",
+    "cfs_ob__Trade_Channel__c": "tradeChannelOptions",
+    "cfs_ob__Subtrade_Channel_Name_Full__c": "subtradeOptions",
+    "cfs_ob__u_TradeNameFull__c": "tradeNameOptions",
+    "cfs_ob__Primary_Group_Name_Full__c": "primaryGroupOptions",
+    "cfs_ob__Secondary_Group_Name_Full__c": "secondaryGroupOptions",
+    "cfs_ob__Overarching_Group__c": "overarchingGroupOptions",
+    "cfs_ob__On_Off_Promotion_Full_Name__c": "promotionOptions",
+    "cfs_ob__Primary_Franchise_Group__c": "primaryFranchiseGroupOptions",
+    "cfs_ob__Chain_Code__c": "chainCodeOptions",
+    "cfs_ob__AML__c": "amlOptions"
+  }
+}

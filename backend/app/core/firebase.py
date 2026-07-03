@@ -12,6 +12,17 @@ def verify_firebase_token(token: str) -> dict:
     """Verify a Firebase ID token using Google's public keys (no service account required)."""
     settings = get_settings()
     request = google_requests.Request()
-    decoded = id_token.verify_firebase_token(token, request, audience=settings.firebase_project_id)
+    try:
+        decoded = id_token.verify_firebase_token(
+            token,
+            request,
+            audience=settings.firebase_project_id,
+            clock_skew_in_seconds=settings.firebase_token_clock_skew_seconds,
+        )
+    except ValueError as exc:
+        msg = str(exc).lower()
+        if "expired" in msg:
+            raise ValueError("Token expired") from exc
+        raise
     logger.debug("Verified Firebase token for uid=%s", decoded.get("sub") or decoded.get("user_id"))
     return decoded

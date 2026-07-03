@@ -1,0 +1,548 @@
+{
+  "sourceFile": "force-app/main/default/lwc/Northeast Modules/lwc/Data Change/lwc/conaDatachangeContacts/conaDatachangeContactsFieldConfigs.js",
+  "bottlerCodes": {
+    "4600": "Reyes",
+    "4900": "Abarta",
+    "5000": "Northeast"
+  },
+  "sectionConfigs": {
+    "CONTACTS_HEADER_FIELDS": {
+      "label": null,
+      "icon": null,
+      "iconVariant": null
+    },
+    "CUSTOMER_CONTACTS_FORM": {
+      "label": null,
+      "icon": null,
+      "iconVariant": null
+    },
+    "PAYER_CONTACTS_FORM": {
+      "label": null,
+      "icon": null,
+      "iconVariant": null
+    }
+  },
+  "contactsFields": [
+    {
+      "configKey": "COPY_OF_INVOICE_EMAILED",
+      "label": "Does the customer want a Copy of the Invoice Emailed?",
+      "apiName": "cfs_ob__CopyOfInvoiceEmailed__c",
+      "backendName": "cfs_ob__CopyOfInvoiceEmailed__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "toggle",
+      "section": "CONTACTS_HEADER_FIELDS",
+      "row": 1,
+      "order": 1,
+      "size": 12,
+      "disabled": false,
+      "payerMode": "both",
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      },
+      "payerModeByBottler": {
+        "4600": "non-payer"
+      },
+      "configSource": "HEADER"
+    },
+    {
+      "configKey": "FIRST_NAME",
+      "label": "First Name",
+      "apiName": "FirstName",
+      "backendName": "FirstName",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "CUSTOMER_CONTACTS_FORM",
+      "row": 1,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Enter first name",
+      "triggersLmsPublish": false,
+      "maxlength": 35,
+      "configSource": "CONTACTS"
+    },
+    {
+      "configKey": "LAST_NAME",
+      "label": "Last Name",
+      "apiName": "LastName",
+      "backendName": "LastName",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "CUSTOMER_CONTACTS_FORM",
+      "row": 1,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Enter last name",
+      "triggersLmsPublish": false,
+      "maxlength": 35,
+      "configSource": "CONTACTS"
+    },
+    {
+      "configKey": "PHONE",
+      "label": "Telephone",
+      "apiName": "Phone",
+      "backendName": "Phone",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "tel",
+      "section": "CUSTOMER_CONTACTS_FORM",
+      "row": 1,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "XXX-XXX-XXXX",
+      "triggersLmsPublish": false,
+      "maxlength": 16,
+      "configSource": "CONTACTS"
+    },
+    {
+      "configKey": "EMAIL",
+      "label": "Email",
+      "apiName": "Email",
+      "backendName": "Email",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "email",
+      "section": "CUSTOMER_CONTACTS_FORM",
+      "row": 1,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter email address",
+      "triggersLmsPublish": false,
+      "maxlength": 50,
+      "configSource": "CONTACTS"
+    },
+    {
+      "configKey": "FUNCTION",
+      "label": "Function",
+      "apiName": "cfs_ob__u_ContactFunction__c",
+      "backendName": "cfs_ob__u_ContactFunction__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "CUSTOMER_CONTACTS_FORM",
+      "row": 2,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Select function",
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "configSource": "CONTACTS"
+    },
+    {
+      "configKey": "DEPARTMENT",
+      "label": "Department",
+      "apiName": "cfs_ob__Department_List__c",
+      "backendName": "cfs_ob__Department_List__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "CUSTOMER_CONTACTS_FORM",
+      "row": 2,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select department",
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "configSource": "CONTACTS"
+    },
+    {
+      "configKey": "PAYER_FIRST_NAME",
+      "label": "First Name",
+      "apiName": "FirstName",
+      "backendName": "FirstName",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "PAYER_CONTACTS_FORM",
+      "row": 1,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Enter first name",
+      "triggersLmsPublish": false,
+      "maxlength": 35,
+      "configSource": "CONTACTS"
+    },
+    {
+      "configKey": "PAYER_LAST_NAME",
+      "label": "Last Name",
+      "apiName": "LastName",
+      "backendName": "LastName",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "text",
+      "section": "PAYER_CONTACTS_FORM",
+      "row": 1,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Enter last name",
+      "triggersLmsPublish": false,
+      "maxlength": 35,
+      "configSource": "CONTACTS"
+    },
+    {
+      "configKey": "PAYER_PHONE",
+      "label": "Telephone",
+      "apiName": "Phone",
+      "backendName": "Phone",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "tel",
+      "section": "PAYER_CONTACTS_FORM",
+      "row": 1,
+      "order": 3,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "XXX-XXX-XXXX",
+      "triggersLmsPublish": false,
+      "maxlength": 16,
+      "configSource": "CONTACTS"
+    },
+    {
+      "configKey": "PAYER_EMAIL",
+      "label": "Email",
+      "apiName": "Email",
+      "backendName": "Email",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "email",
+      "section": "PAYER_CONTACTS_FORM",
+      "row": 1,
+      "order": 4,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Enter email address",
+      "triggersLmsPublish": false,
+      "maxlength": 50,
+      "configSource": "CONTACTS"
+    },
+    {
+      "configKey": "PAYER_FUNCTION",
+      "label": "Function",
+      "apiName": "cfs_ob__u_ContactFunction__c",
+      "backendName": "cfs_ob__u_ContactFunction__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "PAYER_CONTACTS_FORM",
+      "row": 2,
+      "order": 1,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "placeholder": "Select function",
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "configSource": "CONTACTS"
+    },
+    {
+      "configKey": "PAYER_DEPARTMENT",
+      "label": "Department",
+      "apiName": "cfs_ob__Department_List__c",
+      "backendName": "cfs_ob__Department_List__c",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "combobox",
+      "section": "PAYER_CONTACTS_FORM",
+      "row": 2,
+      "order": 2,
+      "size": 3,
+      "disabled": false,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": "Select department",
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "configSource": "CONTACTS"
+    }
+  ],
+  "bottlerVisibilitySummary": {
+    "4600": [
+      "COPY_OF_INVOICE_EMAILED",
+      "FIRST_NAME",
+      "LAST_NAME",
+      "PHONE",
+      "EMAIL",
+      "FUNCTION",
+      "DEPARTMENT",
+      "PAYER_FIRST_NAME",
+      "PAYER_LAST_NAME",
+      "PAYER_PHONE",
+      "PAYER_EMAIL",
+      "PAYER_FUNCTION",
+      "PAYER_DEPARTMENT"
+    ],
+    "4900": [
+      "FIRST_NAME",
+      "LAST_NAME",
+      "PHONE",
+      "EMAIL",
+      "FUNCTION",
+      "PAYER_FIRST_NAME",
+      "PAYER_LAST_NAME",
+      "PAYER_PHONE",
+      "PAYER_EMAIL",
+      "PAYER_FUNCTION"
+    ],
+    "5000": [
+      "FIRST_NAME",
+      "LAST_NAME",
+      "PHONE",
+      "EMAIL",
+      "FUNCTION",
+      "PAYER_FIRST_NAME",
+      "PAYER_LAST_NAME",
+      "PAYER_PHONE",
+      "PAYER_EMAIL",
+      "PAYER_FUNCTION"
+    ]
+  }
+}

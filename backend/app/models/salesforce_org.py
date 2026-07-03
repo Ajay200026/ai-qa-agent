@@ -2,7 +2,7 @@ import uuid
 from datetime import UTC, datetime
 from enum import StrEnum
 
-from sqlalchemy import DateTime, ForeignKey, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -10,8 +10,10 @@ from app.core.database import Base
 
 
 class OrgType(StrEnum):
-    SCRATCH = "scratch"
+    PRODUCTION = "production"
     SANDBOX = "sandbox"
+    CUSTOM = "custom"
+    SCRATCH = "scratch"
 
 
 class AuthMethod(StrEnum):
@@ -39,6 +41,10 @@ class SalesforceOrg(Base):
     encrypted_credentials: Mapped[str | None] = mapped_column(Text, nullable=True)
     instance_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
     status: Mapped[str] = mapped_column(String(50), default=OrgStatus.DISCONNECTED)
+    role: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    bottler: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    is_default: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    salesforce_username: Mapped[str | None] = mapped_column(String(255), nullable=True)
     last_validated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC)

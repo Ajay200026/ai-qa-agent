@@ -1,8 +1,13 @@
 import logging
+import re
+from urllib.parse import quote
 
 from app.automation.pages.base_page import BasePage
 
 logger = logging.getLogger(__name__)
+
+_LIGHTNING_URL = re.compile(r"lightning\.force\.com|\.salesforce\.com", re.IGNORECASE)
+_LOGIN_HOST = re.compile(r"(login|test)\.salesforce\.com", re.IGNORECASE)
 
 
 class LoginPage(BasePage):
@@ -74,18 +79,56 @@ class LoginPage(BasePage):
             await self.screenshot("login_blocker")
             raise RuntimeError(blocker)
 
-        await self.wait_for_lightning_ready(timeout=90000)
+        await self.wait_for_lightning_ready(timeout=45_000)
         logger.info("Logged in as %s — URL: %s", username, self.page.url)
 
     async def login_with_oauth(self, instance_url: str, access_token: str) -> None:
-        frontdoor_url = f"{instance_url.rstrip('/')}/secur/frontdoor.jsp?sid={access_token}"
-        await self.page.goto(frontdoor_url, wait_until="domcontentloaded", timeout=60000)
-        await self.wait_for_lightning_ready(timeout=90000)
-        logger.info("OAuth session injected via frontdoor.jsp")
+        base = instance_url.rstrip("/")
+        frontdoor_url = (
+            f"{base}/secur/frontdoor.jsp"
+            f"?sid={quote(access_token, safe='')}"
+            f"&retURL={quote('/lightning/page/home')}"
+        )
+        await self.page.goto(frontdoor_url, wait_until="domcontentloaded", timeout=60_000)
+        await self.page.wait_for_timeout(800)
+
+        on_login_form = (
+            await self.page.locator("#username").count() > 0
+            or await self.page.locator('input[name="username"]').count() > 0
+        )
+        login_required = await self.page.locator("text=you have to log in").count() > 0
+        if on_login_form or login_required:
+            await self.screenshot("oauth_frontdoor_failed")
+            raise RuntimeError(
+                "OAuth session could not open Salesforce in the browser. "
+                "Re-authorize the org (Authorize via Web) to grant UI access, "
+                "or use Username & Password on the Salesforce Orgs page."
+            )
+
+        blocker = await self._detect_login_blocker()
+        if blocker:
+            await self.screenshot("login_blocker")
+            raise RuntimeError(blocker)
+
+        await self.wait_for_lightning_ready(timeout=30_000)
+        logger.info("OAuth session injected via frontdoor.jsp — URL: %s", self.page.url)
 
     async def is_logged_in(self) -> bool:
+        url = self.page.url or ""
+        if not url or url == "about:blank":
+            return False
+        if _LOGIN_HOST.search(url) and "secur/frontdoor" not in url.lower():
+            try:
+                if await self.page.locator("#username, input[name='username']").first.is_visible(
+                    timeout=1500
+                ):
+                    return False
+            except Exception:
+                pass
+        if not _LIGHTNING_URL.search(url):
+            return False
         try:
-            await self.wait_for_lightning_ready(timeout=15000)
+            await self.wait_for_lightning_ready(timeout=8000)
             return True
         except Exception:
-            return False
+            return "/lightning/" in url.lower()

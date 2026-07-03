@@ -17,6 +17,7 @@ from app.automation.combobox import (
 )
 from app.automation.picklist_interaction import click_field_control, open_picklist, pick_option
 from app.automation.scope import PageOrFrame, all_scopes, find_visible_in_scopes
+from app.knowledge.data_change_field_registry import get_field_by_label, resolve_automation_type
 
 logger = logging.getLogger(__name__)
 
@@ -123,6 +124,11 @@ class SmartFieldResolver:
         return builder
 
     async def resolve(self, field_name: str, hint_type: str | None = None) -> ResolvedField:
+        registry_hint = resolve_automation_type(field_name, hint_type or "combobox")
+        hint_type = registry_hint
+        meta = get_field_by_label(field_name)
+        if meta and meta.label and meta.label != field_name:
+            field_name = meta.label
         if self._repo:
             cached = await self._repo.get_field_registry(self.template_key, field_name)
             if cached and cached.locator_hints:
@@ -343,6 +349,13 @@ class FieldActions:
         return selected
 
     async def set_lookup(self, resolved: ResolvedField, value: str | None) -> str:
+        if resolved.field_name == "Primary Group":
+            from app.automation.form_field import resolve_form_scope, search_primary_group
+
+            page = self.page
+            scope = await resolve_form_scope(page, "Primary Group")
+            return await search_primary_group(scope, value or "")
+
         scope = self._scope(resolved)
         loc = resolved.locator
         if not loc:
@@ -356,7 +369,10 @@ class FieldActions:
             scope, loc = found
 
         target = await self._click_field_target(scope, loc)
-        if value and not is_auto_pick(value):
+        if is_auto_pick(value):
+            await target.fill("a")
+            await scope.wait_for_timeout(700)
+        elif value:
             await target.fill(value)
             await scope.wait_for_timeout(600)
         await open_picklist(scope, target)

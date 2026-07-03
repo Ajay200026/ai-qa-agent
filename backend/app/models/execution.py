@@ -66,6 +66,8 @@ class ExecutionStep(Base):
     status: Mapped[str] = mapped_column(String(50), default=StepStatus.PENDING)
     screenshot_path: Mapped[str | None] = mapped_column(String(512), nullable=True)
     error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    action_params: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 

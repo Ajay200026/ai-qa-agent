@@ -5,6 +5,7 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from app.agents.state import ExecutionState
 from app.core.llm import get_chat_llm, is_llm_configured
+from app.core.privacy import is_sensitive_scenario
 from app.schemas.parsed_scenario import BusinessAction, ParsedScenario
 from app.workflows.scenario_text_parser import parse_scenario_text
 
@@ -62,6 +63,16 @@ def _default_parsed(state: ExecutionState) -> ParsedScenario:
 
 async def scenario_parser_node(state: ExecutionState) -> dict:
     base = _default_parsed(state)
+
+    if is_sensitive_scenario(state):
+        logger.info(
+            "Skipping LLM scenario parser — sensitive customer_target present (privacy guard)"
+        )
+        return {"parsed_scenario": base}
+
+    if state.get("business_actions") and state.get("template_key"):
+        logger.info("Skipping LLM scenario parser — structured inputs already provided")
+        return {"parsed_scenario": base}
 
     if not is_llm_configured():
         logger.info("Using rule-based scenario parser (no LLM)")

@@ -1,11 +1,13 @@
 import re
 
 from app.schemas.agent import ExecutionPlan, ExecutionPlanStep, PlannedStep
+from app.workflows.action_mapping import expects_request_submission
 from app.workflows.base import DatabaseWorkflowStrategy
 
 # Actions the StepExecutor actually implements.
 EXECUTOR_ACTIONS = frozenset({
     "login",
+    "login_as",
     "open_app_launcher",
     "open_app",
     "open_tab",
@@ -29,6 +31,13 @@ EXECUTOR_ACTIONS = frozenset({
     "validate_expected",
     "set_field",
     "save_draft",
+    "change_business_type",
+    "check_field_editable",
+    "check_field_readonly",
+    "read_toast",
+    "assert_no_toast",
+    "load_customer",
+    "load_customer_by_query",
 })
 
 ACTION_MAP = {
@@ -43,6 +52,12 @@ ACTION_MAP = {
     "click submit": "submit",
     "save draft": "save_draft",
     "validate": "validate_expected",
+    "change business type": "change_business_type",
+    "check field editable": "check_field_editable",
+    "check field readonly": "check_field_readonly",
+    "read toast": "read_toast",
+    "assert no toast": "assert_no_toast",
+    "load customer": "load_customer",
 }
 
 BUSINESS_ACTION_ALIASES = {
@@ -75,8 +90,21 @@ class PlanMerger:
         plan_steps: list[ExecutionPlanStep] = []
         seq = 1
 
+        customer_micro_actions = {
+            "open_customer_search",
+            "enter_customer_number",
+            "wait_for_customer_dropdown",
+            "select_first_customer",
+            "search",
+            "wait_for_data",
+        }
+
         for step_def in self.strategy._template_steps:
+            if step_def.get("optional"):
+                continue
             if not self.strategy._should_include_step(step_def):
+                continue
+            if step_def["action"] in customer_micro_actions:
                 continue
             params = self.strategy._substitute_params(step_def.get("params", {}))
             planned.append(
@@ -96,9 +124,32 @@ class PlanMerger:
             )
             seq += 1
 
+        customer_number = self.strategy._inputs.get("CustomerNumber", "__first__")
+        if customer_number not in ("", None):
+            load_params: dict = {}
+            if customer_number not in ("__first__", "__any__"):
+                load_params["customer_number"] = customer_number
+            planned.append(
+                PlannedStep(
+                    seq=seq,
+                    name="Load customer from search field",
+                    action="load_customer",
+                    params=load_params,
+                )
+            )
+            plan_steps.append(
+                ExecutionPlanStep(
+                    action="load_customer",
+                    description="Load customer from search field",
+                    value=customer_number,
+                )
+            )
+            seq += 1
+
         primary_group_value: str | None = None
         open_details = False
         do_submit = False
+        do_save_draft = False
         saw_primary_group_flow = False
         extra_actions: list[dict] = []
 
@@ -123,8 +174,15 @@ class PlanMerger:
                     primary_group_value = value or "__any__"
             elif action == "submit":
                 do_submit = True
+            elif action == "save_draft":
+                do_save_draft = True
             else:
                 extra_actions.append(action_def)
+
+        if not do_submit and not do_save_draft and any(
+            expects_request_submission(expected) for expected in expected_results
+        ):
+            do_submit = True
 
         for action_def in extra_actions:
             planned.append(

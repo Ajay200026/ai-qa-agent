@@ -117,6 +117,16 @@ async def llm_click_target(
     return None
 
 
+_SENSITIVE_FIELD_LABELS = {
+    "customer name/number",
+    "customer name / number",
+    "customer number",
+    "customer name",
+    "account number",
+    "account name",
+}
+
+
 async def llm_assisted_picklist(
     page,
     field_label: str,
@@ -125,6 +135,12 @@ async def llm_assisted_picklist(
     pick_any: bool,
 ) -> str | None:
     """Single LLM click to open, then deterministic option pick from UI dump."""
+    if (field_label or "").strip().lower() in _SENSITIVE_FIELD_LABELS:
+        logger.info(
+            "Refusing LLM assistance for sensitive field '%s' (privacy guard)",
+            field_label,
+        )
+        return None
     for scope in all_scopes(page):
         coords = await llm_click_target(
             scope,
@@ -139,7 +155,7 @@ async def llm_assisted_picklist(
         elements = await _dump_ui(scope)
         options = [
             e for e in elements
-            if re.search(r"K\d{3}|FSV Recipient", e.get("label", ""), re.I)
+            if _option_matches(e.get("label", ""), value, pick_any)
         ]
         if not options:
             continue
@@ -157,3 +173,17 @@ async def llm_assisted_picklist(
         logger.info("LLM assisted pick %s: %s", field_label, label)
         return label or None
     return None
+
+
+def _option_matches(label: str, value: str | None, pick_any: bool) -> bool:
+    if not label:
+        return False
+    if pick_any or not value:
+        return True
+    val = value.strip().upper()
+    lab = label.upper()
+    if val in lab:
+        return True
+    if re.search(r"[SKQ]\d{3}", val) and re.search(r"[SKQ]\d{3}", lab):
+        return val in lab or lab.split("|")[0].strip().upper().startswith(val[:3])
+    return False

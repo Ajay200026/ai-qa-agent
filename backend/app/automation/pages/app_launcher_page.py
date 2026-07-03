@@ -88,16 +88,19 @@ class AppLauncherPage(BasePage):
         await self._wait_for_launcher_search()
         logger.info("App Launcher opened")
 
-    async def _click_app_in_launcher(self, app_name: str) -> None:
-        app_name = normalize_app_name(app_name)
+    async def _click_item_in_launcher(self, label: str) -> None:
         menu = self._launcher_menu()
         await self.wait_locator_visible(menu, timeout=15_000)
 
+        escaped = re.escape(label.strip())
+        flexible = escaped.replace(r"\ ", r"\s+").replace(r"\|", r"\s*\|\s*")
         candidates = [
-            menu.get_by_role("link", name=app_name, exact=True),
-            menu.get_by_role("option", name=app_name, exact=True),
-            menu.locator(f'a[data-label="{app_name}"]'),
-            menu.get_by_text(app_name, exact=True),
+            menu.get_by_role("link", name=label, exact=True),
+            menu.get_by_role("option", name=label, exact=True),
+            menu.locator(f'a[data-label="{label}"]'),
+            menu.get_by_text(label, exact=True),
+            menu.get_by_role("link", name=re.compile(flexible, re.I)),
+            menu.get_by_text(re.compile(flexible, re.I)),
         ]
         for locator in candidates:
             try:
@@ -105,10 +108,47 @@ class AppLauncherPage(BasePage):
                 return
             except Exception:
                 continue
-        await self.screenshot("app_launcher_app_not_found")
+        await self.screenshot("app_launcher_item_not_found")
         raise RuntimeError(
-            f"Could not find '{app_name}' in App Launcher results. URL: {self.page.url}"
+            f"Could not find '{label}' in App Launcher results. URL: {self.page.url}"
         )
+
+    async def _click_app_in_launcher(self, app_name: str) -> None:
+        await self._click_item_in_launcher(normalize_app_name(app_name))
+
+    async def search_and_open_item(self, item_name: str) -> None:
+        """Search the App Launcher for an app or navigation item (e.g. a list view)."""
+        label = item_name.strip()
+        await self.open()
+        search = await self._wait_for_launcher_search()
+        await search.clear()
+        await search.fill(label)
+        await self.cancellable_sleep(1000)
+        pages_before = len(self.page.context.pages)
+        await self._click_item_in_launcher(label)
+        await self._activate_opened_tab(pages_before)
+
+        try:
+            await self._launcher_menu().wait_for(state="hidden", timeout=5_000)
+        except Exception:
+            logger.debug("App Launcher menu did not close — item may still be loading")
+
+        await self.wait_for_lightning_ready(timeout=SLOW_ORG_TIMEOUT_MS)
+        logger.info("Opened launcher item: %s", label)
+
+    async def _activate_opened_tab(self, pages_before: int) -> None:
+        """Switch to a new browser tab when Salesforce opens navigation in the background."""
+        ctx = self.page.context
+        if len(ctx.pages) <= pages_before:
+            return
+        new_page = ctx.pages[-1]
+        try:
+            await new_page.wait_for_load_state("domcontentloaded", timeout=15_000)
+            await new_page.bring_to_front()
+            self.page = new_page
+            logger.info("App Launcher opened new tab: %s", new_page.url)
+        except Exception as exc:
+            logger.debug("Could not activate new tab after App Launcher: %s", exc)
 
     async def search_and_open_app(self, app_name: str = "Onboarding") -> None:
         app_name = normalize_app_name(app_name)

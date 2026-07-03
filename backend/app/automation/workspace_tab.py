@@ -10,6 +10,18 @@ from app.automation.combobox import PLACEHOLDER_PATTERNS
 logger = logging.getLogger(__name__)
 
 DATA_CHANGE_TAB = re.compile(r"\*?\s*new\s+data\s+change", re.I)
+DATA_CHANGE_URL_MARKERS = ("new_data_change", "cfs_ob__new_data_change", "datachange")
+QUEUE_URL_MARKERS = ("customer_life_cycle", "lifecycle_queue")
+
+
+def _is_data_change_url(url: str | None) -> bool:
+    lower = (url or "").lower()
+    return any(marker in lower for marker in DATA_CHANGE_URL_MARKERS)
+
+
+def _is_queue_url(url: str | None) -> bool:
+    lower = (url or "").lower()
+    return any(marker in lower for marker in QUEUE_URL_MARKERS)
 
 # Shadow-DOM walk: find combobox/input for a form field.
 _COMBO_FIND_CORE = """
@@ -156,9 +168,18 @@ async def data_change_tab_active(page: Page) -> bool:
 
 
 async def _form_visible(page: Page) -> bool:
-    """Detect Data Change form — shadow-aware Sales Office field check."""
+    """Detect Data Change form — URL + form fields (never match Queue list pages)."""
+    if _is_queue_url(page.url) and not _is_data_change_url(page.url):
+        return False
     if await sales_office_field_present(page):
         return True
+    try:
+        header = page.get_by_text(re.compile(r"^Data Change$", re.I))
+        draft = page.get_by_role("button", name=re.compile(r"save as draft", re.I))
+        if await header.first.is_visible(timeout=400) and await draft.first.is_visible(timeout=400):
+            return True
+    except Exception:
+        pass
     try:
         return await page.get_by_placeholder(PLACEHOLDER_PATTERNS["Sales Office"]).first.is_visible(
             timeout=600
@@ -184,14 +205,34 @@ async def form_tab_ready(page: Page) -> bool:
 
 
 async def find_data_change_page(page: Page) -> Page | None:
-    """Return the browser tab that has the Data Change form, if any."""
+    """Return the browser tab that has the Data Change form fields visible."""
+    if await _form_visible(page):
+        return page
     for candidate in page.context.pages:
+        if candidate is page or candidate.is_closed():
+            continue
+        if _is_queue_url(candidate.url) and not _is_data_change_url(candidate.url):
+            continue
         try:
-            if await form_tab_ready(candidate):
+            if await _form_visible(candidate):
                 return candidate
         except Exception:
             continue
     return None
+
+
+async def resolve_execution_page(page: Page) -> Page:
+    """Prefer the tab that already shows the Data Change form — never jump to Queue."""
+    if await _form_visible(page):
+        return page
+    found = await find_data_change_page(page)
+    if found and found is not page:
+        await found.bring_to_front()
+        logger.info("Switched to Data Change form tab: %s", found.url)
+        return found
+    if found:
+        return found
+    return page
 
 
 async def activate_workspace_tab(page: Page, name_pattern: re.Pattern[str]) -> bool:
@@ -228,38 +269,30 @@ async def activate_workspace_tab(page: Page, name_pattern: re.Pattern[str]) -> b
 
 
 async def _resolve_data_change_page(page: Page) -> Page:
-    """Find the browser tab that has the Data Change form."""
+    """Find the browser tab that has the Data Change form (form fields, not tab label only)."""
     found = await find_data_change_page(page)
     if found:
         if found is not page:
             await found.bring_to_front()
             logger.info("Switched to browser tab with Data Change form: %s", found.url)
         return found
-    if await data_change_tab_present(page):
-        return page
-    for other in page.context.pages:
-        if other is page:
-            continue
-        if await data_change_tab_present(other):
-            await other.bring_to_front()
-            logger.info("Switched to browser tab with Data Change workspace tab: %s", other.url)
-            return other
     return page
 
 
 async def focus_data_change_form(page: Page, *, activate: bool = True) -> Page:
     """Activate the New Data Change workspace tab without flickering browser tabs."""
-    page = await _resolve_data_change_page(page)
-
     if await _form_visible(page):
-        logger.info("Data Change form already visible on %s", page.url)
+        return page
+
+    page = await _resolve_data_change_page(page)
+    if await _form_visible(page):
         return page
 
     if activate and await data_change_tab_present(page):
         if not await data_change_tab_active(page):
             await activate_workspace_tab(page, DATA_CHANGE_TAB)
         for _ in range(12):
-            if await _form_visible(page) or await form_tab_ready(page):
+            if await _form_visible(page):
                 logger.info("Data Change form ready on %s", page.url)
                 return page
             await page.wait_for_timeout(500)

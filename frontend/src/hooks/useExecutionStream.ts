@@ -29,7 +29,12 @@ export function useExecutionStream(executionId: string | null) {
     };
   }, [executionId]);
 
+  const clearEvents = useCallback(() => {
+    setEvents([]);
+  }, []);
+
   useEffect(() => {
+    setEvents([]);
     const cleanup = connect();
     return () => {
       cleanup?.();
@@ -37,5 +42,5 @@ export function useExecutionStream(executionId: string | null) {
     };
   }, [connect]);
 
-  return { events, connected };
+  return { events, connected, clearEvents };
 }

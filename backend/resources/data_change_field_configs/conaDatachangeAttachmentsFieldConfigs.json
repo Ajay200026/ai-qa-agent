@@ -1,0 +1,276 @@
+{
+  "sourceFile": "force-app/main/default/lwc/Northeast Modules/lwc/Data Change/lwc/conaDatachangeAttachments/conaDatachangeAttachmentsFieldConfigs.js",
+  "bottlerCodes": {
+    "4600": "Reyes",
+    "4900": "Abarta",
+    "5000": "Northeast"
+  },
+  "sectionConfigs": {
+    "ATTACHMENTS_FORM": {
+      "label": null,
+      "icon": null,
+      "iconVariant": null
+    }
+  },
+  "attachmentsFields": [
+    {
+      "configKey": "CREDIT",
+      "label": "Credit Application",
+      "apiName": "credit",
+      "backendName": "credit",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "file-upload",
+      "section": "ATTACHMENTS_FORM",
+      "row": null,
+      "order": null,
+      "size": null,
+      "disabled": true,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "uploadComponentName": "CreditAttachment",
+      "attachPrefix": "Credit Application",
+      "acceptFormats": [
+        ".pdf",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".docx"
+      ]
+    },
+    {
+      "configKey": "TAX",
+      "label": "Tax Exemption Certificate",
+      "apiName": "tax",
+      "backendName": "tax",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "file-upload",
+      "section": "ATTACHMENTS_FORM",
+      "row": null,
+      "order": null,
+      "size": null,
+      "disabled": true,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "hideForAccountGroups": {
+        "4600": [
+          "ZFSV"
+        ]
+      },
+      "uploadComponentName": "TaxAttachment",
+      "attachPrefix": "Tax Exemption Certificate",
+      "acceptFormats": [
+        ".pdf",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".docx"
+      ]
+    },
+    {
+      "configKey": "W9",
+      "label": "W-9",
+      "apiName": "w9",
+      "backendName": "w9",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "file-upload",
+      "section": "ATTACHMENTS_FORM",
+      "row": null,
+      "order": null,
+      "size": null,
+      "disabled": true,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "uploadComponentName": "W9Attachment",
+      "attachPrefix": "W-9",
+      "acceptFormats": [
+        ".pdf",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".docx"
+      ]
+    },
+    {
+      "configKey": "BID",
+      "label": "Bid Letter",
+      "apiName": "bid",
+      "backendName": "bid",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "file-upload",
+      "section": "ATTACHMENTS_FORM",
+      "row": null,
+      "order": null,
+      "size": null,
+      "disabled": true,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "uploadComponentName": "BidLetterAttachment",
+      "attachPrefix": "Bid Letter",
+      "acceptFormats": [
+        ".pdf",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".docx"
+      ]
+    },
+    {
+      "configKey": "MISC",
+      "label": "Miscellaneous Attachments (Upload Multiple Files)",
+      "apiName": "misc",
+      "backendName": "misc",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "file-upload",
+      "section": "ATTACHMENTS_FORM",
+      "row": null,
+      "order": null,
+      "size": null,
+      "disabled": true,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "5000",
+          "name": "Northeast"
+        },
+        {
+          "id": "4900",
+          "name": "Abarta"
+        },
+        {
+          "id": "4600",
+          "name": "Reyes"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "uploadComponentName": "MiscellaneousAttachment",
+      "attachPrefix": "Miscellaneous Attachments",
+      "multiple": true,
+      "acceptFormats": [
+        ".pdf",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".docx"
+      ]
+    },
+    {
+      "configKey": "RESALE_TAX_EXEMPTION",
+      "label": "Resale/Tax Exemption Form",
+      "apiName": "resaleTaxExemption",
+      "backendName": "resaleTaxExemption",
+      "apiCompareKey": null,
+      "sapPath": null,
+      "type": "file-upload",
+      "section": "ATTACHMENTS_FORM",
+      "row": null,
+      "order": null,
+      "size": null,
+      "disabled": true,
+      "payerMode": null,
+      "bottlers": [
+        {
+          "id": "4900",
+          "name": "Abarta"
+        }
+      ],
+      "required": [],
+      "placeholder": null,
+      "triggersLmsPublish": false,
+      "maxlength": null,
+      "uploadComponentName": "ResaleTaxExemptionAttachment",
+      "attachPrefix": "Resale/Tax Exemption Form",
+      "acceptFormats": [
+        ".pdf",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".docx"
+      ]
+    }
+  ],
+  "bottlerVisibilitySummary": {
+    "4600": [
+      "CREDIT",
+      "TAX",
+      "W9",
+      "MISC"
+    ],
+    "4900": [
+      "CREDIT",
+      "W9",
+      "MISC",
+      "RESALE_TAX_EXEMPTION"
+    ],
+    "5000": [
+      "CREDIT",
+      "TAX",
+      "W9",
+      "BID",
+      "MISC"
+    ]
+  }
+}

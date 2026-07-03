@@ -22,8 +22,95 @@ export interface SalesforceOrg {
   auth_method: string;
   instance_url: string | null;
   status: string;
+  role?: string | null;
+  bottler?: string | null;
+  is_default?: boolean;
+  salesforce_username?: string | null;
   last_validated_at: string | null;
   created_at: string;
+}
+
+export interface CustomerTarget {
+  account_number?: string | null;
+  account_name?: string | null;
+  sales_office?: string | null;
+  account_group?: string | null;
+  distribution_channel?: string | null;
+  search_strategy?: "by_number" | "by_name" | "by_soql";
+  soql_query?: string | null;
+  soql_resolved_at?: string | null;
+  bottler?: string | null;
+}
+
+export interface LoginAsTarget {
+  bottler_id: string;
+  onboarding_role: string;
+  enabled?: boolean;
+}
+
+export interface IdentityMapEntry {
+  bottler: string;
+  role: string;
+  override_bottler?: string | null;
+  override_role?: string | null;
+  enabled?: boolean;
+}
+
+export interface IdentityMap {
+  entries: IdentityMapEntry[];
+}
+
+export interface IdentityPreviewItem {
+  bottler: string | null;
+  role: string | null;
+  tc_ids: string[];
+}
+
+export interface IdentityPreviewResponse {
+  identities: IdentityPreviewItem[];
+  pack_bottler: string | null;
+}
+
+export interface MatchHints {
+  bottler?: string | null;
+  account_group?: string | null;
+  distribution_channel?: string | null;
+  role?: string | null;
+  tags?: string[];
+}
+
+export interface AccountQuery {
+  id: string;
+  project_id: string;
+  name: string;
+  soql_text: string;
+  match_hints?: MatchHints | null;
+  sort_order: number;
+  created_at: string;
+}
+
+export interface LoginAsProfile {
+  id: string;
+  project_id: string;
+  name: string;
+  bottler_id: string;
+  onboarding_role: string;
+  match_hints?: MatchHints | null;
+  enabled: boolean;
+  sort_order: number;
+  created_at: string;
+}
+
+export interface RecommendationItem {
+  id: string;
+  name: string;
+  score: number;
+  reason?: string | null;
+}
+
+export interface RecommendResponse {
+  recommended: RecommendationItem | null;
+  alternatives: RecommendationItem[];
 }
 
 export interface Scenario {
@@ -36,6 +123,12 @@ export interface Scenario {
   inputs: Record<string, string>;
   business_actions: Array<Record<string, string>>;
   expected_results: string[];
+  test_pack_content?: string | null;
+  customer_target?: CustomerTarget | null;
+  login_as_target?: LoginAsTarget | null;
+  identity_map?: IdentityMap | null;
+  account_query_id?: string | null;
+  login_as_profile_id?: string | null;
   test_case_file: string | null;
   regression_file: string | null;
   created_at: string;
@@ -49,8 +142,45 @@ export interface ExecutionStep {
   status: string;
   screenshot_path: string | null;
   error: string | null;
+  action_params?: Record<string, unknown> | null;
+  notes?: string | null;
   started_at: string | null;
   finished_at: string | null;
+}
+
+export interface SoqlAccountRow {
+  account_number: string | null;
+  account_name: string | null;
+  sales_office: string | null;
+  account_group: string | null;
+  distribution_channel: string | null;
+  bottler: string | null;
+  raw: Record<string, unknown>;
+}
+
+export interface SoqlQueryResponse {
+  total_size: number;
+  records: SoqlAccountRow[];
+  done: boolean;
+}
+
+export interface CustomerSearchOption {
+  account_group: string;
+  distribution_channel: string | null;
+}
+
+export interface CustomerSearchOptions {
+  bottler: string | null;
+  sales_office: string | null;
+  combinations: CustomerSearchOption[];
+  default_soql: string;
+}
+
+export interface LlmConfig {
+  provider: string;
+  is_local: boolean;
+  enabled: boolean;
+  llm_field_fallback: boolean;
 }
 
 export interface Execution {

@@ -31,11 +31,36 @@ class ExecutionRepository(BaseRepository[Execution]):
     async def list_failed(self, limit: int = 10) -> list[Execution]:
         result = await self.db.execute(
             select(Execution)
-            .where(Execution.status == ExecutionStatus.FAILED)
+            .where(Execution.status.in_([ExecutionStatus.FAILED, ExecutionStatus.ERROR]))
             .order_by(Execution.created_at.desc())
             .limit(limit)
         )
         return list(result.scalars().all())
+
+    async def delete_execution(self, execution_id: UUID) -> bool:
+        await self.db.execute(delete(ExecutionStep).where(ExecutionStep.execution_id == execution_id))
+        await self.db.execute(delete(Report).where(Report.execution_id == execution_id))
+        result = await self.db.execute(delete(Execution).where(Execution.id == execution_id))
+        return (result.rowcount or 0) > 0
+
+    async def clear_by_statuses(self, statuses: list[str]) -> int:
+        if not statuses:
+            return 0
+        result = await self.db.execute(
+            select(Execution.id).where(Execution.status.in_(statuses))
+        )
+        execution_ids = [row[0] for row in result.all()]
+        if not execution_ids:
+            return 0
+        for execution_id in execution_ids:
+            await self.db.execute(
+                delete(ExecutionStep).where(ExecutionStep.execution_id == execution_id)
+            )
+            await self.db.execute(delete(Report).where(Report.execution_id == execution_id))
+        delete_result = await self.db.execute(
+            delete(Execution).where(Execution.id.in_(execution_ids))
+        )
+        return delete_result.rowcount or 0
 
     async def get_stats(self) -> dict:
         total_result = await self.db.execute(select(func.count(Execution.id)))
@@ -83,17 +108,64 @@ class ExecutionRepository(BaseRepository[Execution]):
         await self.db.refresh(step)
         return step
 
-    async def reset_for_rerun(self, execution: Execution) -> Execution:
-        await self.db.execute(delete(ExecutionStep).where(ExecutionStep.execution_id == execution.id))
+    async def reset_for_rerun(
+        self, execution: Execution, *, from_seq: int | None = None
+    ) -> Execution:
+        if from_seq is None:
+            await self.db.execute(
+                delete(ExecutionStep).where(ExecutionStep.execution_id == execution.id)
+            )
+        else:
+            # Keep earlier steps; reset steps >= from_seq back to pending and clear errors.
+            steps_result = await self.db.execute(
+                select(ExecutionStep)
+                .where(ExecutionStep.execution_id == execution.id)
+                .where(ExecutionStep.seq >= from_seq)
+            )
+            for step in steps_result.scalars().all():
+                step.status = "pending"
+                step.error = None
+                step.screenshot_path = None
+                step.started_at = None
+                step.finished_at = None
         await self.db.execute(delete(Report).where(Report.execution_id == execution.id))
         execution.status = ExecutionStatus.QUEUED
         execution.started_at = None
         execution.finished_at = None
         execution.duration_ms = None
-        execution.plan_json = None
+        if from_seq is None:
+            execution.plan_json = None
         await self.db.flush()
         await self.db.refresh(execution)
         return execution
+
+    async def get_step(
+        self, execution_id: UUID, seq: int
+    ) -> ExecutionStep | None:
+        result = await self.db.execute(
+            select(ExecutionStep)
+            .where(ExecutionStep.execution_id == execution_id)
+            .where(ExecutionStep.seq == seq)
+        )
+        return result.scalar_one_or_none()
+
+    async def set_step_params(
+        self, step: ExecutionStep, params: dict
+    ) -> ExecutionStep:
+        step.action_params = params or {}
+        step.error = None
+        step.status = "pending"
+        await self.db.flush()
+        await self.db.refresh(step)
+        return step
+
+    async def set_step_notes(
+        self, step: ExecutionStep, notes: str | None
+    ) -> ExecutionStep:
+        step.notes = notes
+        await self.db.flush()
+        await self.db.refresh(step)
+        return step
 
     async def update_step(
         self,
@@ -104,6 +176,7 @@ class ExecutionRepository(BaseRepository[Execution]):
         error: str | None = None,
         started_at: datetime | None = None,
         finished_at: datetime | None = None,
+        action_params: dict | None = None,
     ) -> ExecutionStep:
         if status:
             step.status = status
@@ -111,6 +184,8 @@ class ExecutionRepository(BaseRepository[Execution]):
             step.screenshot_path = screenshot_path
         if error is not None:
             step.error = error
+        if action_params is not None:
+            step.action_params = action_params
         if started_at:
             step.started_at = started_at
         if finished_at:

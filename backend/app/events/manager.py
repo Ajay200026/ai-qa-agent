@@ -15,13 +15,21 @@ logger = logging.getLogger(__name__)
 class EventManager:
     def __init__(self) -> None:
         self._connections: dict[UUID, list[WebSocket]] = defaultdict(list)
+        self._buffers: dict[UUID, list[ExecutionEvent]] = defaultdict(list)
         self._lock = asyncio.Lock()
 
     async def connect(self, execution_id: UUID, websocket: WebSocket) -> None:
         await websocket.accept()
         async with self._lock:
             self._connections[execution_id].append(websocket)
+            buffered = list(self._buffers.get(execution_id, []))
         logger.info("WebSocket connected for execution %s", execution_id)
+        for event in buffered:
+            try:
+                await websocket.send_json(event.model_dump(mode="json"))
+            except Exception:
+                await self.disconnect(execution_id, websocket)
+                return
 
     async def disconnect(self, execution_id: UUID, websocket: WebSocket) -> None:
         async with self._lock:
@@ -32,9 +40,16 @@ class EventManager:
                 if not self._connections[execution_id]:
                     del self._connections[execution_id]
 
+    def clear_buffer(self, execution_id: UUID) -> None:
+        self._buffers.pop(execution_id, None)
+
     async def publish(self, execution_id: UUID, event: ExecutionEvent) -> None:
         payload = event.model_dump(mode="json")
         async with self._lock:
+            buffer = self._buffers.setdefault(execution_id, [])
+            buffer.append(event)
+            if len(buffer) > 200:
+                del buffer[:-200]
             connections = list(self._connections.get(execution_id, []))
 
         dead: list[WebSocket] = []
