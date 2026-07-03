@@ -1,27 +1,60 @@
-# AI QA Agent for Salesforce
+# AI QA Agent — Enterprise Salesforce Knowledge Platform
 
-AI-powered QA testing platform that automates Salesforce workflows like a manual QA engineer. Upload test scenarios, connect Salesforce orgs, and run browser-based executions with real-time streaming, screenshots, and pass/fail reports.
+An application that understands Salesforce codebases like an experienced developer and automates QA workflows. **Phase 1** focuses on application knowledge: scan a Salesforce module, build a dependency graph, and ask AI questions using a **fully local** LLM (LM Studio + Qwen). QA automation (Playwright test execution) remains available alongside the knowledge engine.
 
 **Author:** [Ajay200026](https://github.com/Ajay200026)
 
 ## Features
 
+### Knowledge Platform (Phase 1)
+
+- **Module-scoped scanning** — Select one module (e.g. Data Change, Onboarding); only that module and its discovered dependencies are indexed
+- **Structured knowledge extraction** — Apex classes, LWC components, objects, fields, flows, validation rules, layouts, permission sets
+- **Application knowledge graph** — Neo4j stores relationships: `CALLS`, `USES`, `READS`, `WRITES`, `DEPENDS_ON`, `RENDERS`, and more
+- **Vector search** — Chroma indexes entity summaries for semantic retrieval (LM Studio embeddings)
+- **Ask AI** — Graph + vector retrieval → local Qwen answers with citations (never sends the full repository to the LLM)
+- **Interactive dependency graph** — React Flow visualization with node detail panel (summary, dependencies, business rules, navigation path)
+- **Local LLM** — LM Studio OpenAI-compatible endpoint; no cloud API required when `LLM_PROVIDER=lmstudio`
+
+### QA Automation
+
 - **LangGraph agent pipeline** — Parses scenarios, plans steps, executes via Playwright, validates results, and generates reports
 - **Salesforce automation** — Page-object model for onboarding, customer lifecycle, data entry, and more
 - **Real-time execution streaming** — WebSocket updates in the dashboard as tests run
-- **Knowledge graph** — Neo4j stores scenario relationships for traceability
+- **Execution knowledge graph** — Neo4j stores scenario execution traces for traceability
 - **Firebase authentication** — Email/password sign-in on the frontend; backend verifies Firebase ID tokens
-- **Flexible LLM providers** — NVIDIA NIM (default) or OpenAI for scenario parsing and field resolution
+- **Flexible LLM providers** — LM Studio (local), NVIDIA NIM, or OpenAI for scenario parsing and field resolution
 
 ## Architecture
 
 ```
-Frontend (Next.js 15)  →  FastAPI Backend  →  LangGraph Agents  →  Playwright
-        ↓                        ↓                    ↓
-   Firebase Auth            PostgreSQL              Neo4j
+Frontend (Next.js 15)
+        │
+        ▼
+FastAPI Backend ─────────────────────────────────────────────┐
+        │                                                     │
+        ├── Knowledge Engine (Phase 1)                        │
+        │     Scanner → Extractors → Postgres (entities)    │
+        │                    ├── Neo4j (application graph)  │
+        │                    └── Chroma (vector store)      │
+        │     Ask AI: graph + vector → LM Studio (Qwen)     │
+        │                                                     │
+        └── QA Agents (Phase 2+)                              │
+              LangGraph → Playwright → Reports                │
+                                                              │
+PostgreSQL ◄──────────────────────────────────────────────────┘
+Neo4j
 ```
 
-### Agent Pipeline
+### Knowledge Engine Pipeline
+
+1. **Register repository** — Point to a local Salesforce project path (`force-app`, `sfdx-project.json`)
+2. **Select module** — Discover and pick a feature module (e.g. `customerDetails`, `DataChange`)
+3. **Scan** — Extract structured knowledge; run dependency closure to pull in referenced Apex, LWC, metadata
+4. **Build graph** — Write nodes and relationships to Neo4j; index summaries in Chroma
+5. **Ask AI / View graph** — Query indexed knowledge via chat or interactive dependency graph
+
+### QA Agent Pipeline
 
 1. **ScenarioParserAgent** — Converts business scenarios into structured execution plans
 2. **PlannerAgent** — Generates ordered automation steps
@@ -31,13 +64,29 @@ Frontend (Next.js 15)  →  FastAPI Backend  →  LangGraph Agents  →  Playwri
 
 ## Prerequisites
 
-| Requirement | Version |
-|-------------|---------|
-| Docker & Docker Compose | Latest |
-| Node.js (local frontend) | 20+ |
-| Python (local backend) | 3.11+ |
-| LLM API key | NVIDIA NIM or OpenAI |
-| Firebase project | Email/Password auth enabled |
+| Requirement | Version | Notes |
+|-------------|---------|-------|
+| Docker & Docker Compose | Latest | PostgreSQL + Neo4j |
+| Node.js (local frontend) | 20+ | |
+| Python (local backend) | 3.11+ | |
+| LM Studio | Latest | **Recommended** — load Qwen + embedding model |
+| LLM API key | Optional | NVIDIA NIM or OpenAI if not using LM Studio |
+| Firebase project | — | Email/Password auth enabled |
+
+### LM Studio Setup (local AI)
+
+1. Install [LM Studio](https://lmstudio.ai)
+2. Load a chat model (e.g. **Qwen**)
+3. Load an embedding model (e.g. **nomic-embed-text**)
+4. Start the local server (default: `http://localhost:1234`)
+5. Set in `.env`:
+
+```bash
+LLM_PROVIDER=lmstudio
+LMSTUDIO_API_BASE=http://localhost:1234/v1
+LMSTUDIO_MODEL=qwen                          # match loaded chat model name
+LMSTUDIO_EMBEDDING_MODEL=text-embedding-nomic-embed-text-v1.5
+```
 
 ## Quick Start (Docker)
 
@@ -62,13 +111,15 @@ python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().d
 JWT_SECRET=your-long-random-secret-at-least-32-characters
 FERNET_KEY=<paste-generated-fernet-key>
 
-# LLM — pick one provider:
-LLM_PROVIDER=nvidia
-NVIDIA_API_KEY=nvapi-your-nvidia-api-key
+# LLM — local (recommended, no cloud API):
+LLM_PROVIDER=lmstudio
+LMSTUDIO_MODEL=qwen
 
-# OR
-LLM_PROVIDER=openai
-OPENAI_API_KEY=sk-your-openai-api-key
+# OR cloud providers:
+# LLM_PROVIDER=nvidia
+# NVIDIA_API_KEY=nvapi-your-nvidia-api-key
+# LLM_PROVIDER=openai
+# OPENAI_API_KEY=sk-your-openai-api-key
 ```
 
 ```bash
@@ -79,11 +130,29 @@ docker compose up --build
 | Service | URL |
 |---------|-----|
 | Frontend | http://localhost:3000 |
+| Knowledge Platform | http://localhost:3000/knowledge |
 | Backend API docs | http://localhost:8000/docs |
 | Health check | http://localhost:8000/health |
 | Neo4j Browser | http://localhost:7474 (user: `neo4j`, password: `neo4j_secret`) |
 
-> **Note:** For Docker, configure Firebase on the frontend by setting `NEXT_PUBLIC_FIREBASE_*` variables in `frontend/.env.local` before building, or use local development mode below.
+> **Note:** LM Studio runs on your host machine, not inside Docker. Start LM Studio before scanning or using Ask AI. For Docker, configure Firebase on the frontend by setting `NEXT_PUBLIC_FIREBASE_*` variables in `frontend/.env.local` before building.
+
+## Using the Knowledge Platform
+
+1. Open **Knowledge** in the sidebar (http://localhost:3000/knowledge)
+2. **Register Repository** — enter a name and the absolute path to your local Salesforce project
+3. **Select Module** — pick a discovered module (e.g. Data Change, Onboarding)
+4. **Scan Module** — extracts knowledge, builds the graph, indexes vectors
+5. **View Graph** — interactive dependency visualization at `/knowledge/graph`
+6. **Ask AI** — chat about fields, Apex, LWCs, flows, navigation at `/knowledge/ask`
+
+Example questions:
+
+- Where is `Finance_Type__c` used?
+- Which Apex class updates Account?
+- Explain the Save button execution flow
+- Show dependencies for this LWC
+- How do I navigate to the Finance section?
 
 ## Local Development
 
@@ -105,12 +174,12 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 # Install dependencies
 pip install -e ".[dev]"
 
-# Install Playwright browser
+# Install Playwright browser (QA automation only)
 playwright install chromium
 
 # Configure environment
 cp ../.env.example .env
-# Edit .env — set JWT_SECRET, FERNET_KEY, and LLM API key (see Quick Start)
+# Edit .env — set JWT_SECRET, FERNET_KEY, LLM_PROVIDER (see Quick Start)
 
 # Run database migrations
 alembic upgrade head
@@ -133,6 +202,10 @@ cp .env.example .env.local
 npm run dev
 ```
 
+### 4. LM Studio (local AI)
+
+Start LM Studio with Qwen and an embedding model loaded before scanning or using Ask AI.
+
 Open http://localhost:3000 and register a new account (Firebase Email/Password must be enabled in your Firebase project).
 
 ## Environment Variables
@@ -143,9 +216,14 @@ Open http://localhost:3000 and register a new account (Firebase Email/Password m
 |----------|----------|-------------|
 | `JWT_SECRET` | Yes | JWT signing key (min 32 characters) |
 | `FERNET_KEY` | Yes | Fernet key for encrypting Salesforce credentials |
-| `LLM_PROVIDER` | Yes | `nvidia` or `openai` |
+| `LLM_PROVIDER` | Yes | `lmstudio`, `nvidia`, or `openai` |
+| `LMSTUDIO_API_BASE` | If using LM Studio | Default: `http://localhost:1234/v1` |
+| `LMSTUDIO_MODEL` | If using LM Studio | Chat model name (e.g. `qwen`) |
+| `LMSTUDIO_EMBEDDING_MODEL` | If using LM Studio | Embedding model for vector search |
 | `NVIDIA_API_KEY` | If using NVIDIA | NVIDIA NIM API key |
 | `OPENAI_API_KEY` | If using OpenAI | OpenAI API key |
+| `CHROMA_DIR` | No | Vector store path; default: `./data/chroma` |
+| `SF_REPO_PATH` | No | Optional default Salesforce repo path |
 | `DATABASE_URL` | No | Default: `postgresql+asyncpg://aiqa:aiqa_secret@localhost:5432/aiqa_db` |
 | `NEO4J_URI` | No | Default: `bolt://localhost:7687` |
 | `NEO4J_USER` / `NEO4J_PASSWORD` | No | Default: `neo4j` / `neo4j_secret` |
@@ -202,7 +280,6 @@ Supports two methods when adding a Salesforce org:
 
 1. **Credentials** — Username/password stored encrypted (Fernet); Playwright logs in via the login page. The same credentials power **REST SOQL** lookups (Login As user resolution, Account Queries).
 2. **OAuth (Authorize via Web)** — Same flow as VS Code / SF CLI: pick Production/Sandbox, sign in via browser popup. Uses Salesforce’s built-in `PlatformCLI` Connected App and a local callback on port **1717** — no `.env` setup required.
-3. **Credentials** — Username/password (+ optional security token) on the same page.
 
 ### Salesforce Orgs page
 
@@ -261,12 +338,14 @@ LIMIT 1
 |--------|-----------|
 | Auth | `POST /auth/register`, `POST /auth/login`, `GET /auth/me` |
 | Projects | `GET\|POST /projects` |
+| **Knowledge Engine** | `POST /knowledge/repos`, `GET /knowledge/repos/{id}/discover`, `POST /knowledge/repos/{id}/modules`, `POST /knowledge/modules/{id}/scan`, `GET /knowledge/modules/{id}/status`, `GET /knowledge/modules/{id}/graph`, `GET /knowledge/entities/{id}`, `POST /knowledge/ask`, `POST /knowledge/ask/stream` |
 | Salesforce | `GET\|POST\|PATCH\|DELETE /salesforce/orgs`, `POST /salesforce/orgs/oauth/start`, `POST /salesforce/orgs/oauth/callback`, `POST /salesforce/orgs/{id}/validate` |
 | Scenarios | `GET\|POST /scenarios` (multipart upload) |
 | Workflows | `GET\|POST /workflows` |
 | Executions | `POST /executions`, `GET /executions`, `WS /executions/{id}/stream` |
 | Reports | `GET /reports`, `GET /reports/dashboard` |
-| Knowledge | `GET /knowledge/scenarios/{id}/graph` |
+| Knowledge (QA traces) | `GET /knowledge/scenarios/{id}/graph` |
+| System | `GET /config/llm` |
 
 Interactive API documentation: http://localhost:8000/docs
 
@@ -276,23 +355,31 @@ Interactive API documentation: http://localhost:8000/docs
 ai-qa-agent/
 ├── backend/
 │   ├── app/
-│   │   ├── api/v1/          # REST API routers
-│   │   ├── agents/          # LangGraph agents
-│   │   ├── automation/      # Playwright page-object framework
-│   │   ├── core/            # Config, security, database, LLM
-│   │   ├── events/          # WebSocket event manager
-│   │   ├── knowledge/       # Neo4j integration
-│   │   ├── models/          # SQLAlchemy ORM
-│   │   ├── repositories/    # Data access layer
-│   │   ├── schemas/         # Pydantic models
-│   │   └── services/        # Business logic
-│   └── alembic/             # Database migrations
+│   │   ├── api/v1/              # REST API routers
+│   │   ├── agents/              # LangGraph QA agents
+│   │   ├── automation/          # Playwright page-object framework
+│   │   ├── core/                # Config, security, database, LLM
+│   │   ├── events/              # WebSocket event manager
+│   │   ├── knowledge/           # Neo4j client (QA execution traces)
+│   │   ├── knowledge_engine/    # Application knowledge platform
+│   │   │   ├── scanner/         # Repo/module discovery, dependency closure
+│   │   │   ├── extractors/      # Apex, LWC, metadata, flow parsers
+│   │   │   ├── graph_writer.py  # Neo4j application graph
+│   │   │   ├── vector_store.py  # Chroma + LM Studio embeddings
+│   │   │   ├── ask_service.py   # Graph + vector → LLM answers
+│   │   │   └── scan_service.py  # Scan orchestration
+│   │   ├── models/              # SQLAlchemy ORM
+│   │   ├── repositories/        # Data access layer
+│   │   ├── schemas/             # Pydantic models
+│   │   └── services/            # Business logic
+│   └── alembic/                 # Database migrations
 ├── frontend/
 │   └── src/
-│       ├── app/             # Next.js App Router pages
-│       ├── components/      # UI components
-│       ├── hooks/           # React hooks (auth, execution stream)
-│       └── lib/             # API client, Firebase, types
+│       ├── app/
+│       │   └── (app)/knowledge/ # Knowledge dashboard, graph, Ask AI
+│       ├── components/          # UI components
+│       ├── hooks/               # React hooks (auth, execution stream)
+│       └── lib/                 # API client, Firebase, types
 ├── docker-compose.yml
 ├── .env.example
 └── README.md
@@ -304,6 +391,11 @@ ai-qa-agent/
 |-------|-----|
 | Backend won't start — missing env | Ensure `JWT_SECRET` (32+ chars) and `FERNET_KEY` are set in `.env` |
 | `alembic upgrade head` fails | Confirm PostgreSQL is running: `docker compose up postgres -d` |
+| LM Studio / Ask AI not working | Start LM Studio, load Qwen + embedding model, verify `http://localhost:1234/v1/models` |
+| Vector search empty after scan | Ensure embedding model is loaded in LM Studio; check `LMSTUDIO_EMBEDDING_MODEL` matches |
+| No modules discovered | Verify repo path points to a valid SFDX project with `force-app/` |
+| Scan finds 0 files | Module name must match folder names in `lwc/`, `classes/`, etc. |
+| Graph view empty | Run a scan first; confirm Neo4j is running |
 | Playwright browser missing | Run `playwright install chromium` in the backend venv |
 | Playwright points at Cursor sandbox path | Restart the backend after pulling latest; the app ignores invalid sandbox paths. Or unset `PLAYWRIGHT_BROWSERS_PATH` in your shell |
 | Frontend login fails | Verify Firebase Email/Password is enabled and `NEXT_PUBLIC_FIREBASE_*` match your project |
@@ -312,10 +404,16 @@ ai-qa-agent/
 
 ## Tech Stack
 
-- **Frontend:** Next.js 15, React 19, Tailwind CSS, Firebase Auth, TanStack Query
+- **Frontend:** Next.js 15, React 19, Tailwind CSS, Firebase Auth, TanStack Query, React Flow
 - **Backend:** FastAPI, SQLAlchemy, Alembic, LangGraph, Playwright
-- **Databases:** PostgreSQL, Neo4j
-- **LLM:** NVIDIA NIM / OpenAI
+- **Databases:** PostgreSQL, Neo4j, Chroma (vector store)
+- **LLM:** LM Studio (local Qwen) / NVIDIA NIM / OpenAI
+
+## Roadmap
+
+- **Phase 1 (current):** Application Knowledge Engine — module scanning, graph, Ask AI
+- **Phase 2:** QA automation integrated with the knowledge engine
+- **Future agents:** Architecture, Deployment, Performance, Security, Root Cause Analysis
 
 ## License
 
