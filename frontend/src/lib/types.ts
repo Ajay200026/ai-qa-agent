@@ -181,6 +181,8 @@ export interface LlmConfig {
   is_local: boolean;
   enabled: boolean;
   llm_field_fallback: boolean;
+  model?: string | null;
+  embedding_model?: string | null;
 }
 
 export interface Execution {
@@ -223,4 +225,85 @@ export interface ExecutionEvent {
   message: string | null;
   screenshot_path: string | null;
   timestamp: string;
+}
+
+export interface KnowledgeRepo {
+  id: string;
+  name: string;
+  path: string;
+  owner_id: string;
+  created_at: string;
+}
+
+export interface KnowledgeModule {
+  id: string;
+  repo_id: string;
+  name: string;
+  scan_status: string;
+  scan_error: string | null;
+  stats: Record<string, number | string> | null;
+  scanned_at: string | null;
+  created_at: string;
+}
+
+export interface DiscoveredModule {
+  name: string;
+  file_count: number;
+}
+
+export interface ModuleStatus {
+  module_id: string;
+  scan_status: string;
+  scan_error: string | null;
+  stats: Record<string, number | string> | null;
+  graph_status: string;
+  vector_status: string;
+  ai_status: string;
+}
+
+export interface GraphNode {
+  id: string;
+  label: string;
+  type: string;
+  name: string;
+  summary?: string | null;
+  file_path?: string | null;
+  entity_id?: string | null;
+}
+
+export interface GraphEdge {
+  id: string;
+  source: string;
+  target: string;
+  relationship: string;
+}
+
+export interface KnowledgeGraph {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+}
+
+export interface EntityDetail {
+  id: string;
+  entity_type: string;
+  name: string;
+  file_path: string | null;
+  summary: string | null;
+  extracted: Record<string, unknown> | null;
+  business_rules: string[] | null;
+  dependencies: GraphNode[];
+  related_files: string[];
+  navigation_path: string[];
+}
+
+export interface AskCitation {
+  entity_id: string | null;
+  name: string;
+  entity_type: string;
+  file_path: string | null;
+}
+
+export interface AskResponse {
+  answer: string;
+  citations: AskCitation[];
 }

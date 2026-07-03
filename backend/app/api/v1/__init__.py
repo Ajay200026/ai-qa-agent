@@ -5,6 +5,7 @@ from app.api.v1 import (
     auth,
     executions,
     knowledge,
+    knowledge_engine,
     login_as_profiles,
     projects,
     reports,
@@ -29,4 +30,7 @@ api_router.include_router(workflows.router, prefix="/workflows", tags=["workflow
 api_router.include_router(executions.router, prefix="/executions", tags=["executions"])
 api_router.include_router(reports.router, prefix="/reports", tags=["reports"])
 api_router.include_router(knowledge.router, prefix="/knowledge", tags=["knowledge"])
+api_router.include_router(
+    knowledge_engine.router, prefix="/knowledge", tags=["knowledge-engine"]
+)
 api_router.include_router(system.router, tags=["system"])

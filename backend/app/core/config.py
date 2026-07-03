@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     jwt_expire_minutes: int = 1440
     fernet_key: str = Field(..., min_length=32)
 
-    # LLM: "nvidia" (NVIDIA NIM) or "openai"
+    # LLM: "nvidia" | "openai" | "lmstudio" (local LM Studio + Qwen)
     llm_provider: str = "nvidia"
     nvidia_api_key: str = ""
     nvidia_api_base: str = "https://integrate.api.nvidia.com/v1"
@@ -38,6 +38,18 @@ class Settings(BaseSettings):
 
     openai_api_key: str = ""
     openai_model: str = "gpt-4o"
+
+    # LM Studio (local OpenAI-compatible endpoint)
+    lmstudio_api_base: str = "http://localhost:1234/v1"
+    lmstudio_api_key: str = "lm-studio"
+    lmstudio_model: str = "qwen"
+    lmstudio_embedding_model: str = "text-embedding-nomic-embed-text-v1.5"
+    lmstudio_max_tokens: int = 8192
+    lmstudio_temperature: float = 0.3
+
+    # Knowledge Engine
+    chroma_dir: Path = Path("./data/chroma")
+    sf_repo_path: str | None = None
 
     firebase_project_id: str = "automation-tool-29a9c"
     firebase_credentials_path: str | None = None

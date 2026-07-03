@@ -1,16 +1,24 @@
 import type {
   AccountQuery,
+  AskCitation,
+  AskResponse,
   CustomerSearchOptions,
   CustomerTarget,
   DashboardStats,
+  DiscoveredModule,
+  EntityDetail,
   Execution,
   ExecutionStep,
   IdentityMap,
   IdentityPreviewResponse,
+  KnowledgeGraph,
+  KnowledgeModule,
+  KnowledgeRepo,
   LoginAsProfile,
   LoginAsTarget,
   LlmConfig,
   MatchHints,
+  ModuleStatus,
   Project,
   RecommendResponse,
   Report,
@@ -499,6 +507,96 @@ class ApiClient {
       );
     }
     return response.blob();
+  }
+
+  // --- Knowledge Engine ---
+
+  async listKnowledgeRepos(): Promise<KnowledgeRepo[]> {
+    return this.request("/knowledge/repos");
+  }
+
+  async createKnowledgeRepo(name: string, path: string): Promise<KnowledgeRepo> {
+    return this.request("/knowledge/repos", {
+      method: "POST",
+      body: JSON.stringify({ name, path }),
+    });
+  }
+
+  async discoverModules(repoId: string): Promise<DiscoveredModule[]> {
+    return this.request(`/knowledge/repos/${repoId}/discover`);
+  }
+
+  async listKnowledgeModules(repoId: string): Promise<KnowledgeModule[]> {
+    return this.request(`/knowledge/repos/${repoId}/modules`);
+  }
+
+  async createKnowledgeModule(repoId: string, name: string): Promise<KnowledgeModule> {
+    return this.request(`/knowledge/repos/${repoId}/modules`, {
+      method: "POST",
+      body: JSON.stringify({ name }),
+    });
+  }
+
+  async startModuleScan(moduleId: string): Promise<{ status: string; module_id: string }> {
+    return this.request(`/knowledge/modules/${moduleId}/scan`, { method: "POST" });
+  }
+
+  async getModuleStatus(moduleId: string): Promise<ModuleStatus> {
+    return this.request(`/knowledge/modules/${moduleId}/status`);
+  }
+
+  async getModuleGraph(moduleId: string): Promise<KnowledgeGraph> {
+    return this.request(`/knowledge/modules/${moduleId}/graph`);
+  }
+
+  async getKnowledgeEntity(entityId: string): Promise<EntityDetail> {
+    return this.request(`/knowledge/entities/${entityId}`);
+  }
+
+  async askKnowledge(moduleId: string, question: string): Promise<AskResponse> {
+    return this.request("/knowledge/ask", {
+      method: "POST",
+      body: JSON.stringify({ module_id: moduleId, question }),
+    });
+  }
+
+  async *askKnowledgeStream(
+    moduleId: string,
+    question: string
+  ): AsyncGenerator<{ type: string; content?: string; citations?: AskCitation[]; message?: string }> {
+    const token = await this.resolveToken();
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetch(`${API_URL}/knowledge/ask/stream`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ module_id: moduleId, question }),
+    });
+    if (!response.ok || !response.body) {
+      throw new Error(`Ask stream failed: HTTP ${response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          try {
+            yield JSON.parse(line.slice(6));
+          } catch {
+            // skip malformed
+          }
+        }
+      }
+    }
   }
 }
 

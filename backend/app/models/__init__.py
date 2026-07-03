@@ -1,5 +1,6 @@
 from app.models.account_query import AccountQuery
 from app.models.execution import Execution, ExecutionStep
+from app.models.knowledge import KnowledgeEntity, KnowledgeModule, KnowledgeRepo
 from app.models.login_as_profile import LoginAsProfile
 from app.models.project import Project
 from app.models.report import Report
@@ -12,6 +13,9 @@ __all__ = [
     "AccountQuery",
     "Execution",
     "ExecutionStep",
+    "KnowledgeEntity",
+    "KnowledgeModule",
+    "KnowledgeRepo",
     "LoginAsProfile",
     "Project",
     "Report",

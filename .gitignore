@@ -19,6 +19,7 @@ out/
 # Artifacts
 backend/uploads/*
 backend/artifacts/*
+backend/data/chroma/
 !backend/uploads/.gitkeep
 !backend/artifacts/.gitkeep
 

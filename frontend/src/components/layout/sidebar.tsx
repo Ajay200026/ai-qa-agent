@@ -2,18 +2,25 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Cloud, Database, FileText, LayoutDashboard, LogOut, Play, UserCircle, X } from "lucide-react";
+import { Brain, Cloud, Database, FileText, GitBranch, LayoutDashboard, LogOut, MessageSquare, Play, UserCircle, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
+  { href: "/knowledge", label: "Knowledge", icon: Brain },
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/salesforce-orgs", label: "Salesforce Orgs", icon: Cloud },
   { href: "/executions/new", label: "New Execution", icon: Play },
   { href: "/reports", label: "Reports", icon: FileText },
   { href: "/account-queries", label: "Account Queries", icon: Database },
   { href: "/login-as", label: "Login As", icon: UserCircle },
+];
+
+const knowledgeSubItems = [
+  { href: "/knowledge", label: "Overview", icon: Brain },
+  { href: "/knowledge/graph", label: "Graph", icon: GitBranch },
+  { href: "/knowledge/ask", label: "Ask AI", icon: MessageSquare },
 ];
 
 interface SidebarProps {
@@ -53,20 +60,45 @@ export function Sidebar({ mobileOpen = false, onNavigate }: SidebarProps) {
           const Icon = item.icon;
           const active = pathname.startsWith(item.href);
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onNavigate}
-              className={cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                active
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            <div key={item.href}>
+              <Link
+                href={item.href}
+                onClick={onNavigate}
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  active
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                )}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                {item.label}
+              </Link>
+              {item.href === "/knowledge" && pathname.startsWith("/knowledge") && (
+                <div className="ml-4 mt-1 space-y-1 border-l pl-2">
+                  {knowledgeSubItems.map((sub) => {
+                    const SubIcon = sub.icon;
+                    const subActive = pathname === sub.href;
+                    return (
+                      <Link
+                        key={sub.href}
+                        href={sub.href}
+                        onClick={onNavigate}
+                        className={cn(
+                          "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
+                          subActive
+                            ? "text-primary"
+                            : "text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        <SubIcon className="h-3 w-3 shrink-0" />
+                        {sub.label}
+                      </Link>
+                    );
+                  })}
+                </div>
               )}
-            >
-              <Icon className="h-4 w-4 shrink-0" />
-              {item.label}
-            </Link>
+            </div>
           );
         })}
       </nav>
