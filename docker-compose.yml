@@ -41,13 +41,15 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    env_file:
+      - .env
     environment:
       DATABASE_URL: postgresql+asyncpg://aiqa:aiqa_secret@postgres:5432/aiqa_db
       NEO4J_URI: bolt://neo4j:7687
       NEO4J_USER: neo4j
       NEO4J_PASSWORD: neo4j_secret
-      JWT_SECRET: docker-dev-jwt-secret-change-in-production-32chars
-      FERNET_KEY: ${FERNET_KEY:-dGVzdC1mZXJuZXQta2V5LWZvci1kZXYtMzJieXRlcw==}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      FERNET_KEY: ${FERNET_KEY:?Set FERNET_KEY in .env}
       FIREBASE_PROJECT_ID: code-automation-tool
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       CORS_ORIGINS: http://localhost:3000
