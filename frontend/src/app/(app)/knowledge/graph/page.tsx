@@ -20,7 +20,10 @@ import dagre from "dagre";
 import { api } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 import { PageHeader } from "@/components/layout/page-header";
+import { AgentModeToggle } from "@/components/knowledge/AgentModeToggle";
+import { Button } from "@/components/ui/button";
 import { PageLoading } from "@/components/loading/page-loading";
 import type { EntityDetail, GraphNode } from "@/lib/types";
 
@@ -161,6 +164,14 @@ export default function KnowledgeGraphPage() {
       <PageHeader
         title="Dependency Graph"
         description={`${graph?.nodes.length ?? 0} nodes, ${graph?.edges.length ?? 0} relationships`}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <AgentModeToggle />
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`/knowledge/globe?module=${moduleId}`}>3D Globe</Link>
+            </Button>
+          </div>
+        }
       />
 
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">

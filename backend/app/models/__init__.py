@@ -1,4 +1,5 @@
 from app.models.account_query import AccountQuery
+from app.models.azure_devops import AzureDevOpsConnection
 from app.models.execution import Execution, ExecutionStep
 from app.models.knowledge import KnowledgeEntity, KnowledgeModule, KnowledgeRepo
 from app.models.login_as_profile import LoginAsProfile
@@ -11,6 +12,7 @@ from app.models.workflow import WorkflowFieldRegistry, WorkflowTemplate
 
 __all__ = [
     "AccountQuery",
+    "AzureDevOpsConnection",
     "Execution",
     "ExecutionStep",
     "KnowledgeEntity",

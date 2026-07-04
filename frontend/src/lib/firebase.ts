@@ -1,4 +1,5 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
+import { getAnalytics, isSupported, type Analytics } from "firebase/analytics";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -22,15 +23,29 @@ const firebaseConfig = {
 
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
+let analytics: Analytics | null = null;
+
+function ensureFirebaseApp(): FirebaseApp {
+  if (!app) {
+    app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+    if (typeof window !== "undefined" && firebaseConfig.measurementId) {
+      void isSupported().then((supported) => {
+        if (supported && app) {
+          analytics = getAnalytics(app);
+        }
+      });
+    }
+  }
+  return app;
+}
 
 /** Lazily initialize Firebase only in the browser (avoids SSR vendor-chunk errors). */
 export function getFirebaseAuth(): Auth {
   if (typeof window === "undefined") {
     throw new Error("Firebase auth is only available in the browser");
   }
-  if (!app) {
-    app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-    auth = getAuth(app);
+  if (!auth) {
+    auth = getAuth(ensureFirebaseApp());
   }
   return auth!;
 }

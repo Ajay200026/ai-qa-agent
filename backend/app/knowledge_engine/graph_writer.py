@@ -133,101 +133,57 @@ async def write_module_graph(
             )
 
 
+def _graph_node_from_record(record: dict) -> dict | None:
+    node_id = record.get("id")
+    if not node_id:
+        return None
+    label = record.get("label") or record.get("name") or "Unknown"
+    name = record.get("name") or record.get("label") or "Unknown"
+    return {
+        "id": node_id,
+        "label": label,
+        "type": record.get("type") or "Reference",
+        "name": name,
+        "summary": record.get("summary"),
+        "file_path": record.get("file_path"),
+        "entity_id": record.get("entity_id"),
+    }
+
+
 async def get_module_graph(module_id: UUID) -> dict:
-    records = await neo4j_client.run_query(
-        """
-        MATCH (n:KeNode {module_id: $module_id})
-        OPTIONAL MATCH (n)-[r]->(m:KeNode {module_id: $module_id})
-        RETURN collect(DISTINCT n) as nodes, collect(DISTINCT r) as rels,
-               collect(DISTINCT m) as targets
-        """,
-        {"module_id": str(module_id)},
-    )
-    if not records:
-        return {"nodes": [], "edges": []}
-
-    nodes_map: dict[str, dict] = {}
-    edges: list[dict] = []
-
-    for record in records:
-        for node in record.get("nodes") or []:
-            if node:
-                nid = node.get("id")
-                if nid and nid not in nodes_map:
-                    nodes_map[nid] = {
-                        "id": nid,
-                        "label": node.get("label") or node.get("name"),
-                        "type": node.get("type"),
-                        "name": node.get("name"),
-                        "summary": node.get("summary"),
-                        "file_path": node.get("file_path"),
-                        "entity_id": node.get("entity_id"),
-                    }
-        for target in record.get("targets") or []:
-            if target:
-                nid = target.get("id")
-                if nid and nid not in nodes_map:
-                    nodes_map[nid] = {
-                        "id": nid,
-                        "label": target.get("label") or target.get("name"),
-                        "type": target.get("type"),
-                        "name": target.get("name"),
-                        "summary": target.get("summary"),
-                        "file_path": target.get("file_path"),
-                        "entity_id": target.get("entity_id"),
-                    }
-        for rel in record.get("rels") or []:
-            if rel:
-                edges.append(
-                    {
-                        "id": rel.element_id if hasattr(rel, "element_id") else str(rel),
-                        "source": rel.start_node.get("id") if hasattr(rel, "start_node") else "",
-                        "target": rel.end_node.get("id") if hasattr(rel, "end_node") else "",
-                        "relationship": rel.type if hasattr(rel, "type") else "RELATED",
-                    }
-                )
-
-    # Fallback query if relationship objects aren't serializable
-    if not edges:
-        rel_records = await neo4j_client.run_query(
-            """
-            MATCH (a:KeNode {module_id: $module_id})-[r]->(b:KeNode {module_id: $module_id})
-            RETURN a.id as source, b.id as target, type(r) as relationship
-            """,
-            {"module_id": str(module_id)},
-        )
-        for i, rec in enumerate(rel_records):
-            edges.append(
-                {
-                    "id": f"edge-{i}",
-                    "source": rec["source"],
-                    "target": rec["target"],
-                    "relationship": rec["relationship"],
-                }
-            )
-
+    module_key = str(module_id)
     node_records = await neo4j_client.run_query(
         """
         MATCH (n:KeNode {module_id: $module_id})
         RETURN n.id as id, n.label as label, n.type as type, n.name as name,
                n.summary as summary, n.file_path as file_path, n.entity_id as entity_id
         """,
-        {"module_id": str(module_id)},
+        {"module_id": module_key},
     )
-    nodes = [
-        {
-            "id": r["id"],
-            "label": r.get("label") or r.get("name"),
-            "type": r.get("type"),
-            "name": r.get("name"),
-            "summary": r.get("summary"),
-            "file_path": r.get("file_path"),
-            "entity_id": r.get("entity_id"),
-        }
-        for r in node_records
-    ]
+    edge_records = await neo4j_client.run_query(
+        """
+        MATCH (a:KeNode {module_id: $module_id})-[r]->(b:KeNode {module_id: $module_id})
+        RETURN a.id as source, b.id as target, type(r) as relationship
+        """,
+        {"module_id": module_key},
+    )
 
-    return {"nodes": nodes or list(nodes_map.values()), "edges": edges}
+    nodes = [
+        node
+        for record in node_records
+        if (node := _graph_node_from_record(record)) is not None
+    ]
+    edges = [
+        {
+            "id": f"edge-{index}",
+            "source": record["source"],
+            "target": record["target"],
+            "relationship": record.get("relationship") or "RELATED",
+        }
+        for index, record in enumerate(edge_records)
+        if record.get("source") and record.get("target")
+    ]
+    return {"nodes": nodes, "edges": edges}
 
 
 async def find_entity_neighbors(module_id: UUID, name: str) -> list[dict]:

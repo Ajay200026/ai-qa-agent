@@ -791,6 +791,23 @@ class ExecutionService:
         except Exception as exc:
             logger.warning("Failed to store Neo4j knowledge: %s", exc)
 
+        if not report_data.passed:
+            try:
+                from app.agents.rca_agent import run_rca_analysis
+
+                rca = await run_rca_analysis(
+                    str(scenario.id),
+                    scenario.name,
+                    report_data,
+                    state.get("step_results", []),
+                    str(execution_id),
+                )
+                if rca:
+                    report.rca_analysis = rca.model_dump()
+                    await repo.db.commit()
+            except Exception as exc:
+                logger.warning("RCA analysis failed: %s", exc)
+
         await event_manager.emit(
             execution_id,
             "execution_completed",

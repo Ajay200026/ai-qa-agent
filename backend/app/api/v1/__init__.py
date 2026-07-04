@@ -3,6 +3,8 @@ from fastapi import APIRouter
 from app.api.v1 import (
     account_queries,
     auth,
+    azure_devops,
+    brain_config,
     executions,
     knowledge,
     knowledge_engine,
@@ -33,4 +35,8 @@ api_router.include_router(knowledge.router, prefix="/knowledge", tags=["knowledg
 api_router.include_router(
     knowledge_engine.router, prefix="/knowledge", tags=["knowledge-engine"]
 )
+api_router.include_router(
+    azure_devops.router, prefix="/knowledge/azure", tags=["azure-devops"]
+)
 api_router.include_router(system.router, tags=["system"])
+api_router.include_router(brain_config.router, tags=["brain-config"])

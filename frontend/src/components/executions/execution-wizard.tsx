@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
@@ -29,9 +30,12 @@ export function ExecutionWizard({ currentStep, onStepClick, children }: Executio
           const done = index < currentIndex;
           const active = step.id === currentStep;
           return (
-            <button
+            <motion.button
               key={step.id}
               type="button"
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.05 }}
               onClick={() => onStepClick?.(step.id)}
               className={cn(
                 "flex w-full items-start gap-3 rounded-lg border px-3 py-3 text-left transition-colors",
@@ -54,7 +58,7 @@ export function ExecutionWizard({ currentStep, onStepClick, children }: Executio
                 <span className="block text-sm font-medium">{step.label}</span>
                 <span className="block text-xs text-muted-foreground">{step.description}</span>
               </span>
-            </button>
+            </motion.button>
           );
         })}
         <p className="px-3 pt-2 text-xs text-muted-foreground">

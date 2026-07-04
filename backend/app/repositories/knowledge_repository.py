@@ -20,6 +20,10 @@ class KnowledgeRepoRepository(BaseRepository[KnowledgeRepo]):
         )
         return list(result.scalars().all())
 
+    async def delete(self, repo_id: UUID) -> None:
+        await self.db.execute(delete(KnowledgeRepo).where(KnowledgeRepo.id == repo_id))
+        await self.db.flush()
+
 
 class KnowledgeModuleRepository(BaseRepository[KnowledgeModule]):
     def __init__(self, db: AsyncSession):
@@ -40,6 +44,14 @@ class KnowledgeModuleRepository(BaseRepository[KnowledgeModule]):
             .order_by(KnowledgeModule.name)
         )
         return list(result.scalars().all())
+
+    async def delete(self, module_id: UUID) -> None:
+        await self.db.execute(delete(KnowledgeModule).where(KnowledgeModule.id == module_id))
+        await self.db.flush()
+
+    async def delete_by_repo(self, repo_id: UUID) -> None:
+        await self.db.execute(delete(KnowledgeModule).where(KnowledgeModule.repo_id == repo_id))
+        await self.db.flush()
 
     async def update_status(
         self,

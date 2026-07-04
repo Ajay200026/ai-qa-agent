@@ -24,6 +24,7 @@ async def lifespan(app: FastAPI):
     setup_logging(settings.debug)
     settings.upload_dir.mkdir(parents=True, exist_ok=True)
     settings.artifacts_dir.mkdir(parents=True, exist_ok=True)
+    settings.azure_devops_workspace_dir.mkdir(parents=True, exist_ok=True)
     validate_fernet_key()
 
     try:
@@ -37,6 +38,15 @@ async def lifespan(app: FastAPI):
         await ensure_oauth_redirect_server()
     except Exception as exc:
         logger.warning("Salesforce OAuth redirect server not started: %s", exc)
+
+    try:
+        from app.core.database import AsyncSessionLocal
+        from app.services.brain_settings_service import get_brain_settings
+
+        async with AsyncSessionLocal() as db:
+            await get_brain_settings(db)
+    except Exception as exc:
+        logger.warning("Brain settings init skipped: %s", exc)
 
     yield
 

@@ -1,7 +1,5 @@
 """Route scanned files to the appropriate extractor."""
 
-from pathlib import Path
-
 from app.knowledge_engine.extractors.apex_extractor import extract_apex
 from app.knowledge_engine.extractors.flow_extractor import extract_flow
 from app.knowledge_engine.extractors.lwc_extractor import extract_lwc
@@ -9,7 +7,10 @@ from app.knowledge_engine.extractors.metadata_extractor import extract_metadata
 from app.knowledge_engine.types import ExtractionResult, SalesforceFileType, ScannedFile
 
 
-def extract_file(scanned: ScannedFile) -> list[ExtractionResult]:
+def extract_file(
+    scanned: ScannedFile,
+    processed_lwc_bundles: set[str] | None = None,
+) -> list[ExtractionResult]:
     path = scanned.path
     rel = scanned.relative_path
 
@@ -20,8 +21,14 @@ def extract_file(scanned: ScannedFile) -> list[ExtractionResult]:
         result.entity_type = "ApexTrigger"
         return [result]
     if scanned.file_type == SalesforceFileType.LWC:
-        if path.suffix == ".html":
-            return extract_lwc(path.parent, rel)
+        bundle_dir = path.parent
+        bundle_key = str(bundle_dir.resolve())
+        if processed_lwc_bundles is not None:
+            if bundle_key in processed_lwc_bundles:
+                return []
+            processed_lwc_bundles.add(bundle_key)
+        if path.suffix in {".html", ".js"} or (bundle_dir / f"{bundle_dir.name}.js").exists():
+            return extract_lwc(bundle_dir, rel)
         return []
     if scanned.file_type in {
         SalesforceFileType.OBJECT,

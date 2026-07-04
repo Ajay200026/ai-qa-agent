@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/layout/page-header";
+import { AgentModeToggle } from "@/components/knowledge/AgentModeToggle";
 import type { AskCitation } from "@/lib/types";
 
 interface ChatMessage {
@@ -105,7 +106,8 @@ export default function KnowledgeAskPage() {
     <div className="flex h-[calc(100vh-8rem)] flex-col space-y-4">
       <PageHeader
         title="Ask AI"
-        description="Ask questions about your indexed Salesforce module using local Qwen via LM Studio."
+        description="Graph-memory chat powered by your local Code Brain (Devstral via LM Studio)."
+        actions={<AgentModeToggle />}
       />
 
       <div className="flex flex-wrap gap-2">
@@ -144,12 +146,17 @@ export default function KnowledgeAskPage() {
               >
                 <p className="whitespace-pre-wrap">{msg.content}</p>
                 {msg.citations && msg.citations.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1">
+                  <div className="mt-2 flex flex-wrap items-center gap-1">
                     {msg.citations.map((c, j) => (
                       <Badge key={j} variant="secondary" className="text-xs">
                         {c.entity_type}: {c.name}
                       </Badge>
                     ))}
+                    {moduleId && (
+                      <Button variant="link" size="sm" className="h-auto p-0 text-xs" asChild>
+                        <Link href={`/knowledge/globe?module=${moduleId}`}>Open in Globe</Link>
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>

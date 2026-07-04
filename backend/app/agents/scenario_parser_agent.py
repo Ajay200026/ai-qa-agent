@@ -4,7 +4,8 @@ import json
 from langchain_core.prompts import ChatPromptTemplate
 
 from app.agents.state import ExecutionState
-from app.core.llm import get_chat_llm, is_llm_configured
+from app.core.brain_llm_router import get_analysis_llm
+from app.core.llm import is_llm_configured
 from app.core.privacy import is_sensitive_scenario
 from app.schemas.parsed_scenario import BusinessAction, ParsedScenario
 from app.workflows.scenario_text_parser import parse_scenario_text
@@ -78,7 +79,7 @@ async def scenario_parser_node(state: ExecutionState) -> dict:
         logger.info("Using rule-based scenario parser (no LLM)")
         return {"parsed_scenario": base}
 
-    llm = get_chat_llm(temperature=0)
+    llm = get_analysis_llm(temperature=0)
     if not llm:
         return {"parsed_scenario": base}
 

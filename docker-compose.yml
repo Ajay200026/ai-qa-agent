@@ -1,3 +1,5 @@
+name: automation-tool
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -6,7 +8,7 @@ services:
       POSTGRES_PASSWORD: aiqa_secret
       POSTGRES_DB: aiqa_db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -33,6 +35,7 @@ services:
       retries: 10
 
   backend:
+    image: automation-tool-backend:latest
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -45,12 +48,23 @@ services:
       NEO4J_PASSWORD: neo4j_secret
       JWT_SECRET: docker-dev-jwt-secret-change-in-production-32chars
       FERNET_KEY: ${FERNET_KEY:-dGVzdC1mZXJuZXQta2V5LWZvci1kZXYtMzJieXRlcw==}
+      FIREBASE_PROJECT_ID: code-automation-tool
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       CORS_ORIGINS: http://localhost:3000
       PLAYWRIGHT_HEADLESS: "true"
+      LLM_PROVIDER: ${LLM_PROVIDER:-lmstudio}
+      LMSTUDIO_API_BASE: ${LMSTUDIO_API_BASE:-http://host.docker.internal:1234/v1}
+      LMSTUDIO_BRAIN_API_BASE: ${LMSTUDIO_BRAIN_API_BASE:-http://host.docker.internal:1234/v1}
+      LMSTUDIO_MODEL: ${LMSTUDIO_MODEL:-mistralai/devstral-small-2505}
+      LMSTUDIO_BRAIN_MODEL: ${LMSTUDIO_BRAIN_MODEL:-mistralai/devstral-small-2505}
+      LMSTUDIO_EMBEDDING_MODEL: ${LMSTUDIO_EMBEDDING_MODEL:-text-embedding-nomic-embed-text-v1.5}
+      AZURE_DEVOPS_WORKSPACE_DIR: /app/data/azure_workspaces
+      LOCAL_WORKSPACE_DIR: /app/data/local_workspaces
     volumes:
       - ./backend/uploads:/app/uploads
       - ./backend/artifacts:/app/artifacts
+      - azure_workspaces:/app/data/azure_workspaces
+      - local_workspaces:/app/data/local_workspaces
     depends_on:
       postgres:
         condition: service_healthy
@@ -61,9 +75,19 @@ services:
              uvicorn app.main:app --host 0.0.0.0 --port 8000"
 
   frontend:
+    profiles: ["docker-frontend"]
+    image: automation-tool-frontend:latest
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_FIREBASE_API_KEY: ${NEXT_PUBLIC_FIREBASE_API_KEY:-}
+        NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:-code-automation-tool.firebaseapp.com}
+        NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${NEXT_PUBLIC_FIREBASE_PROJECT_ID:-code-automation-tool}
+        NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET:-code-automation-tool.firebasestorage.app}
+        NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID:-}
+        NEXT_PUBLIC_FIREBASE_APP_ID: ${NEXT_PUBLIC_FIREBASE_APP_ID:-}
+        NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID:-}
     ports:
       - "3000:3000"
     environment:
@@ -75,3 +99,5 @@ services:
 volumes:
   postgres_data:
   neo4j_data:
+  azure_workspaces:
+  local_workspaces:

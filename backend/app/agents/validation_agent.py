@@ -6,7 +6,8 @@ from playwright.async_api import Page
 from app.agents.state import ExecutionState
 from app.automation.expected_validator import check_expected
 from app.automation.pages.data_change_page import DataChangePage
-from app.core.llm import get_chat_llm, is_llm_configured
+from app.core.brain_llm_router import get_analysis_llm
+from app.core.llm import is_llm_configured
 from app.schemas.agent import ValidationResult
 
 logger = logging.getLogger(__name__)
@@ -67,7 +68,7 @@ async def validation_node(state: ExecutionState, page: Page | None = None) -> di
     llm_verdict = None
     if is_llm_configured():
         try:
-            llm = get_chat_llm(temperature=0)
+            llm = get_analysis_llm(temperature=0)
             if not llm:
                 raise RuntimeError("LLM not available")
             step_summary = "\n".join(
@@ -88,6 +89,30 @@ async def validation_node(state: ExecutionState, page: Page | None = None) -> di
         except Exception as exc:
             logger.warning("LLM validation failed: %s", exc)
             llm_verdict = f"LLM validation unavailable: {exc}"
+
+    validation = ValidationResult(passed=all_passed, checks=checks, llm_verdict=llm_verdict)
+
+    for step in state.get("step_results", []):
+        if step.screenshot_path:
+            try:
+                from app.agents.vision_qa_agent import run_vision_qa
+
+                vision = await run_vision_qa(
+                    execution_id=str(state.get("execution_id", "local")),
+                    scenario_name=state.get("scenario_name", "scenario"),
+                    step_action=step.action,
+                    expected=state.get("acceptance_criteria", "")[:500],
+                    screenshot_path=step.screenshot_path,
+                )
+                checks.append({
+                    "check": f"vision_{step.action}",
+                    "passed": vision.get("validation_passed", True),
+                    "detail": vision.get("summary", ""),
+                })
+                if not vision.get("validation_passed", True):
+                    all_passed = False
+            except Exception as exc:
+                logger.debug("Vision QA skipped: %s", exc)
 
     validation = ValidationResult(passed=all_passed, checks=checks, llm_verdict=llm_verdict)
     logger.info("Validation result: %s", "PASSED" if all_passed else "FAILED")

@@ -231,14 +231,67 @@ export interface KnowledgeRepo {
   id: string;
   name: string;
   path: string;
+  source_type: string;
+  azure_connection_id: string | null;
+  azure_project: string | null;
+  azure_repo: string | null;
+  azure_repo_id: string | null;
+  branch: string | null;
+  last_synced_commit: string | null;
   owner_id: string;
   created_at: string;
+}
+
+export interface UploadedFileInfo {
+  path: string;
+  type: string;
+  size: number;
+}
+
+export interface FolderUploadResult extends KnowledgeRepo {
+  success: boolean;
+  projectName: string;
+  totalFiles: number;
+  uploadedFiles: UploadedFileInfo[];
+}
+
+export interface KnowledgeRepoCreate {
+  name: string;
+  source_type: "azure" | "local";
+  connection_id?: string;
+  azure_project?: string;
+  azure_repo?: string;
+  azure_repo_id?: string;
+  branch?: string;
+  path?: string;
+}
+
+export interface AzureConnection {
+  id: string;
+  name: string;
+  organization_url: string;
+  organization_name: string;
+  status: string;
+  last_validated_at: string | null;
+  created_at: string;
+}
+
+export interface AzureProject {
+  id: string;
+  name: string;
+}
+
+export interface AzureRepo {
+  id: string;
+  name: string;
+  default_branch: string;
 }
 
 export interface KnowledgeModule {
   id: string;
   repo_id: string;
   name: string;
+  scope_path: string | null;
   scan_status: string;
   scan_error: string | null;
   stats: Record<string, number | string> | null;
@@ -249,6 +302,40 @@ export interface KnowledgeModule {
 export interface DiscoveredModule {
   name: string;
   file_count: number;
+  scope_path?: string | null;
+}
+
+export interface ValidateScopeResponse {
+  valid: boolean;
+  normalized_path?: string | null;
+  file_count: number;
+  breakdown: Record<string, number>;
+  suggestion?: string | null;
+  message?: string | null;
+}
+
+export interface RepoFolderEntry {
+  name: string;
+  path: string;
+  file_count: number;
+  breakdown: Record<string, number>;
+  is_selectable?: boolean;
+  is_current?: boolean;
+}
+
+export interface RepoFileEntry {
+  name: string;
+  path: string;
+  is_directory: boolean;
+  size: number | null;
+}
+
+export interface FileContentResponse {
+  path: string;
+  content: string;
+  language: string;
+  size: number;
+  truncated: boolean;
 }
 
 export interface ModuleStatus {
@@ -269,6 +356,51 @@ export interface GraphNode {
   summary?: string | null;
   file_path?: string | null;
   entity_id?: string | null;
+  orbit_level?: number | null;
+  line_start?: number | null;
+}
+
+export interface BrainNodeDetail {
+  id: string;
+  name: string;
+  type: string;
+  label?: string;
+  summary?: string;
+  description?: string;
+  file_path?: string;
+  line_start?: number;
+  line_end?: number;
+  neighbors?: Array<{
+    rel: string;
+    direction: string;
+    node: string;
+    node_type: string;
+    node_id?: string;
+    file_path?: string;
+    line_start?: number;
+  }>;
+}
+
+export interface BrainConfig {
+  agent_mode: "single" | "multi";
+  routing_mode?: string;
+  models: {
+    scan?: string;
+    chat?: string;
+    analysis?: string;
+    automation?: string;
+    brain: string;
+    rca: string;
+    vision: string;
+  };
+  scan_available?: boolean;
+  chat_available?: boolean;
+  analysis_available?: boolean;
+  automation_available?: boolean;
+  brain_available: boolean;
+  rca_available: boolean;
+  vision_available: boolean;
+  degraded: boolean;
 }
 
 export interface GraphEdge {

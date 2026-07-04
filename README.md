@@ -1,8 +1,10 @@
-# AI QA Agent — Enterprise Salesforce Knowledge Platform
+# Automation Tool — Enterprise Salesforce Knowledge Platform
 
 An application that understands Salesforce codebases like an experienced developer and automates QA workflows. **Phase 1** focuses on application knowledge: scan a Salesforce module, build a dependency graph, and ask AI questions using a **fully local** LLM (LM Studio + Qwen). QA automation (Playwright test execution) remains available alongside the knowledge engine.
 
 **Author:** [Ajay200026](https://github.com/Ajay200026)
+
+> **Docker image names:** `automation-tool-backend:latest` and `automation-tool-frontend:latest` (Compose project: `automation-tool`)
 
 ## Features
 
@@ -48,8 +50,8 @@ Neo4j
 
 ### Knowledge Engine Pipeline
 
-1. **Register repository** — Point to a local Salesforce project path (`force-app`, `sfdx-project.json`)
-2. **Select module** — Discover and pick a feature module (e.g. `customerDetails`, `DataChange`)
+1. **Register repository** — Connect **Azure DevOps** (primary) or **upload** a ZIP / local folder (`sfdx-project.json` or `force-app/` required)
+2. **Select module** — Discover and pick a feature folder (e.g. `Data Change`) — generic containers like `lwc` are blocked
 3. **Scan** — Extract structured knowledge; run dependency closure to pull in referenced Apex, LWC, metadata
 4. **Build graph** — Write nodes and relationships to Neo4j; index summaries in Chroma
 5. **Ask AI / View graph** — Query indexed knowledge via chat or interactive dependency graph
@@ -68,29 +70,101 @@ Neo4j
 |-------------|---------|-------|
 | Docker & Docker Compose | Latest | PostgreSQL + Neo4j |
 | Node.js (local frontend) | 20+ | |
-| Python (local backend) | 3.11+ | |
+| Python (local backend) | 3.11+ | 3.11–3.13 recommended; 3.14 may work but is less tested |
 | LM Studio | Latest | **Recommended** — load Qwen + embedding model |
 | LLM API key | Optional | NVIDIA NIM or OpenAI if not using LM Studio |
 | Firebase project | — | Email/Password auth enabled |
 
+### Verified on this machine (Windows)
+
+| Tool | Version |
+|------|---------|
+| Node.js | 20+ |
+| Python | 3.11+ |
+| Docker | 29.x |
+| Docker Compose | v2+ |
+
+### One-time setup (local development)
+
+From the project root (`ai-qa-agent/`):
+
+```bash
+# 1. Backend — Python venv, deps, Playwright Chromium
+cd backend
+python -m venv .venv
+# Windows PowerShell:
+.\.venv\Scripts\Activate.ps1
+# macOS/Linux:
+# source .venv/bin/activate
+pip install -e ".[dev]"
+playwright install chromium
+
+# 2. Frontend — Node dependencies
+cd ../frontend
+npm install
+
+# 3. Environment files (project root)
+cd ..
+cp .env.example .env          # Windows: Copy-Item .env.example .env
+cp frontend/.env.example frontend/.env.local
+
+# Generate secrets and set in .env:
+# Windows (from backend venv):
+#   .\.venv\Scripts\Activate.ps1
+#   python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+#   python -c "import secrets; print(secrets.token_urlsafe(48))"
+# macOS/Linux: same python commands after source .venv/bin/activate
+# Set JWT_SECRET and FERNET_KEY in .env
+
+# Copy .env for local backend (or symlink)
+cp .env backend/.env          # Windows: Copy-Item .env backend\.env
+
+# 4. Start databases
+docker compose up postgres neo4j -d
+
+# 5. Run migrations (backend venv active)
+cd backend
+alembic upgrade head
+```
+
+Edit `frontend/.env.local` with your `NEXT_PUBLIC_FIREBASE_*` values from [Firebase Console](https://console.firebase.google.com).
+
 ### LM Studio Setup (local AI)
 
 1. Install [LM Studio](https://lmstudio.ai)
-2. Load a chat model (e.g. **Qwen**)
-3. Load an embedding model (e.g. **nomic-embed-text**)
-4. Start the local server (default: `http://localhost:1234`)
-5. Set in `.env`:
+2. Load **mistralai/devstral-small-2505** (chat / Code Brain)
+3. Load **text-embedding-nomic-embed-text-v1.5** (vector search / Ask AI)
+4. Start the local server — reachable at `http://127.0.0.1:1234`
+
+**OpenAI-compatible endpoints** (used by this app):
+
+| Method | Endpoint |
+|--------|----------|
+| `GET` | `http://127.0.0.1:1234/v1/models` |
+| `POST` | `http://127.0.0.1:1234/v1/chat/completions` |
+| `POST` | `http://127.0.0.1:1234/v1/embeddings` |
+
+5. Set in `.env` (model IDs must match `GET /v1/models`):
 
 ```bash
 LLM_PROVIDER=lmstudio
-LMSTUDIO_API_BASE=http://localhost:1234/v1
-LMSTUDIO_MODEL=qwen                          # match loaded chat model name
+LMSTUDIO_API_BASE=http://127.0.0.1:1234/v1
+LMSTUDIO_MODEL=mistralai/devstral-small-2505
 LMSTUDIO_EMBEDDING_MODEL=text-embedding-nomic-embed-text-v1.5
+
+# Code Brain (single-agent mode — Devstral handles scan, Ask AI, RCA, vision)
+BRAIN_AGENT_MODE=single
+LMSTUDIO_BRAIN_API_BASE=http://127.0.0.1:1234/v1
+LMSTUDIO_BRAIN_MODEL=mistralai/devstral-small-2505
 ```
+
+**Multi-agent mode** (optional): enable in the UI toggle or set `BRAIN_AGENT_MODE=multi`, then run additional LM Studio servers on ports 1235/1236 with `qwen/qwen3.6-35b-a3b` (RCA) and `google/gemma-4-26b-a4b-qat` (vision).
 
 ## Quick Start (Docker)
 
 Recommended for first-time setup. Runs PostgreSQL, Neo4j, backend, and frontend together.
+
+Docker images are tagged **`automation-tool-backend:latest`** and **`automation-tool-frontend:latest`**. The Compose project name is **`automation-tool`** (container names like `automation-tool-postgres-1`).
 
 ```bash
 # 1. Clone the repository
@@ -99,12 +173,14 @@ cd ai-qa-agent
 
 # 2. Create backend environment file
 cp .env.example .env
+# Windows PowerShell: Copy-Item .env.example .env
 ```
 
 Edit `.env` and set at minimum:
 
 ```bash
 # Generate a Fernet key (required for encrypting Salesforce credentials)
+# Run from backend venv after pip install, or: pip install cryptography
 python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 
 # Set in .env:
@@ -113,7 +189,8 @@ FERNET_KEY=<paste-generated-fernet-key>
 
 # LLM — local (recommended, no cloud API):
 LLM_PROVIDER=lmstudio
-LMSTUDIO_MODEL=qwen
+LMSTUDIO_MODEL=mistralai/devstral-small-2505
+LMSTUDIO_BRAIN_MODEL=mistralai/devstral-small-2505
 
 # OR cloud providers:
 # LLM_PROVIDER=nvidia
@@ -123,8 +200,15 @@ LMSTUDIO_MODEL=qwen
 ```
 
 ```bash
-# 3. Start all services
+# 3. Start all services (builds automation-tool-backend and automation-tool-frontend images)
 docker compose up --build
+
+# Optional: build images without starting
+docker compose build
+
+# Optional: tag images explicitly after build
+# docker tag automation-tool-backend:latest automation-tool-backend:latest
+# docker tag automation-tool-frontend:latest automation-tool-frontend:latest
 ```
 
 | Service | URL |
@@ -140,11 +224,18 @@ docker compose up --build
 ## Using the Knowledge Platform
 
 1. Open **Knowledge** in the sidebar (http://localhost:3000/knowledge)
-2. **Register Repository** — enter a name and the absolute path to your local Salesforce project
-3. **Select Module** — pick a discovered module (e.g. Data Change, Onboarding)
-4. **Scan Module** — extracts knowledge, builds the graph, indexes vectors
-5. **View Graph** — interactive dependency visualization at `/knowledge/graph`
-6. **Ask AI** — chat about fields, Apex, LWCs, flows, navigation at `/knowledge/ask`
+2. **Connect Azure DevOps** — organization URL + Personal Access Token (scopes: **Code Read**, **Project and Team Read**)
+3. **Select project → repository → branch** and register the repo
+4. **Select Module** — pick a discovered module (e.g. Data Change, Onboarding)
+5. **Scan Module** — syncs the branch, extracts knowledge, builds the graph, indexes vectors
+6. **View Graph** — interactive dependency visualization at `/knowledge/graph`
+7. **Ask AI** — chat about fields, Apex, LWCs, flows, navigation at `/knowledge/ask`
+
+### Azure DevOps PAT setup
+
+1. Azure DevOps → User settings → **Personal access tokens** → New Token
+2. Scopes: **Code (Read)** and **Project and Team (Read)**
+3. Paste the token in the Knowledge UI (stored encrypted per user in PostgreSQL)
 
 Example questions:
 
@@ -169,7 +260,10 @@ cd backend
 
 # Create virtual environment (recommended)
 python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+# Windows PowerShell:
+.\.venv\Scripts\Activate.ps1
+# macOS/Linux:
+# source .venv/bin/activate
 
 # Install dependencies
 pip install -e ".[dev]"
@@ -179,6 +273,8 @@ playwright install chromium
 
 # Configure environment
 cp ../.env.example .env
+# Windows: Copy-Item ..\.env.example .env
+# Or copy the root .env if already configured: Copy-Item ..\.env .env
 # Edit .env — set JWT_SECRET, FERNET_KEY, LLM_PROVIDER (see Quick Start)
 
 # Run database migrations
@@ -208,6 +304,32 @@ Start LM Studio with Qwen and an embedding model loaded before scanning or using
 
 Open http://localhost:3000 and register a new account (Firebase Email/Password must be enabled in your Firebase project).
 
+## Run the app (after setup)
+
+**Option A — Docker (full stack)**
+
+```bash
+docker compose up --build
+```
+
+**Option B — Local dev (databases in Docker)**
+
+```bash
+# Terminal 1 — databases (if not already running)
+docker compose up postgres neo4j -d
+
+# Terminal 2 — backend
+cd backend
+.\.venv\Scripts\Activate.ps1    # Windows
+uvicorn app.main:app --reload --port 8000
+
+# Terminal 3 — frontend
+cd frontend
+npm run dev
+```
+
+**Still required manually:** [LM Studio](https://lmstudio.ai) (for Ask AI / scanning) and [Firebase](https://console.firebase.google.com) config in `frontend/.env.local`.
+
 ## Environment Variables
 
 ### Backend (`.env` in project root or `backend/.env`)
@@ -217,14 +339,17 @@ Open http://localhost:3000 and register a new account (Firebase Email/Password m
 | `JWT_SECRET` | Yes | JWT signing key (min 32 characters) |
 | `FERNET_KEY` | Yes | Fernet key for encrypting Salesforce credentials |
 | `LLM_PROVIDER` | Yes | `lmstudio`, `nvidia`, or `openai` |
-| `LMSTUDIO_API_BASE` | If using LM Studio | Default: `http://localhost:1234/v1` |
-| `LMSTUDIO_MODEL` | If using LM Studio | Chat model name (e.g. `qwen`) |
+| `LMSTUDIO_API_BASE` | If using LM Studio | Default: `http://127.0.0.1:1234/v1` |
+| `LMSTUDIO_MODEL` | If using LM Studio | Chat model ID (e.g. `mistralai/devstral-small-2505`) |
 | `LMSTUDIO_EMBEDDING_MODEL` | If using LM Studio | Embedding model for vector search |
+| `BRAIN_AGENT_MODE` | No | `single` (Devstral for all) or `multi` |
+| `LMSTUDIO_BRAIN_API_BASE` | No | Code Brain endpoint; default same as `LMSTUDIO_API_BASE` |
+| `LMSTUDIO_BRAIN_MODEL` | No | Code Brain model; default `mistralai/devstral-small-2505` |
 | `NVIDIA_API_KEY` | If using NVIDIA | NVIDIA NIM API key |
 | `OPENAI_API_KEY` | If using OpenAI | OpenAI API key |
 | `CHROMA_DIR` | No | Vector store path; default: `./data/chroma` |
-| `SF_REPO_PATH` | No | Optional default Salesforce repo path |
-| `DATABASE_URL` | No | Default: `postgresql+asyncpg://aiqa:aiqa_secret@localhost:5432/aiqa_db` |
+| `AZURE_DEVOPS_WORKSPACE_DIR` | No | Git clone cache for Azure repos; default: `./data/azure_workspaces` |
+| `DATABASE_URL` | No | Default: `postgresql+asyncpg://aiqa:aiqa_secret@localhost:5433/aiqa_db` (port **5433** avoids conflict if local PostgreSQL uses 5432) |
 | `NEO4J_URI` | No | Default: `bolt://localhost:7687` |
 | `NEO4J_USER` / `NEO4J_PASSWORD` | No | Default: `neo4j` / `neo4j_secret` |
 | `FIREBASE_PROJECT_ID` | No | Must match your Firebase project |
@@ -237,7 +362,7 @@ See [.env.example](.env.example) for the full list.
 
 For any server that runs browser automation:
 
-1. **Recommended:** use the provided Docker backend image (`backend/Dockerfile`), which is based on `mcr.microsoft.com/playwright/python` and already includes Chromium + OS dependencies.
+1. **Recommended:** use the provided Docker backend image (`automation-tool-backend:latest`, built from `backend/Dockerfile`), which is based on `mcr.microsoft.com/playwright/python` and already includes Chromium + OS dependencies.
 2. Run with Docker Compose: `docker compose up --build`
 3. Keep `PLAYWRIGHT_HEADLESS=true` in production.
 4. If you deploy without Docker, on the server run once inside the backend venv:
@@ -269,10 +394,20 @@ python -c "import secrets; print(secrets.token_urlsafe(48))"
 
 ## Firebase Setup
 
-1. Create a project at [Firebase Console](https://console.firebase.google.com)
+Project: **code-automation-tool**
+
+1. Open [Firebase Console](https://console.firebase.google.com) → **code-automation-tool**
 2. Enable **Authentication → Sign-in method → Email/Password**
-3. Add a **Web app** and copy the config values into `frontend/.env.local`
-4. Set `FIREBASE_PROJECT_ID` in backend `.env` to match your project ID
+3. Web app config is already wired in `frontend/.env.local` (`NEXT_PUBLIC_FIREBASE_*`)
+4. Backend `.env` must use the same project ID:
+
+```bash
+FIREBASE_PROJECT_ID=code-automation-tool
+```
+
+5. Restart the frontend after changing env vars: `npm run dev` (or rebuild for Docker)
+
+**Authorized domains** (Firebase Console → Authentication → Settings): add `localhost` for local dev.
 
 ## Salesforce Authentication
 
@@ -338,7 +473,7 @@ LIMIT 1
 |--------|-----------|
 | Auth | `POST /auth/register`, `POST /auth/login`, `GET /auth/me` |
 | Projects | `GET\|POST /projects` |
-| **Knowledge Engine** | `POST /knowledge/repos`, `GET /knowledge/repos/{id}/discover`, `POST /knowledge/repos/{id}/modules`, `POST /knowledge/modules/{id}/scan`, `GET /knowledge/modules/{id}/status`, `GET /knowledge/modules/{id}/graph`, `GET /knowledge/entities/{id}`, `POST /knowledge/ask`, `POST /knowledge/ask/stream` |
+| **Knowledge Engine** | `POST /knowledge/azure/connect`, `GET /knowledge/azure/connections`, `GET /knowledge/azure/connections/{id}/projects`, `POST /knowledge/repos`, `GET /knowledge/repos/{id}/discover`, `POST /knowledge/modules/{id}/scan`, `GET /knowledge/modules/{id}/graph`, `POST /knowledge/ask` |
 | Salesforce | `GET\|POST\|PATCH\|DELETE /salesforce/orgs`, `POST /salesforce/orgs/oauth/start`, `POST /salesforce/orgs/oauth/callback`, `POST /salesforce/orgs/{id}/validate` |
 | Scenarios | `GET\|POST /scenarios` (multipart upload) |
 | Workflows | `GET\|POST /workflows` |
@@ -380,7 +515,7 @@ ai-qa-agent/
 │       ├── components/          # UI components
 │       ├── hooks/               # React hooks (auth, execution stream)
 │       └── lib/                 # API client, Firebase, types
-├── docker-compose.yml
+├── docker-compose.yml          # Compose project: automation-tool
 ├── .env.example
 └── README.md
 ```
@@ -390,11 +525,11 @@ ai-qa-agent/
 | Issue | Fix |
 |-------|-----|
 | Backend won't start — missing env | Ensure `JWT_SECRET` (32+ chars) and `FERNET_KEY` are set in `.env` |
-| `alembic upgrade head` fails | Confirm PostgreSQL is running: `docker compose up postgres -d` |
-| LM Studio / Ask AI not working | Start LM Studio, load Qwen + embedding model, verify `http://localhost:1234/v1/models` |
+| `alembic upgrade head` fails | Confirm PostgreSQL is running: `docker compose up postgres -d`. On Windows, if port 5432 is already used by a local PostgreSQL install, use port **5433** (default in `docker-compose.yml` and `.env.example`). |
+| LM Studio / Ask AI not working | Start LM Studio, load Devstral + nomic embedding model, verify `http://127.0.0.1:1234/v1/models` lists both |
 | Vector search empty after scan | Ensure embedding model is loaded in LM Studio; check `LMSTUDIO_EMBEDDING_MODEL` matches |
-| No modules discovered | Verify repo path points to a valid SFDX project with `force-app/` |
-| Scan finds 0 files | Module name must match folder names in `lwc/`, `classes/`, etc. |
+| No modules discovered | Verify repo contains `force-app/` with LWC bundles; use suggested feature folders from discover |
+| Scan finds 0 files | Select a named feature folder (e.g. `Data Change`), not a generic `lwc` container |
 | Graph view empty | Run a scan first; confirm Neo4j is running |
 | Playwright browser missing | Run `playwright install chromium` in the backend venv |
 | Playwright points at Cursor sandbox path | Restart the backend after pulling latest; the app ignores invalid sandbox paths. Or unset `PLAYWRIGHT_BROWSERS_PATH` in your shell |
@@ -402,9 +537,32 @@ ai-qa-agent/
 | Neo4j connection warning | Non-fatal at startup; graph features retry on use. Check `docker compose up neo4j -d` |
 | CORS errors | Add your frontend URL to `CORS_ORIGINS` in backend `.env` |
 
+### Reset knowledge platform (one-time wipe)
+
+Use the **Start Fresh** button on the Knowledge workbench to delete all repos, modules, Azure connections, and workspace files for your user.
+
+For a full environment reset (all users, Docker volumes):
+
+```sql
+-- PostgreSQL (order matters for FK constraints)
+DELETE FROM knowledge_entities;
+DELETE FROM knowledge_modules;
+DELETE FROM knowledge_repos;
+DELETE FROM azure_devops_connections;
+```
+
+```bash
+# Remove workspace and graph/vector data volumes
+docker compose down
+docker volume rm automation-tool_azure_workspaces automation-tool_neo4j_data 2>/dev/null || true
+# Chroma data: remove backend data/chroma directory if using local Chroma
+```
+
+Clear browser state: `localStorage.removeItem('knowledge_selected_module')`
+
 ## Tech Stack
 
-- **Frontend:** Next.js 15, React 19, Tailwind CSS, Firebase Auth, TanStack Query, React Flow
+- **Frontend:** Next.js 15, React 19, Tailwind CSS, Firebase Auth, TanStack Query, React Flow, react-force-graph-3d
 - **Backend:** FastAPI, SQLAlchemy, Alembic, LangGraph, Playwright
 - **Databases:** PostgreSQL, Neo4j, Chroma (vector store)
 - **LLM:** LM Studio (local Qwen) / NVIDIA NIM / OpenAI

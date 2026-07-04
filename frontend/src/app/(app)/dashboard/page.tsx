@@ -7,19 +7,29 @@ import { Trash2 } from "lucide-react";
 import { api } from "@/lib/api";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { OrgCard } from "@/components/dashboard/org-card";
+import { KnowledgeQuickAccess } from "@/components/dashboard/knowledge-quick-access";
 import { ExecutionList } from "@/components/executions/execution-list";
 import { PageHeader, SectionHeader } from "@/components/layout/page-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PremiumCard } from "@/components/ui/premium-card";
 import { Button } from "@/components/ui/button";
 import { StatsCardsSkeleton } from "@/components/loading/stats-cards-skeleton";
 import { ListCardsSkeleton } from "@/components/loading/list-cards-skeleton";
 import { TableSkeleton } from "@/components/loading/table-skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 export default function DashboardPage() {
   const queryClient = useQueryClient();
   const [clearingFailed, setClearingFailed] = useState(false);
   const [clearingHistory, setClearingHistory] = useState(false);
-  const [actionError, setActionError] = useState("");
+  const [confirmAction, setConfirmAction] = useState<"failed" | "history" | null>(null);
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["dashboard-stats"],
@@ -62,30 +72,30 @@ export default function DashboardPage() {
   };
 
   const handleClearFailed = async () => {
-    if (!confirm("Clear all failed executions? This cannot be undone.")) return;
     setClearingFailed(true);
-    setActionError("");
     try {
       await api.clearFailedExecutions();
       await invalidateExecutionQueries();
+      toast.success("Failed executions cleared");
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Failed to clear failed executions");
+      toast.error(err instanceof Error ? err.message : "Failed to clear");
     } finally {
       setClearingFailed(false);
+      setConfirmAction(null);
     }
   };
 
   const handleClearHistory = async () => {
-    if (!confirm("Clear all finished execution history? Active runs will be kept.")) return;
     setClearingHistory(true);
-    setActionError("");
     try {
       await api.clearExecutionHistory();
       await invalidateExecutionQueries();
+      toast.success("Execution history cleared");
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Failed to clear execution history");
+      toast.error(err instanceof Error ? err.message : "Failed to clear");
     } finally {
       setClearingHistory(false);
+      setConfirmAction(null);
     }
   };
 
@@ -101,13 +111,9 @@ export default function DashboardPage() {
         }
       />
 
-      {actionError && (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {actionError}
-        </div>
-      )}
-
       {statsLoading ? <StatsCardsSkeleton /> : stats && <StatsCards stats={stats} />}
+
+      <KnowledgeQuickAccess />
 
       <section>
         <SectionHeader
@@ -123,14 +129,14 @@ export default function DashboardPage() {
         {orgsLoading && projectId ? (
           <ListCardsSkeleton count={3} />
         ) : orgs.length === 0 ? (
-          <Card>
-            <CardContent className="py-8 text-center text-sm text-muted-foreground">
+          <PremiumCard>
+            <p className="py-4 text-center text-sm text-muted-foreground">
               No orgs connected.{" "}
-              <Link href="/salesforce-orgs" className="font-medium underline">
+              <Link href="/salesforce-orgs" className="font-medium text-primary underline">
                 Authorize a Salesforce org
               </Link>
-            </CardContent>
-          </Card>
+            </p>
+          </PremiumCard>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {orgs.map((org) => (
@@ -149,7 +155,7 @@ export default function DashboardPage() {
                 variant="outline"
                 size="sm"
                 className="gap-2"
-                onClick={handleClearHistory}
+                onClick={() => setConfirmAction("history")}
                 disabled={clearingHistory}
               >
                 <Trash2 className="h-4 w-4" />
@@ -158,15 +164,13 @@ export default function DashboardPage() {
             ) : null
           }
         />
-        <Card>
-          <CardContent className="p-0 sm:p-0">
-            {executionsLoading ? (
-              <TableSkeleton rows={5} columns={3} />
-            ) : (
-              <ExecutionList executions={executions.slice(0, 10)} />
-            )}
-          </CardContent>
-        </Card>
+        <PremiumCard noPadding>
+          {executionsLoading ? (
+            <TableSkeleton rows={5} columns={3} />
+          ) : (
+            <ExecutionList executions={executions.slice(0, 10)} />
+          )}
+        </PremiumCard>
       </section>
 
       {failedExecutions.length > 0 && (
@@ -178,7 +182,7 @@ export default function DashboardPage() {
                 variant="outline"
                 size="sm"
                 className="gap-2"
-                onClick={handleClearFailed}
+                onClick={() => setConfirmAction("failed")}
                 disabled={clearingFailed}
               >
                 <Trash2 className="h-4 w-4" />
@@ -188,20 +192,46 @@ export default function DashboardPage() {
           />
           <div className="space-y-2">
             {failedExecutions.map((exec) => (
-              <Card key={exec.id}>
-                <CardHeader className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
-                  <CardTitle className="break-all font-mono text-sm">{exec.id}</CardTitle>
-                  <Link href={`/executions/${exec.id}`} className="w-full sm:w-auto">
-                    <Button variant="outline" size="sm" className="w-full sm:w-auto">
+              <PremiumCard key={exec.id} className="py-3">
+                <div className="flex flex-col gap-3 px-6 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="break-all font-mono text-sm">{exec.id}</p>
+                  <Link href={`/executions/${exec.id}`}>
+                    <Button variant="outline" size="sm">
                       Investigate
                     </Button>
                   </Link>
-                </CardHeader>
-              </Card>
+                </div>
+              </PremiumCard>
             ))}
           </div>
         </section>
       )}
+
+      <Dialog open={!!confirmAction} onOpenChange={() => setConfirmAction(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {confirmAction === "failed" ? "Clear failed executions?" : "Clear execution history?"}
+            </DialogTitle>
+            <DialogDescription>
+              {confirmAction === "failed"
+                ? "This will permanently remove all failed execution records."
+                : "This will clear finished execution history. Active runs will be kept."}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmAction(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmAction === "failed" ? handleClearFailed : handleClearHistory}
+            >
+              Confirm
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

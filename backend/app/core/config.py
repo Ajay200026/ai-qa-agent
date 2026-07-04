@@ -26,32 +26,54 @@ class Settings(BaseSettings):
     jwt_expire_minutes: int = 1440
     fernet_key: str = Field(..., min_length=32)
 
-    # LLM: "nvidia" | "openai" | "lmstudio" (local LM Studio + Qwen)
+    # LLM: "nvidia" | "openai" | "lmstudio" (local LM Studio OpenAI-compatible API)
     llm_provider: str = "nvidia"
+    # hybrid = local scan/embeddings + NVIDIA chat/analysis/automation
+    llm_routing_mode: str = "hybrid"
+    scan_llm_provider: str = "nvidia"
     nvidia_api_key: str = ""
     nvidia_api_base: str = "https://integrate.api.nvidia.com/v1"
     nvidia_model: str = "minimaxai/minimax-m3"
-    nvidia_automation_model: str = "nvidia/nemotron-3-ultra-550b-a55b"
-    nvidia_max_tokens: int = 8192
+    nvidia_chat_model: str = "z-ai/glm-5.2"
+    nvidia_scan_model: str = "google/gemma-4-31b-it"
+    nvidia_analysis_model: str = "google/gemma-4-31b-it"
+    nvidia_automation_model: str = "z-ai/glm-5.2"
+    nvidia_max_tokens: int = 16384
     nvidia_temperature: float = 0.3
+    nvidia_chat_temperature: float = 1.0
+    nvidia_scan_temperature: float = 0.2
+    nvidia_analysis_temperature: float = 1.0
+    nvidia_enable_thinking: bool = True
     llm_field_fallback: bool = False
 
     openai_api_key: str = ""
     openai_model: str = "gpt-4o"
 
     # LM Studio (local OpenAI-compatible endpoint)
-    lmstudio_api_base: str = "http://localhost:1234/v1"
+    lmstudio_api_base: str = "http://127.0.0.1:1234/v1"
     lmstudio_api_key: str = "lm-studio"
-    lmstudio_model: str = "qwen"
+    lmstudio_model: str = "mistralai/devstral-small-2505"
     lmstudio_embedding_model: str = "text-embedding-nomic-embed-text-v1.5"
     lmstudio_max_tokens: int = 8192
     lmstudio_temperature: float = 0.3
 
+    # Code Brain agent routing: single (Devstral for all) | multi (Devstral + Qwen + Gemma)
+    brain_agent_mode: str = "single"
+    lmstudio_brain_api_base: str = "http://127.0.0.1:1234/v1"
+    lmstudio_brain_model: str = "mistralai/devstral-small-2505"
+    lmstudio_rca_api_base: str = ""
+    lmstudio_rca_model: str = "qwen/qwen3.6-35b-a3b"
+    lmstudio_vision_api_base: str = ""
+    lmstudio_vision_model: str = "google/gemma-4-26b-a4b-qat"
+
     # Knowledge Engine
     chroma_dir: Path = Path("./data/chroma")
-    sf_repo_path: str | None = None
+    azure_devops_workspace_dir: Path = Path("./data/azure_workspaces")
+    local_workspace_dir: Path = Path("./data/local_workspaces")
+    max_upload_bytes: int = 500 * 1024 * 1024
+    upload_batch_max_files: int = 200
 
-    firebase_project_id: str = "automation-tool-29a9c"
+    firebase_project_id: str = "code-automation-tool"
     firebase_credentials_path: str | None = None
     # Tolerate small client/server clock drift when validating Firebase ID tokens.
     firebase_token_clock_skew_seconds: int = 60

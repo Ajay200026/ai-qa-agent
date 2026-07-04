@@ -1,46 +1,12 @@
 import logging
 from uuid import UUID
 
+from app.knowledge.action_registry import ACTION_FIELD_MAP, ACTION_SECTION_MAP, resolve_field_for_action
 from app.knowledge.graph_schema import FIELDS, SECTIONS
 from app.knowledge.neo4j_client import Neo4jClient
 from app.schemas.agent import ExecutionReport, PlannedStep, StepResult
 
 logger = logging.getLogger(__name__)
-
-ACTION_SECTION_MAP = {
-    "login": "login",
-    "open_queues": "customer_lifecycle",
-    "create_data_change_request": "customer_lifecycle",
-    "search_select_customer": "data_change",
-    "open_customer_details": "data_change",
-    "modify_primary_group": "data_change",
-    "submit": "data_change",
-    "click_new_button": "customer_lifecycle",
-    "select_request_module": "customer_lifecycle",
-    "open_customer_search": "data_change",
-    "validate_expected": "validation",
-    "set_field": "data_change",
-    "wait_for_customer_dropdown": "data_change",
-    "select_first_customer": "data_change",
-    "open_app_launcher": "app_launcher",
-    "open_app": "onboarding",
-    "open_tab": "customer_lifecycle",
-    "click_new": "customer_lifecycle",
-    "select_module": "data_change",
-    "select_sales_office": "data_change",
-    "enter_customer_number": "data_change",
-    "search": "data_change",
-    "wait_for_data": "data_change",
-    "save_draft": "data_change",
-}
-
-ACTION_FIELD_MAP = {
-    "modify_primary_group": "primary_group",
-    "search_select_customer": "customer_number",
-    "select_module": "module_selection",
-    "select_sales_office": "sales_office",
-    "enter_customer_number": "customer_number",
-}
 
 
 class KnowledgeWriter:
@@ -77,16 +43,22 @@ class KnowledgeWriter:
 
         await self.client.run_query(
             """
-            MERGE (s:Scenario {id: $scenario_id})
-            SET s.name = $scenario_name
+            MERGE (s:KeNode:Scenario {id: $brain_scenario_id})
+            SET s.scenario_id = $scenario_id, s.name = $scenario_name, s.type = 'Scenario',
+                s.label = $scenario_name, s.expected = $expected, s.actual = $actual,
+                s.orbit_level = 5
+            MERGE (s2:Scenario {id: $scenario_id})
+            SET s2.name = $scenario_name
             MERGE (e:Execution {id: $execution_id})
             SET e.status = $status, e.passed_count = $passed_count, e.failed_count = $failed_count
-            MERGE (s)-[:EXECUTED]->(e)
+            MERGE (s2)-[:EXECUTED]->(e)
+            MERGE (e)-[:VALIDATED]->(s)
             MERGE (r:Result {id: $result_id})
             SET r.passed = $passed, r.summary = $summary
             MERGE (e)-[:PRODUCED]->(r)
             """,
             {
+                "brain_scenario_id": f"brain-scenario:{scenario_id}",
                 "scenario_id": str(scenario_id),
                 "scenario_name": scenario_name,
                 "execution_id": str(execution_id),
@@ -96,8 +68,50 @@ class KnowledgeWriter:
                 "failed_count": report.failed_count,
                 "passed": report.passed,
                 "summary": report.summary[:2000],
+                "expected": report.summary[:500],
+                "actual": "passed" if report.passed else "failed",
             },
         )
+
+        for step_result in step_results:
+            if step_result.status == "passed":
+                continue
+            defect_id = f"defect:{execution_id}:{step_result.seq}"
+            await self.client.run_query(
+                """
+                MERGE (d:KeNode:Defect {id: $defect_id})
+                SET d.type = 'Defect', d.name = $name, d.label = $name,
+                    d.summary = $error, d.ticket = $ticket, d.orbit_level = 5
+                WITH d
+                MATCH (s:KeNode {id: $scenario_brain_id})
+                MERGE (d)-[:AFFECTS]->(s)
+                """,
+                {
+                    "defect_id": defect_id,
+                    "name": f"Step {step_result.seq} failure",
+                    "error": (step_result.error or "")[:1000],
+                    "ticket": defect_id,
+                    "scenario_brain_id": f"brain-scenario:{scenario_id}",
+                },
+            )
+            field_name = resolve_field_for_action(step_result.action, step_result.params if hasattr(step_result, "params") else None)
+            if field_name:
+                await self.client.run_query(
+                    """
+                    MATCH (d:KeNode {id: $defect_id})
+                    MATCH (f:KeNode)
+                    WHERE f.type = 'Field' AND toLower(f.name) CONTAINS toLower($field)
+                    MERGE (e:Execution {id: $execution_id})
+                    MERGE (e)-[:FAILED_ON]->(f)
+                    MERGE (d)-[:CAUSED_BY]->(f)
+                    LIMIT 1
+                    """,
+                    {
+                        "defect_id": defect_id,
+                        "field": field_name,
+                        "execution_id": str(execution_id),
+                    },
+                )
 
         navigated_sections: set[str] = set()
         for step in planned_steps:

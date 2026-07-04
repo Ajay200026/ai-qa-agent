@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { Brain } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PremiumCard } from "@/components/ui/premium-card";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 export default function LoginPage() {
   const { login, register } = useAuth();
@@ -33,15 +35,29 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>AI QA Agent</CardTitle>
-          <CardDescription>
-            {isRegister ? "Create your account" : "Sign in to your account"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="flex min-h-screen">
+      <div className="relative hidden flex-1 flex-col justify-between bg-gradient-to-br from-primary/20 via-background to-background p-10 lg:flex">
+        <div className="flex items-center gap-2">
+          <Brain className="h-8 w-8 text-primary" />
+          <span className="text-xl font-bold">AI QA Agent</span>
+        </div>
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight">
+            Salesforce QA &<br />
+            Knowledge Platform
+          </h1>
+          <p className="mt-4 max-w-md text-muted-foreground">
+            Connect Azure DevOps, build knowledge graphs, and run AI-powered Salesforce testing.
+          </p>
+        </div>
+        <p className="text-xs text-muted-foreground">Premium testing automation</p>
+      </div>
+
+      <div className="flex flex-1 flex-col items-center justify-center p-6">
+        <div className="absolute right-4 top-4">
+          <ThemeToggle />
+        </div>
+        <PremiumCard className="w-full max-w-md" title="AI QA Agent" description={isRegister ? "Create your account" : "Sign in to your account"}>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -77,8 +93,8 @@ export default function LoginPage() {
               {isRegister ? "Already have an account? Sign in" : "Need an account? Register"}
             </Button>
           </form>
-        </CardContent>
-      </Card>
+        </PremiumCard>
+      </div>
     </div>
   );
 }

@@ -2,17 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { OrgConnectPanel } from "@/components/salesforce/org-connect-panel";
 import { OrgList } from "@/components/salesforce/org-list";
 import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardContent } from "@/components/ui/card";
+import { PremiumCard } from "@/components/ui/premium-card";
 import { TableSkeleton } from "@/components/loading/table-skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export default function SalesforceOrgsPage() {
   const queryClient = useQueryClient();
   const [busyId, setBusyId] = useState<string | null>(null);
-  const [message, setMessage] = useState("");
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const { data: projects = [] } = useQuery({
     queryKey: ["projects"],
@@ -35,22 +45,19 @@ export default function SalesforceOrgsPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("connected") !== "1") return;
-    setMessage("Org authorized — your Salesforce session is saved. No password needed for test runs.");
+    toast.success("Org authorized — Salesforce session saved.");
     window.history.replaceState({}, "", "/salesforce-orgs");
-    if (projectId) {
-      void refetch();
-    }
+    if (projectId) void refetch();
   }, [projectId, refetch]);
 
   const handleValidate = async (orgId: string) => {
     setBusyId(orgId);
-    setMessage("");
     try {
       const result = await api.validateOrg(orgId);
-      setMessage(result.message);
+      toast.success(result.message);
       await refetch();
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Validation failed");
+      toast.error(err instanceof Error ? err.message : "Validation failed");
     } finally {
       setBusyId(null);
     }
@@ -61,27 +68,30 @@ export default function SalesforceOrgsPage() {
     try {
       await api.updateOrg(orgId, { is_default: true });
       await queryClient.invalidateQueries({ queryKey: ["orgs", projectId] });
+      toast.success("Default org updated");
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Failed to set default");
+      toast.error(err instanceof Error ? err.message : "Failed to set default");
     } finally {
       setBusyId(null);
     }
   };
 
-  const handleDelete = async (orgId: string) => {
-    const org = orgs.find((o) => o.id === orgId);
-    if (!confirm(`Delete org "${org?.name}"? This cannot be undone.`)) return;
-    setBusyId(orgId);
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    setBusyId(deleteId);
     try {
-      await api.deleteOrg(orgId);
+      await api.deleteOrg(deleteId);
       await refetch();
-      setMessage("Org deleted.");
+      toast.success("Org deleted");
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Delete failed");
+      toast.error(err instanceof Error ? err.message : "Delete failed");
     } finally {
       setBusyId(null);
+      setDeleteId(null);
     }
   };
+
+  const deleteOrgName = orgs.find((o) => o.id === deleteId)?.name;
 
   return (
     <div className="space-y-6">
@@ -90,35 +100,46 @@ export default function SalesforceOrgsPage() {
         description="Authorize and manage connected orgs for SOQL user lookup and Login As test runs."
       />
 
-      {message && (
-        <div className="rounded-lg border bg-muted/30 px-4 py-3 text-sm">{message}</div>
-      )}
-
-      <Card>
-        <CardContent className="p-0 pt-0">
-          {orgsLoading && projectId ? (
-            <TableSkeleton rows={4} columns={5} />
-          ) : (
-            <OrgList
-              orgs={orgs}
-              onValidate={handleValidate}
-              onSetDefault={handleSetDefault}
-              onDelete={handleDelete}
-              busyId={busyId}
-            />
-          )}
-        </CardContent>
-      </Card>
+      <PremiumCard title="Connected Orgs" noPadding>
+        {orgsLoading && projectId ? (
+          <TableSkeleton rows={4} columns={5} />
+        ) : (
+          <OrgList
+            orgs={orgs}
+            onValidate={handleValidate}
+            onSetDefault={handleSetDefault}
+            onDelete={setDeleteId}
+            busyId={busyId}
+          />
+        )}
+      </PremiumCard>
 
       {projectId && (
-        <OrgConnectPanel
-          projectId={projectId}
-          onConnected={() => {
-            refetch();
-            setMessage("Org connected.");
-          }}
-        />
+        <PremiumCard title="Connect New Org">
+          <OrgConnectPanel
+            projectId={projectId}
+            onConnected={() => {
+              refetch();
+              toast.success("Org connected");
+            }}
+          />
+        </PremiumCard>
       )}
+
+      <Dialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete org?</DialogTitle>
+            <DialogDescription>
+              Delete &quot;{deleteOrgName}&quot;? This cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteId(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

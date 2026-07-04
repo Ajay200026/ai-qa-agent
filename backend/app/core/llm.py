@@ -2,6 +2,7 @@ import logging
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
+from app.core.brain_llm_router import get_automation_agent_llm, uses_cloud_routing
 from app.core.config import Settings, get_settings
 
 logger = logging.getLogger(__name__)
@@ -26,16 +27,19 @@ def _lmstudio_chat(
 
 
 def get_automation_llm(*, temperature: float | None = None) -> ChatOpenAI | None:
-    """LLM for UI automation fallback (Nemotron by default)."""
+    """LLM for UI automation fallback."""
+    temp = temperature if temperature is not None else 0.1
+    llm = get_automation_agent_llm(temperature=temp)
+    if llm is not None:
+        return llm
+
     settings = get_settings()
     if settings.llm_provider == "lmstudio":
-        temp = temperature if temperature is not None else 0.1
         logger.debug("Using LM Studio automation model %s", settings.lmstudio_model)
         return _lmstudio_chat(settings, temperature=temp)
     if settings.llm_provider == "nvidia":
         if not settings.nvidia_api_key:
             return None
-        temp = temperature if temperature is not None else 0.1
         model = settings.nvidia_automation_model or settings.nvidia_model
         logger.debug("Using NVIDIA automation model %s", model)
         return ChatOpenAI(
@@ -46,7 +50,6 @@ def get_automation_llm(*, temperature: float | None = None) -> ChatOpenAI | None
             max_tokens=settings.nvidia_max_tokens,
         )
     if settings.openai_api_key:
-        temp = temperature if temperature is not None else 0.1
         return ChatOpenAI(
             model=settings.openai_model,
             api_key=settings.openai_api_key,
@@ -56,8 +59,14 @@ def get_automation_llm(*, temperature: float | None = None) -> ChatOpenAI | None
 
 
 def get_chat_llm(*, temperature: float | None = None) -> ChatOpenAI | None:
-    """Return a chat LLM client (LM Studio, NVIDIA NIM, or OpenAI-compatible)."""
+    """Return a chat LLM client for general tasks (routes via brain router in hybrid mode)."""
+    from app.core.brain_llm_router import get_chat_agent_llm
+
     settings = get_settings()
+    if uses_cloud_routing():
+        llm = get_chat_agent_llm(temperature=temperature)
+        if llm is not None:
+            return llm
 
     if settings.llm_provider == "lmstudio":
         temp = temperature if temperature is not None else settings.lmstudio_temperature
@@ -90,13 +99,15 @@ def get_chat_llm(*, temperature: float | None = None) -> ChatOpenAI | None:
 
 
 def get_embeddings() -> OpenAIEmbeddings | None:
-    """Return an embeddings client for vector search (LM Studio or OpenAI)."""
+    """Embeddings for vector search — always LM Studio in hybrid mode when configured."""
     settings = get_settings()
-    if settings.llm_provider == "lmstudio":
+    if uses_cloud_routing() or settings.llm_provider == "lmstudio":
         return OpenAIEmbeddings(
             model=settings.lmstudio_embedding_model,
             api_key=settings.lmstudio_api_key,
             base_url=settings.lmstudio_api_base,
+            # LM Studio expects raw strings, not pre-tokenized input arrays.
+            check_embedding_ctx_length=False,
         )
     if settings.openai_api_key:
         return OpenAIEmbeddings(
@@ -108,6 +119,8 @@ def get_embeddings() -> OpenAIEmbeddings | None:
 
 def is_llm_configured() -> bool:
     settings = get_settings()
+    if uses_cloud_routing():
+        return bool(settings.nvidia_api_key) or settings.llm_provider == "lmstudio"
     if settings.llm_provider == "lmstudio":
         return True
     if settings.llm_provider == "nvidia":

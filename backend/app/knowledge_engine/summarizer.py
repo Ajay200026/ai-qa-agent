@@ -7,7 +7,7 @@ import logging
 
 from langchain_core.messages import HumanMessage, SystemMessage
 
-from app.core.llm import get_chat_llm
+from app.core.brain_llm_router import _redact_secrets, get_brain_llm
 from app.knowledge_engine.types import ExtractionResult
 
 logger = logging.getLogger(__name__)
@@ -17,8 +17,15 @@ write a concise 2-3 sentence summary explaining what it does and any business ru
 Return JSON: {"summary": "...", "business_rules": ["rule1", "rule2"]}"""
 
 
-async def summarize_extraction(extraction: ExtractionResult) -> tuple[str | None, list[str]]:
-    llm = get_chat_llm(temperature=0.2)
+async def summarize_extraction(
+    extraction: ExtractionResult,
+    *,
+    use_llm: bool = True,
+) -> tuple[str | None, list[str]]:
+    if not use_llm:
+        return _fallback_summary(extraction)
+
+    llm = get_brain_llm(temperature=0.2)
     if llm is None:
         return _fallback_summary(extraction)
 
@@ -38,7 +45,11 @@ async def summarize_extraction(extraction: ExtractionResult) -> tuple[str | None
         text = response.content if isinstance(response.content, str) else str(response.content)
         return _parse_summary_response(text, extraction)
     except Exception as exc:
-        logger.warning("Summarization failed for %s: %s", extraction.name, exc)
+        logger.warning(
+            "Summarization failed for %s: %s",
+            extraction.name,
+            _redact_secrets(str(exc)),
+        )
         return _fallback_summary(extraction)
 
 

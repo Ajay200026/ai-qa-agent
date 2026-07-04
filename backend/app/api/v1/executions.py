@@ -159,6 +159,53 @@ async def clear_execution_history(db: DbSession, current_user: CurrentUser):
     return {"deleted": deleted}
 
 
+@router.get("/{execution_id}/rca")
+async def get_execution_rca(execution_id: UUID, db: DbSession, current_user: CurrentUser):
+    from sqlalchemy import select
+
+    from app.models.execution import Execution
+    from app.models.report import Report
+    from app.models.scenario import Scenario
+    from app.agents.rca_agent import run_rca_analysis
+    from app.schemas.agent import ExecutionReport, StepResult
+
+    result = await db.execute(select(Execution).where(Execution.id == execution_id))
+    execution = result.scalar_one_or_none()
+    if not execution:
+        raise HTTPException(status_code=404, detail="Execution not found")
+
+    report_row = await db.execute(select(Report).where(Report.execution_id == execution_id))
+    report = report_row.scalar_one_or_none()
+    if report and report.rca_analysis:
+        return report.rca_analysis
+
+    scenario_row = await db.execute(select(Scenario).where(Scenario.id == execution.scenario_id))
+    scenario = scenario_row.scalar_one_or_none()
+    if not scenario or not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    step_results = []
+    if execution.plan_json and execution.plan_json.get("step_results"):
+        for s in execution.plan_json["step_results"]:
+            step_results.append(StepResult(**s))
+
+    report_data = ExecutionReport(
+        passed=report.failed_count == 0,
+        summary=report.summary,
+        passed_count=report.passed_count,
+        failed_count=report.failed_count,
+        llm_analysis=report.llm_analysis,
+    )
+    rca = await run_rca_analysis(
+        str(scenario.id), scenario.name, report_data, step_results, str(execution_id)
+    )
+    if rca:
+        report.rca_analysis = rca.model_dump()
+        await db.commit()
+        return rca.model_dump()
+    raise HTTPException(status_code=503, detail="RCA analysis unavailable")
+
+
 @router.get("/{execution_id}", response_model=ExecutionResponse)
 async def get_execution(execution_id: UUID, db: DbSession, current_user: CurrentUser):
     service = ExecutionService(db)

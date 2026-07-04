@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Brain, Cloud, Database, FileText, GitBranch, LayoutDashboard, LogOut, MessageSquare, Play, UserCircle, X } from "lucide-react";
+import { Brain, Cloud, Database, FileText, GitBranch, Globe, LayoutDashboard, LogOut, MessageSquare, Play, UserCircle, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -20,6 +20,7 @@ const navItems = [
 const knowledgeSubItems = [
   { href: "/knowledge", label: "Overview", icon: Brain },
   { href: "/knowledge/graph", label: "Graph", icon: GitBranch },
+  { href: "/knowledge/globe", label: "Globe", icon: Globe },
   { href: "/knowledge/ask", label: "Ask AI", icon: MessageSquare },
 ];
 
@@ -41,7 +42,9 @@ export function Sidebar({ mobileOpen = false, onNavigate }: SidebarProps) {
     >
       <div className="flex items-start justify-between border-b p-4 md:p-6">
         <div>
-          <h1 className="text-lg font-bold">AI QA Agent</h1>
+          <h1 className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-lg font-bold text-transparent">
+            AI QA Agent
+          </h1>
           <p className="text-xs text-muted-foreground">Salesforce Testing</p>
         </div>
         <Button
@@ -65,17 +68,20 @@ export function Sidebar({ mobileOpen = false, onNavigate }: SidebarProps) {
                 href={item.href}
                 onClick={onNavigate}
                 className={cn(
-                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  "relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
                   active
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 )}
               >
+                {active && (
+                  <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-primary" />
+                )}
                 <Icon className="h-4 w-4 shrink-0" />
                 {item.label}
               </Link>
               {item.href === "/knowledge" && pathname.startsWith("/knowledge") && (
-                <div className="ml-4 mt-1 space-y-1 border-l pl-2">
+                <div className="ml-4 mt-1 space-y-1 border-l border-border pl-2">
                   {knowledgeSubItems.map((sub) => {
                     const SubIcon = sub.icon;
                     const subActive = pathname === sub.href;

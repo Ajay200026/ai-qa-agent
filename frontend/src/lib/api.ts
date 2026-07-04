@@ -1,11 +1,20 @@
 import type {
   AccountQuery,
+  AzureConnection,
+  AzureProject,
+  AzureRepo,
+  BrainConfig,
+  BrainNodeDetail,
   AskCitation,
   AskResponse,
   CustomerSearchOptions,
   CustomerTarget,
   DashboardStats,
   DiscoveredModule,
+  ValidateScopeResponse,
+  RepoFolderEntry,
+  RepoFileEntry,
+  FileContentResponse,
   EntityDetail,
   Execution,
   ExecutionStep,
@@ -14,6 +23,8 @@ import type {
   KnowledgeGraph,
   KnowledgeModule,
   KnowledgeRepo,
+  KnowledgeRepoCreate,
+  FolderUploadResult,
   LoginAsProfile,
   LoginAsTarget,
   LlmConfig,
@@ -105,8 +116,11 @@ class ApiClient {
       throw new Error(message || `HTTP ${response.status}`);
     }
 
-    if (response.status === 204) return {} as T;
-    return response.json();
+    if (response.status === 204) return undefined as T;
+
+    const text = await response.text();
+    if (!text) return undefined as T;
+    return JSON.parse(text) as T;
   }
 
   async register(email: string, password: string): Promise<User> {
@@ -515,30 +529,241 @@ class ApiClient {
     return this.request("/knowledge/repos");
   }
 
-  async createKnowledgeRepo(name: string, path: string): Promise<KnowledgeRepo> {
+  async createKnowledgeRepo(body: KnowledgeRepoCreate): Promise<KnowledgeRepo> {
     return this.request("/knowledge/repos", {
       method: "POST",
-      body: JSON.stringify({ name, path }),
+      body: JSON.stringify(body),
     });
+  }
+
+  async connectAzure(body: {
+    name: string;
+    organization_url: string;
+    pat: string;
+  }): Promise<AzureConnection> {
+    return this.request("/knowledge/azure/connect", {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+  }
+
+  async listAzureConnections(): Promise<AzureConnection[]> {
+    return this.request("/knowledge/azure/connections");
+  }
+
+  async deleteAzureConnection(connectionId: string): Promise<void> {
+    return this.request(`/knowledge/azure/connections/${connectionId}`, { method: "DELETE" });
+  }
+
+  async validateAzureConnection(connectionId: string): Promise<AzureConnection> {
+    return this.request(`/knowledge/azure/connections/${connectionId}/validate`, { method: "POST" });
+  }
+
+  async listAzureProjects(connectionId: string): Promise<AzureProject[]> {
+    return this.request(`/knowledge/azure/connections/${connectionId}/projects`);
+  }
+
+  async listAzureRepos(connectionId: string, project: string): Promise<AzureRepo[]> {
+    return this.request(
+      `/knowledge/azure/connections/${connectionId}/projects/${encodeURIComponent(project)}/repos`
+    );
+  }
+
+  async listAzureBranches(
+    connectionId: string,
+    repoId: string,
+    project: string
+  ): Promise<{ branches: string[] }> {
+    return this.request(
+      `/knowledge/azure/connections/${connectionId}/repos/${repoId}/branches?project=${encodeURIComponent(project)}`
+    );
+  }
+
+  async listRepoTree(repoId: string, path = ""): Promise<RepoFolderEntry[]> {
+    const query = path ? `?path=${encodeURIComponent(path)}` : "";
+    return this.request(`/knowledge/repos/${repoId}/tree${query}`);
+  }
+
+  async listRepoFiles(
+    repoId: string,
+    path = "",
+    scopePath?: string
+  ): Promise<RepoFileEntry[]> {
+    const params = new URLSearchParams();
+    if (path) params.set("path", path);
+    if (scopePath) params.set("scope_path", scopePath);
+    const query = params.toString() ? `?${params.toString()}` : "";
+    return this.request(`/knowledge/repos/${repoId}/files${query}`);
+  }
+
+  async getRepoFileContent(repoId: string, path: string): Promise<FileContentResponse> {
+    return this.request(
+      `/knowledge/repos/${repoId}/file-content?path=${encodeURIComponent(path)}`
+    );
   }
 
   async discoverModules(repoId: string): Promise<DiscoveredModule[]> {
     return this.request(`/knowledge/repos/${repoId}/discover`);
   }
 
+  async validateScope(repoId: string, path: string): Promise<ValidateScopeResponse> {
+    return this.request(
+      `/knowledge/repos/${repoId}/validate-scope?path=${encodeURIComponent(path)}`
+    );
+  }
+
+  async deleteKnowledgeRepo(repoId: string): Promise<void> {
+    return this.request(`/knowledge/repos/${repoId}`, { method: "DELETE" });
+  }
+
+  async deleteKnowledgeModule(moduleId: string): Promise<void> {
+    return this.request(`/knowledge/modules/${moduleId}`, { method: "DELETE" });
+  }
+
+  async resetKnowledge(): Promise<{ repos_deleted: number; connections_deleted: number }> {
+    return this.request("/knowledge/reset", { method: "POST" });
+  }
+
+  async uploadRepoZip(name: string, file: File): Promise<KnowledgeRepo> {
+    const token = await this.resolveToken();
+    const form = new FormData();
+    form.append("name", name);
+    form.append("file", file);
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+    const response = await fetch(`${API_URL}/knowledge/repos/upload`, {
+      method: "POST",
+      headers,
+      body: form,
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: "Upload failed" }));
+      throw new Error(typeof error.detail === "string" ? error.detail : "Upload failed");
+    }
+    return response.json();
+  }
+
+  async uploadRepoFolder(
+    name: string,
+    files: FileList,
+    onProgress?: (percent: number) => void
+  ): Promise<FolderUploadResult> {
+    const { chunkFiles, prepareFolderUpload } = await import("./upload-folder");
+    const { files: fileArr, paths } = prepareFolderUpload(files);
+    if (fileArr.length === 0) {
+      throw new Error("No files in folder. Select a folder with Salesforce code (LWC, Apex, etc.).");
+    }
+
+    const token = await this.resolveToken();
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const batches = chunkFiles(
+      fileArr.map((file, i) => ({ file, path: paths[i] })),
+      150
+    );
+    let sessionId: string | undefined;
+    let result: FolderUploadResult | null = null;
+
+    for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+      const batch = batches[batchIndex];
+      const form = new FormData();
+      if (!sessionId) {
+        form.append("name", name);
+      } else {
+        form.append("session_id", sessionId);
+      }
+      const isLast = batchIndex === batches.length - 1;
+      if (isLast) {
+        form.append("finalize", "true");
+      }
+      form.append("relative_paths", JSON.stringify(batch.map((b) => b.path)));
+      batch.forEach((b) => form.append("files", b.file, b.path));
+
+      const response = await fetch(`${API_URL}/knowledge/repos/upload-folder`, {
+        method: "POST",
+        headers,
+        body: form,
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ detail: "Upload failed" }));
+        const detail = error.detail;
+        const message = Array.isArray(detail)
+          ? detail.map((d: { msg?: string }) => d.msg).filter(Boolean).join(", ")
+          : typeof detail === "string"
+            ? detail
+            : "Upload failed";
+        throw new Error(message || `Upload failed (${response.status})`);
+      }
+
+      const data = await response.json();
+      if (isLast) {
+        result = data as FolderUploadResult;
+      } else {
+        sessionId = data.session_id;
+      }
+      onProgress?.(Math.round(((batchIndex + 1) / batches.length) * 100));
+    }
+
+    if (!result) {
+      throw new Error("Upload did not finalize");
+    }
+    return result;
+  }
+
   async listKnowledgeModules(repoId: string): Promise<KnowledgeModule[]> {
     return this.request(`/knowledge/repos/${repoId}/modules`);
   }
 
-  async createKnowledgeModule(repoId: string, name: string): Promise<KnowledgeModule> {
+  async createKnowledgeModule(
+    repoId: string,
+    name: string,
+    scopePath?: string
+  ): Promise<KnowledgeModule> {
     return this.request(`/knowledge/repos/${repoId}/modules`, {
       method: "POST",
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name, scope_path: scopePath ?? null }),
     });
   }
 
   async startModuleScan(moduleId: string): Promise<{ status: string; module_id: string }> {
     return this.request(`/knowledge/modules/${moduleId}/scan`, { method: "POST" });
+  }
+
+  async *streamModuleScan(
+    moduleId: string
+  ): AsyncGenerator<{ event_type: string; message?: string; count?: number; stats?: Record<string, unknown> }> {
+    const token = await this.resolveToken();
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetch(`${API_URL}/knowledge/modules/${moduleId}/scan/stream`, {
+      headers,
+    });
+    if (!response.ok || !response.body) {
+      throw new Error(`Scan stream failed: HTTP ${response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          try {
+            yield JSON.parse(line.slice(6));
+          } catch {
+            // skip malformed
+          }
+        }
+      }
+    }
   }
 
   async getModuleStatus(moduleId: string): Promise<ModuleStatus> {
@@ -547,6 +772,29 @@ class ApiClient {
 
   async getModuleGraph(moduleId: string): Promise<KnowledgeGraph> {
     return this.request(`/knowledge/modules/${moduleId}/graph`);
+  }
+
+  async getRepoBrain(repoId: string): Promise<KnowledgeGraph> {
+    return this.request(`/knowledge/repos/${repoId}/brain`);
+  }
+
+  async getBrainNode(nodeId: string): Promise<BrainNodeDetail> {
+    return this.request(`/knowledge/nodes/${encodeURIComponent(nodeId)}`);
+  }
+
+  async getBrainConfig(): Promise<BrainConfig> {
+    return this.request("/config/brain");
+  }
+
+  async patchBrainConfig(agent_mode: "single" | "multi"): Promise<BrainConfig> {
+    return this.request("/config/brain", {
+      method: "PATCH",
+      body: JSON.stringify({ agent_mode }),
+    });
+  }
+
+  async getExecutionRca(executionId: string) {
+    return this.request(`/executions/${executionId}/rca`);
   }
 
   async getKnowledgeEntity(entityId: string): Promise<EntityDetail> {
